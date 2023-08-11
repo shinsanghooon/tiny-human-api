@@ -1,0 +1,31 @@
+spring:
+  profiles.active: local
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+  flyway:
+    enabled: false
+  datasource:
+    url: jdbc:mariadb://localhost:13306/tinyhuman_db?allowPublicKeyRetrieval=true&useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
+    username: root
+    password: password
+    hikari:
+      max-lifetime: 56000
+      connection-timeout: 2000
+    driver-class-name: org.mariadb.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        format_sql: true
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    open-in-view: false
+  sql:
+    init:
+      mode: always
+logging:
+  level:
+    org.hibernate.sql: debug
