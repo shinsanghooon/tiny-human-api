@@ -4,38 +4,21 @@ import lombok.Builder;
 
 import java.time.LocalDateTime;
 
-public class DiaryResponse {
-
-    private Long id;
-
-    private int daysAfterBirth;
-
-    private String writer;
-
-    private Boolean isPublic;
-
-    private int likeCount;
-
-    private LocalDateTime createdAt;
+public record DiaryResponse(Long id, int daysAfterBirth, String writer, Boolean isPublic, int likeCount,
+                            LocalDateTime createdAt) {
 
     @Builder
-    public DiaryResponse(Long id, int daysAfterBirth, String writer, Boolean isPublic, int likeCount, LocalDateTime createdAt) {
-        this.id = id;
-        this.daysAfterBirth = daysAfterBirth;
-        this.writer = writer;
-        this.isPublic = isPublic;
-        this.likeCount = likeCount;
-        this.createdAt = createdAt;
+    public DiaryResponse {
     }
 
     public static DiaryResponse fromModel(Diary diary) {
         return DiaryResponse.builder()
-                .id(diary.getId())
-                .daysAfterBirth(diary.getDaysAfterBirth())
-                .writer(diary.getWriter())
-                .isPublic(diary.getIsPublic())
-                .likeCount(diary.getLikeCount())
-                .createdAt(diary.getCreated_at())
+                .id(diary.id())
+                .daysAfterBirth(diary.daysAfterBirth())
+                .writer(diary.writer())
+                .isPublic(diary.isPublic())
+                .likeCount(diary.likeCount())
+                .createdAt(diary.created_at())
                 .build();
     }
 }

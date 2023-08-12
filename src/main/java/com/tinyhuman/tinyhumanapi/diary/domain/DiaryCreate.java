@@ -1,15 +1,8 @@
 package com.tinyhuman.tinyhumanapi.diary.domain;
 
-import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
-@Getter
-public class DiaryCreate {
+@RequiredArgsConstructor
+public record DiaryCreate(int daysAfterBirth, String writer, Boolean isPublic, int likeCount) {
 
-    private int daysAfterBirth;
-
-    private String writer;
-
-    private Boolean isPublic;
-
-    private int likeCount;
 }

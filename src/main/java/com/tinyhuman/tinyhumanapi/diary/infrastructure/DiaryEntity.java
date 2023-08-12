@@ -28,7 +28,7 @@ public class DiaryEntity extends BaseEntity {
     @Column(name="is_public")
     private Boolean isPublic;
 
-    @Column(name="likeCount")
+    @Column(name="like_count")
     private int likeCount;
 
     @Builder
@@ -42,11 +42,11 @@ public class DiaryEntity extends BaseEntity {
 
     public static DiaryEntity fromModel(Diary diary) {
         return DiaryEntity.builder()
-                .id(diary.getId())
-                .daysAfterBirth(diary.getDaysAfterBirth())
-                .writer(diary.getWriter())
-                .isPublic(diary.getIsPublic())
-                .likeCount(diary.getLikeCount())
+                .id(diary.id())
+                .daysAfterBirth(diary.daysAfterBirth())
+                .writer(diary.writer())
+                .isPublic(diary.isPublic())
+                .likeCount(diary.likeCount())
                 .build();
     }
 
