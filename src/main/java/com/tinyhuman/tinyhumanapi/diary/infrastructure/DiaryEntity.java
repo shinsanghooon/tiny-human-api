@@ -8,6 +8,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Where;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Getter
 @Table(name = "diaries")
@@ -30,6 +33,9 @@ public class DiaryEntity extends BaseEntity {
 
     @Column(name="like_count")
     private int likeCount;
+
+    @OneToMany(mappedBy = "diary")
+    private final List<SentenceEntity> sentences = new ArrayList<>();
 
     @Builder
     public DiaryEntity(Long id, int daysAfterBirth, String writer, Boolean isPublic, int likeCount) {
@@ -59,7 +65,10 @@ public class DiaryEntity extends BaseEntity {
                 .likeCount(this.likeCount)
                 .created_at(this.getCreatedAt())
                 .build();
+    }
 
+    public void addSentence(SentenceEntity sentence) {
+        sentences.add(sentence);
     }
 
 }

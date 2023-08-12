@@ -1,8 +1,13 @@
 package com.tinyhuman.tinyhumanapi.diary.domain;
 
-import lombok.RequiredArgsConstructor;
+import lombok.Builder;
+import java.util.List;
 
-@RequiredArgsConstructor
-public record DiaryCreate(int daysAfterBirth, String writer, Boolean isPublic, int likeCount) {
 
+public record DiaryCreate(int daysAfterBirth, String writer, Boolean isPublic, int likeCount,
+                          List<Sentence> sentences) {
+
+    @Builder
+    public DiaryCreate {
+    }
 }
