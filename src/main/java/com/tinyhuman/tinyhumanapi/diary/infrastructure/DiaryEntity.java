@@ -1,5 +1,6 @@
 package com.tinyhuman.tinyhumanapi.diary.infrastructure;
 
+import com.tinyhuman.tinyhumanapi.baby.infrastructure.BabyEntity;
 import com.tinyhuman.tinyhumanapi.common.infrastructure.BaseEntity;
 import com.tinyhuman.tinyhumanapi.diary.domain.Diary;
 import jakarta.persistence.*;
@@ -34,12 +35,27 @@ public class DiaryEntity extends BaseEntity {
     @OneToMany(mappedBy = "diary")
     private final List<SentenceEntity> sentences = new ArrayList<>();
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "baby_id")
+    private BabyEntity baby;
+
     @Builder
-    public DiaryEntity(Long id, int daysAfterBirth, String writer, int likeCount) {
+    public DiaryEntity(Long id, int daysAfterBirth, String writer, int likeCount, BabyEntity baby) {
         this.id = id;
         this.daysAfterBirth = daysAfterBirth;
         this.writer = writer;
         this.likeCount = likeCount;
+        this.baby = setBaby(baby);
+    }
+
+    private BabyEntity setBaby(BabyEntity baby) {
+        if (this.baby != null) {
+            this.baby.getDiaries().remove(this);
+        }
+        this.baby = baby;
+        baby.addDiary(this);
+
+        return baby;
     }
 
     public static DiaryEntity fromModel(Diary diary) {
