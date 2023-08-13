@@ -28,9 +28,6 @@ public class DiaryEntity extends BaseEntity {
     @Column(name="writer")
     private String writer;
 
-    @Column(name="is_public")
-    private Boolean isPublic;
-
     @Column(name="like_count")
     private int likeCount;
 
@@ -38,11 +35,10 @@ public class DiaryEntity extends BaseEntity {
     private final List<SentenceEntity> sentences = new ArrayList<>();
 
     @Builder
-    public DiaryEntity(Long id, int daysAfterBirth, String writer, Boolean isPublic, int likeCount) {
+    public DiaryEntity(Long id, int daysAfterBirth, String writer, int likeCount) {
         this.id = id;
         this.daysAfterBirth = daysAfterBirth;
         this.writer = writer;
-        this.isPublic = isPublic;
         this.likeCount = likeCount;
     }
 
@@ -51,7 +47,6 @@ public class DiaryEntity extends BaseEntity {
                 .id(diary.id())
                 .daysAfterBirth(diary.daysAfterBirth())
                 .writer(diary.writer())
-                .isPublic(diary.isPublic())
                 .likeCount(diary.likeCount())
                 .build();
     }
@@ -61,7 +56,6 @@ public class DiaryEntity extends BaseEntity {
                 .id(this.id)
                 .daysAfterBirth(this.daysAfterBirth)
                 .writer(this.writer)
-                .isPublic(this.isPublic)
                 .likeCount(this.likeCount)
                 .created_at(this.getCreatedAt())
                 .build();

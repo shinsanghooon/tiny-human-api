@@ -4,7 +4,7 @@ import lombok.Builder;
 
 import java.time.LocalDateTime;
 
-public record Diary(Long id, int daysAfterBirth, String writer, Boolean isPublic, int likeCount,
+public record Diary(Long id, int daysAfterBirth, String writer, int likeCount,
                     LocalDateTime created_at) {
 
     @Builder
@@ -15,7 +15,6 @@ public record Diary(Long id, int daysAfterBirth, String writer, Boolean isPublic
         return Diary.builder()
                 .daysAfterBirth(diaryCreate.daysAfterBirth())
                 .writer(diaryCreate.writer())
-                .isPublic(diaryCreate.isPublic())
                 .likeCount(diaryCreate.likeCount())
                 .build();
     }

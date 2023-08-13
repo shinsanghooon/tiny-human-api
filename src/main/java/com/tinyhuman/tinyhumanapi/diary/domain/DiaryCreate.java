@@ -4,7 +4,7 @@ import lombok.Builder;
 import java.util.List;
 
 
-public record DiaryCreate(int daysAfterBirth, String writer, Boolean isPublic, int likeCount,
+public record DiaryCreate(int daysAfterBirth, String writer, int likeCount,
                           List<SentenceCreate> sentences) {
 
     @Builder
