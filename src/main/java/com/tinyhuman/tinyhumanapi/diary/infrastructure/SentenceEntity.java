@@ -47,6 +47,7 @@ public class SentenceEntity extends BaseEntity {
         return SentenceEntity.builder()
                 .id(sentence.id())
                 .sentence(sentence.sentence())
+                .diary(DiaryEntity.fromModel(sentence.diary()))
                 .build();
     }
 }

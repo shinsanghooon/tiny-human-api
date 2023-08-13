@@ -3,19 +3,13 @@ package com.tinyhuman.tinyhumanapi.diary.domain;
 import lombok.Builder;
 import java.util.List;
 
-public record Sentence(Long id, String sentence) {
+public record Sentence(Long id, String sentence, Diary diary) {
 
     @Builder
     public Sentence {
     }
 
-    public static List<Sentence> from(DiaryCreate diaryCreate) {
-        return diaryCreate.sentences()
-                .stream()
-                .map(s -> Sentence.builder()
-                        .id(s.id)
-                        .sentence(s.sentence)
-                        .build())
-                .toList();
+    public static List<SentenceCreate> from(DiaryCreate diaryCreate) {
+        return diaryCreate.sentences();
     }
 }

@@ -5,7 +5,7 @@ import java.util.List;
 
 
 public record DiaryCreate(int daysAfterBirth, String writer, Boolean isPublic, int likeCount,
-                          List<Sentence> sentences) {
+                          List<SentenceCreate> sentences) {
 
     @Builder
     public DiaryCreate {
