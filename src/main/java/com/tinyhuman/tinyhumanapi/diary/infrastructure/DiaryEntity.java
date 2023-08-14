@@ -35,6 +35,9 @@ public class DiaryEntity extends BaseEntity {
     @OneToMany(mappedBy = "diary")
     private final List<SentenceEntity> sentences = new ArrayList<>();
 
+    @OneToMany(mappedBy = "diary")
+    private final List<PictureEntity> pictures = new ArrayList<>();
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "baby_id")
     private BabyEntity baby;
@@ -64,6 +67,7 @@ public class DiaryEntity extends BaseEntity {
                 .daysAfterBirth(diary.daysAfterBirth())
                 .writer(diary.writer())
                 .likeCount(diary.likeCount())
+                .baby(BabyEntity.fromModel(diary.baby()))
                 .build();
     }
 
@@ -74,11 +78,16 @@ public class DiaryEntity extends BaseEntity {
                 .writer(this.writer)
                 .likeCount(this.likeCount)
                 .created_at(this.getCreatedAt())
+                .baby(this.baby.toModel())
                 .build();
     }
 
     public void addSentence(SentenceEntity sentence) {
         sentences.add(sentence);
+    }
+
+    public void addPicture(PictureEntity picture) {
+        pictures.add(picture);
     }
 
 }

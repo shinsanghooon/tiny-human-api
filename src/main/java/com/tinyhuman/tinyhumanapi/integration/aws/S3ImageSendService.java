@@ -1,7 +1,6 @@
 package com.tinyhuman.tinyhumanapi.integration.aws;
 
 import com.tinyhuman.tinyhumanapi.integration.service.ImageService;
-import com.tinyhuman.tinyhumanapi.integration.util.S3Util;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -27,8 +26,8 @@ public class S3ImageSendService implements ImageService {
         byte[] imageBytes = getImageBytes(file);
 
         String fileName = file.getOriginalFilename();
-        Long userId = 1L;
-        String s3FullPath = S3Util.addUserIdToImagePath(s3UploadPath, userId, fileName);
+        Long babyId = 1L;
+        String s3FullPath = S3Util.addUserIdToImagePath(s3UploadPath, babyId, fileName);
 
         PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                 .bucket(bucketName)
