@@ -19,7 +19,7 @@ public class SentenceEntity extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "sentence")
+    @Column(name = "sentence", length = 900)
     private String sentence;
 
     @ManyToOne(fetch = FetchType.LAZY)
