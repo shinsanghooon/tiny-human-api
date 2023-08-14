@@ -4,6 +4,7 @@ package com.tinyhuman.tinyhumanapi.diary.controller;
 import com.tinyhuman.tinyhumanapi.diary.controller.port.DiaryService;
 import com.tinyhuman.tinyhumanapi.diary.domain.DiaryCreate;
 import com.tinyhuman.tinyhumanapi.diary.domain.DiaryResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +18,7 @@ public class DiaryCreateController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public DiaryResponse createDiary(@RequestBody DiaryCreate diaryCreate) {
+    public DiaryResponse createDiary(@RequestBody @Valid DiaryCreate diaryCreate) {
         return diaryServiceImpl.create(diaryCreate);
     }
 
