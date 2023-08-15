@@ -45,4 +45,10 @@ public class FakeBabyRepository implements BabyRepository {
                 .filter(baby -> baby.id().equals(id))
                 .findAny();
     }
+
+    @Override
+    public void delete(Long id) {
+
+    }
+
 }

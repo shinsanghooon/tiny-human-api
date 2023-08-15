@@ -12,4 +12,6 @@ public interface BabyService {
 
     List<BabyResponse> getMyBabies();
 
+    void delete(Long id);
+
 }

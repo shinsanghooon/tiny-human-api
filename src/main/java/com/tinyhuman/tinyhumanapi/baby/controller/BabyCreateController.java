@@ -20,4 +20,11 @@ public class BabyCreateController {
     public BabyResponse register(@RequestPart @Valid BabyCreate babyCreate, @RequestPart MultipartFile file) {
         return babyService.register(babyCreate, file);
     }
+
+    @DeleteMapping("{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable("id") Long id) {
+        babyService.delete(id);
+    }
+
 }

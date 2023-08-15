@@ -5,6 +5,7 @@ import com.tinyhuman.tinyhumanapi.baby.domain.Baby;
 import com.tinyhuman.tinyhumanapi.baby.domain.BabyCreate;
 import com.tinyhuman.tinyhumanapi.baby.domain.BabyResponse;
 import com.tinyhuman.tinyhumanapi.baby.service.port.BabyRepository;
+import com.tinyhuman.tinyhumanapi.common.domain.exception.ResourceNotFoundException;
 import com.tinyhuman.tinyhumanapi.integration.service.ImageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -40,5 +41,12 @@ public class BabyServiceImpl implements BabyService {
         // TODO: Login 구현 후 작업
         Long userId = 1L;
         return null;
+    }
+
+    @Override
+    public void delete(Long id) {
+        Baby baby = babyRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Baby", id));
+        Baby deletedBaby = baby.delete();
+        babyRepository.save(deletedBaby);
     }
 }

@@ -21,11 +21,5 @@ public abstract class BaseEntity extends BaseTimeEntity {
     @Column(name="updated_by")
     private String updatedBy;
 
-    @Column(name="is_deleted")
-    private Boolean isDeleted = false;
-
-    public void delete() {
-        this.isDeleted = true;
-    }
 }
 

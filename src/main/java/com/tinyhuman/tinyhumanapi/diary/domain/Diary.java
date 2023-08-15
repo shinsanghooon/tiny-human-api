@@ -6,7 +6,7 @@ import lombok.Builder;
 import java.time.LocalDateTime;
 
 public record Diary(Long id, int daysAfterBirth, String writer, int likeCount,
-                    LocalDateTime created_at, Baby baby) {
+                    LocalDateTime created_at, Baby baby, boolean isDeleted) {
 
     @Builder
     public Diary {

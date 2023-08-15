@@ -23,4 +23,9 @@ public class BabyRepositoryImpl implements BabyRepository {
     public Optional<Baby> findById(Long id) {
         return babyJpaRepository.findById(id).map(BabyEntity::toModel);
     }
+
+    @Override
+    public void delete(Long id) {
+    }
+
 }

@@ -50,9 +50,11 @@ public class BabyEntity extends BaseEntity {
     @OneToMany(mappedBy = "baby")
     private final List<DiaryEntity> diaries = new ArrayList<>();
 
+    @Column(name="is_deleted")
+    private Boolean isDeleted = false;
+
     @Builder
-    public BabyEntity(Long id, String name, LocalDate dayOfBirth, int timeOfBirth, Gender gender,
-                      String nickName, String profileImgUrl, Long userId) {
+    public BabyEntity(Long id, String name, LocalDate dayOfBirth, int timeOfBirth, Gender gender, String nickName, String profileImgUrl, Long userId, Boolean isDeleted) {
         this.id = id;
         this.name = name;
         this.dayOfBirth = dayOfBirth;
@@ -61,6 +63,7 @@ public class BabyEntity extends BaseEntity {
         this.nickName = nickName;
         this.profileImgUrl = profileImgUrl;
         this.userId = userId;
+        this.isDeleted = isDeleted;
     }
 
     public static BabyEntity fromModel(Baby baby) {
@@ -72,6 +75,7 @@ public class BabyEntity extends BaseEntity {
                 .gender(baby.gender())
                 .nickName(baby.nickName())
                 .profileImgUrl(baby.profileImgUrl())
+                .isDeleted(baby.isDeleted())
                 .build();
     }
 
@@ -84,6 +88,8 @@ public class BabyEntity extends BaseEntity {
                 .gender(this.gender)
                 .nickName(this.nickName)
                 .profileImgUrl(this.profileImgUrl)
+                .diaries(this.diaries.stream().map(DiaryEntity::toModel).toList())
+                .isDeleted(this.isDeleted)
                 .build();
     }
 
