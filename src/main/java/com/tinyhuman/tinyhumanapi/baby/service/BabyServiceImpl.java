@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -33,6 +35,10 @@ public class BabyServiceImpl implements BabyService {
         return BabyResponse.fromModel(babyRepository.save(newBaby));
     }
 
-        return BabyResponse.fromModel(babyRepository.save(newbaby));
+    @Override
+    public List<BabyResponse> getMyBabies() {
+        // TODO: Login 구현 후 작업
+        Long userId = 1L;
+        return null;
     }
 }

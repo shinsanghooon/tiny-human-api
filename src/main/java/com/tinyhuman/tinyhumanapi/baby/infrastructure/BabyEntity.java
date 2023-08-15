@@ -44,12 +44,15 @@ public class BabyEntity extends BaseEntity {
     @Column(name = "profile_img_url")
     private String profileImgUrl;
 
+    @Column(name = "user_id")
+    private Long userId;
+
     @OneToMany(mappedBy = "baby")
     private final List<DiaryEntity> diaries = new ArrayList<>();
 
     @Builder
     public BabyEntity(Long id, String name, LocalDate dayOfBirth, int timeOfBirth, Gender gender,
-                      String nickName, String profileImgUrl) {
+                      String nickName, String profileImgUrl, Long userId) {
         this.id = id;
         this.name = name;
         this.dayOfBirth = dayOfBirth;
@@ -57,6 +60,7 @@ public class BabyEntity extends BaseEntity {
         this.gender = gender;
         this.nickName = nickName;
         this.profileImgUrl = profileImgUrl;
+        this.userId = userId;
     }
 
     public static BabyEntity fromModel(Baby baby) {
