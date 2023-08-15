@@ -1,0 +1,14 @@
+spring.datasource.url=jdbc:h2:mem:testdb;MODE=MySQL;DB_CLOSE_DELAY=-1
+spring.datasource.driverClassName=org.h2.Driver
+spring.datasource.username=sa
+spring.datasource.password=
+spring.h2.console.enabled=true
+
+spring.jpa.hibernate.dialect=org.hibernate.dialect.MariaDBDialect
+spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
+spring.jpa.hibernate.ddl-auto=create-drop
+
+aws.s3.bucketName=tiny-human-dev
+aws.s3.bucketName.path.profile=images/babyId/profile/
+aws.s3.bucketName.path.diary=images/babyId/diary/
+aws.s3.bucketName.path.album=images/babyId/album/

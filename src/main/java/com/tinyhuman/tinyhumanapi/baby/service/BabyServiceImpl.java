@@ -28,15 +28,10 @@ public class BabyServiceImpl implements BabyService {
     public BabyResponse register(BabyCreate babyCreate, MultipartFile file) {
 
         String s3FullPath = imageService.sendImage(file, s3UploadPath);
+        Baby newBaby = Baby.fromCreate(babyCreate, s3FullPath);
 
-        Baby newbaby = Baby.builder()
-                .name(babyCreate.name())
-                .dayOfBirth(babyCreate.dayOfBirth())
-                .timeOfBirth(babyCreate.timeOfBirth())
-                .nickName(babyCreate.nickName())
-                .gender(babyCreate.gender())
-                .profileImgUrl(s3FullPath)
-                .build();
+        return BabyResponse.fromModel(babyRepository.save(newBaby));
+    }
 
         return BabyResponse.fromModel(babyRepository.save(newbaby));
     }
