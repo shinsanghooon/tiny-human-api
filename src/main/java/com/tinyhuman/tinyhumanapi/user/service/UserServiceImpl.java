@@ -21,4 +21,9 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.save(User.fromCreate(userCreate));
         return UserResponse.fromModel(user);
     }
+
+    @Override
+    public UserResponse getUser(Long userId) {
+        return UserResponse.fromModel(userRepository.findById(userId));
+    }
 }
