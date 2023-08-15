@@ -1,5 +1,6 @@
 package com.tinyhuman.tinyhumanapi.user.service;
 
+import com.tinyhuman.tinyhumanapi.common.domain.exception.ResourceNotFoundException;
 import com.tinyhuman.tinyhumanapi.user.controller.port.UserService;
 import com.tinyhuman.tinyhumanapi.user.domain.User;
 import com.tinyhuman.tinyhumanapi.user.domain.UserCreate;
@@ -24,6 +25,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponse getUser(Long userId) {
-        return UserResponse.fromModel(userRepository.findById(userId));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User", userId));
+        return UserResponse.fromModel(user);
     }
 }
