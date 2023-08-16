@@ -30,6 +30,13 @@ dependencies {
 
     runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
 
+    // aws sdk
+    implementation platform('software.amazon.awssdk:bom:2.20.56')
+    implementation 'software.amazon.awssdk:s3'
+
+    // exif 정보 추출
+    implementation 'com.drewnoakes:metadata-extractor:2.18.0'
+
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation "org.assertj:assertj-core:3.12.2"
 }
