@@ -9,12 +9,11 @@ import com.tinyhuman.tinyhumanapi.common.domain.exception.ResourceNotFoundExcept
 import com.tinyhuman.tinyhumanapi.diary.domain.Diary;
 import com.tinyhuman.tinyhumanapi.diary.service.port.DiaryRepository;
 import com.tinyhuman.tinyhumanapi.integration.service.ImageService;
+import com.tinyhuman.tinyhumanapi.user.controller.port.UserBabyRelationService;
 import com.tinyhuman.tinyhumanapi.user.domain.User;
 import com.tinyhuman.tinyhumanapi.user.domain.UserBabyRelation;
-import com.tinyhuman.tinyhumanapi.user.enums.UserBabyRole;
-import com.tinyhuman.tinyhumanapi.user.service.port.UserBabyRelationRepository;
 import com.tinyhuman.tinyhumanapi.user.service.port.UserRepository;
-import lombok.RequiredArgsConstructor;
+import lombok.Builder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,7 +23,6 @@ import java.util.List;
 
 @Service
 @Transactional
-@RequiredArgsConstructor
 public class BabyServiceImpl implements BabyService {
 
     private final BabyRepository babyRepository;
@@ -35,7 +33,17 @@ public class BabyServiceImpl implements BabyService {
 
     private final UserRepository userRepository;
 
-    private final UserBabyRelationRepository userBabyRelationRepository;
+    private final UserBabyRelationService userBabyRelationService;
+
+    @Builder
+    public BabyServiceImpl(BabyRepository babyRepository, ImageService imageService, DiaryRepository diaryRepository,
+                           UserRepository userRepository, UserBabyRelationService userBabyRelationService) {
+        this.babyRepository = babyRepository;
+        this.imageService = imageService;
+        this.diaryRepository = diaryRepository;
+        this.userRepository = userRepository;
+        this.userBabyRelationService = userBabyRelationService;
+    }
 
     @Value("${aws.s3.path.profile}")
     private String s3UploadPath;
@@ -50,15 +58,7 @@ public class BabyServiceImpl implements BabyService {
         String s3FullPath = imageService.sendImage(file, s3UploadPath);
         Baby baby = babyRepository.save(Baby.fromCreate(babyCreate, s3FullPath));
 
-        // user-baby-relation
-        UserBabyRelation userBabyRelation = UserBabyRelation.builder()
-                .user(user)
-                .baby(baby)
-                .relation(babyCreate.relation())
-                .userBabyRole(UserBabyRole.ADMIN)
-                .build();
-
-        userBabyRelationRepository.save(userBabyRelation);
+        userBabyRelationService.establishRelationUserToBaby(babyCreate, user, baby);
 
         return BabyResponse.fromModel(baby);
     }
@@ -76,7 +76,7 @@ public class BabyServiceImpl implements BabyService {
         Long userId = 1L;
 
         User user = findUser(userId);
-        List<UserBabyRelation> myBabies = userBabyRelationRepository.findByUser(user);
+        List<UserBabyRelation> myBabies = userBabyRelationService.findByUser(user);
 
         return myBabies.stream()
                 .map(UserBabyRelation::baby)
