@@ -17,18 +17,27 @@ spring:
     driver-class-name: org.mariadb.jdbc.Driver
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: create-drop
     properties:
       hibernate:
         format_sql: true
     database-platform: org.hibernate.dialect.MySQL8Dialect
     open-in-view: false
+    defer-datasource-initialization: true
   sql:
     init:
       mode: always
   servlet:
     multipart:
       max-file-size: 15MB
+      max-request-size: 75MB
+aws:
+  s3:
+    bucketName: tiny-human-dev
+    path:
+      profile: images/babyId/profile/
+      diary: images/babyId/diary/
+      album: images/babyId/album/
 logging:
   level:
     org.hibernate.sql: debug
