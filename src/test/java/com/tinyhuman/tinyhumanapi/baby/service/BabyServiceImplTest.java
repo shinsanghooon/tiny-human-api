@@ -9,6 +9,11 @@ import com.tinyhuman.tinyhumanapi.baby.mock.FakeImageService;
 import com.tinyhuman.tinyhumanapi.baby.mock.FakeMultipartFile;
 import com.tinyhuman.tinyhumanapi.common.domain.exception.ResourceNotFoundException;
 import com.tinyhuman.tinyhumanapi.diary.mock.FakeDiaryRepository;
+import com.tinyhuman.tinyhumanapi.user.domain.User;
+import com.tinyhuman.tinyhumanapi.user.domain.UserCreate;
+import com.tinyhuman.tinyhumanapi.user.mock.FakeUserBabyRelationRepository;
+import com.tinyhuman.tinyhumanapi.user.mock.FakeUserRepository;
+import com.tinyhuman.tinyhumanapi.user.service.UserBabyRelationServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -30,8 +35,33 @@ class BabyServiceImplTest {
         FakeBabyRepository fakeBabyRepository = new FakeBabyRepository();
         FakeImageService fakeImageService = new FakeImageService();
         FakeDiaryRepository fakeDiaryRepository = new FakeDiaryRepository();
+        FakeUserRepository fakeUserRepository = new FakeUserRepository();
+        FakeUserBabyRelationRepository fakeUserBabyRelationRepository = new FakeUserBabyRelationRepository();
+        UserBabyRelationServiceImpl userBabyRelationService = new UserBabyRelationServiceImpl(fakeUserBabyRelationRepository);
 
-        this.babyServiceImpl = new BabyServiceImpl(fakeBabyRepository, fakeImageService, fakeDiaryRepository);
+        this.babyServiceImpl = BabyServiceImpl
+                .builder()
+                .babyRepository(fakeBabyRepository)
+                .imageService(fakeImageService)
+                .diaryRepository(fakeDiaryRepository)
+                .userRepository(fakeUserRepository)
+                .userBabyRelationService(userBabyRelationService)
+                .build();
+
+        UserCreate userCreate1 = UserCreate.builder()
+                .name("홈버그")
+                .email("homebug@tinyhuman.com")
+                .password("1234")
+                .build();
+
+        UserCreate userCreate2 = UserCreate.builder()
+                .name("겐지")
+                .email("genzi@tinyhuman.com")
+                .password("1234")
+                .build();
+
+        fakeUserRepository.save(User.fromCreate(userCreate1));
+        fakeUserRepository.save(User.fromCreate(userCreate2));
 
         Baby baby = Baby.builder()
                 .name("김가나")
@@ -45,27 +75,49 @@ class BabyServiceImplTest {
 
         fakeBabyRepository.save(baby);
     }
-    @Test
-    @DisplayName("BabyCreate을 이용하여 아기를 등록할 수 있다.")
-    void registerBaby(){
-        BabyCreate babyCreate = BabyCreate.builder()
-                .name("김등록")
-                .gender(Gender.MALE)
-                .nickName("등록")
-                .timeOfBirth(14)
-                .dayOfBirth(LocalDate.of(2022, 9, 30))
-                .build();
 
-        MultipartFile multipartFile = FakeMultipartFile.createMultipartFile();
-        BabyResponse response = babyServiceImpl.register(babyCreate, multipartFile);
+    @Nested
+    @DisplayName("아기를 등록할 수 있다.")
+    class RegisterBaby {
+        @Test
+        @DisplayName("BabyCreate을 이용하여 아기를 등록할 수 있다.")
+        void registerBaby() {
+            BabyCreate babyCreate = BabyCreate.builder()
+                    .name("김등록")
+                    .gender(Gender.MALE)
+                    .nickName("등록")
+                    .timeOfBirth(14)
+                    .dayOfBirth(LocalDate.of(2022, 9, 30))
+                    .build();
 
-        assertThat(response.id()).isNotNull();
-        assertThat(response.name()).isEqualTo(babyCreate.name());
-        assertThat(response.gender()).isEqualTo(babyCreate.gender());
-        assertThat(response.nickName()).isEqualTo(babyCreate.nickName());
-        assertThat(response.timeOfBirth()).isEqualTo(babyCreate.timeOfBirth());
-        assertThat(response.dayOfBirth()).isEqualTo(babyCreate.dayOfBirth());
-        assertThat(response.profileImgUrl()).isNotNull();
+            MultipartFile multipartFile = FakeMultipartFile.createMultipartFile();
+            BabyResponse response = babyServiceImpl.register(babyCreate, multipartFile);
+
+            assertThat(response.id()).isNotNull();
+            assertThat(response.name()).isEqualTo(babyCreate.name());
+            assertThat(response.gender()).isEqualTo(babyCreate.gender());
+            assertThat(response.nickName()).isEqualTo(babyCreate.nickName());
+            assertThat(response.timeOfBirth()).isEqualTo(babyCreate.timeOfBirth());
+            assertThat(response.dayOfBirth()).isEqualTo(babyCreate.dayOfBirth());
+            assertThat(response.profileImgUrl()).isNotNull();
+        }
+    }
+
+    @Nested
+    @DisplayName("아기를 조회할 수 있다.")
+    class GetBaby {
+        @Test
+        @DisplayName("BabyId를 입력 받아 아기를 조회할 수 있다.")
+        void findBaby() {
+            Long babyId = 1L;
+            BabyResponse baby = babyServiceImpl.findById(babyId);
+
+            assertThat(baby.id()).isEqualTo(babyId);
+            assertThat(baby.name()).isEqualTo("김가나");
+            assertThat(baby.gender()).isEqualTo(Gender.MALE);
+            assertThat(baby.dayOfBirth()).isEqualTo(LocalDate.of(2022, 9, 20));
+            assertThat(baby.profileImgUrl()).isEqualTo("test_url");
+        }
     }
 
     @Nested
