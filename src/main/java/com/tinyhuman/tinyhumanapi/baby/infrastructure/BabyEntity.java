@@ -4,6 +4,7 @@ import com.tinyhuman.tinyhumanapi.baby.domain.Baby;
 import com.tinyhuman.tinyhumanapi.baby.enums.Gender;
 import com.tinyhuman.tinyhumanapi.common.infrastructure.BaseEntity;
 import com.tinyhuman.tinyhumanapi.diary.infrastructure.DiaryEntity;
+import com.tinyhuman.tinyhumanapi.user.infrastructure.UserBabyRelationEntity;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -50,9 +51,14 @@ public class BabyEntity extends BaseEntity {
     @OneToMany(mappedBy = "baby")
     private final List<DiaryEntity> diaries = new ArrayList<>();
 
+    @Column(name="is_deleted")
+    private boolean isDeleted = false;
+
+    @OneToMany(mappedBy = "baby")
+    private final List<UserBabyRelationEntity> userBabyRelations = new ArrayList<>();
+
     @Builder
-    public BabyEntity(Long id, String name, LocalDate dayOfBirth, int timeOfBirth, Gender gender,
-                      String nickName, String profileImgUrl, Long userId) {
+    public BabyEntity(Long id, String name, LocalDate dayOfBirth, int timeOfBirth, Gender gender, String nickName, String profileImgUrl, Long userId, Boolean isDeleted) {
         this.id = id;
         this.name = name;
         this.dayOfBirth = dayOfBirth;
@@ -61,6 +67,7 @@ public class BabyEntity extends BaseEntity {
         this.nickName = nickName;
         this.profileImgUrl = profileImgUrl;
         this.userId = userId;
+        this.isDeleted = isDeleted;
     }
 
     public static BabyEntity fromModel(Baby baby) {
@@ -72,6 +79,7 @@ public class BabyEntity extends BaseEntity {
                 .gender(baby.gender())
                 .nickName(baby.nickName())
                 .profileImgUrl(baby.profileImgUrl())
+                .isDeleted(baby.isDeleted())
                 .build();
     }
 
@@ -84,10 +92,15 @@ public class BabyEntity extends BaseEntity {
                 .gender(this.gender)
                 .nickName(this.nickName)
                 .profileImgUrl(this.profileImgUrl)
+                .isDeleted(this.isDeleted)
                 .build();
     }
 
     public void addDiary(DiaryEntity diary) {
         diaries.add(diary);
+    }
+
+    public void addRelation(UserBabyRelationEntity userBabyRelation) {
+        userBabyRelations.add(userBabyRelation);
     }
 }

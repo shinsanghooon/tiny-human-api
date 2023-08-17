@@ -42,13 +42,17 @@ public class DiaryEntity extends BaseEntity {
     @JoinColumn(name = "baby_id")
     private BabyEntity baby;
 
+    @Column(name="is_deleted")
+    private Boolean isDeleted = false;
+
     @Builder
-    public DiaryEntity(Long id, int daysAfterBirth, String writer, int likeCount, BabyEntity baby) {
+    public DiaryEntity(Long id, int daysAfterBirth, String writer, int likeCount, boolean isDeleted, BabyEntity baby) {
         this.id = id;
         this.daysAfterBirth = daysAfterBirth;
         this.writer = writer;
         this.likeCount = likeCount;
         this.baby = setBaby(baby);
+        this.isDeleted = isDeleted;
     }
 
     private BabyEntity setBaby(BabyEntity baby) {
@@ -68,6 +72,7 @@ public class DiaryEntity extends BaseEntity {
                 .writer(diary.writer())
                 .likeCount(diary.likeCount())
                 .baby(BabyEntity.fromModel(diary.baby()))
+                .isDeleted(diary.isDeleted())
                 .build();
     }
 
@@ -78,6 +83,7 @@ public class DiaryEntity extends BaseEntity {
                 .writer(this.writer)
                 .likeCount(this.likeCount)
                 .created_at(this.getCreatedAt())
+                .isDeleted(this.isDeleted)
                 .baby(this.baby.toModel())
                 .build();
     }

@@ -9,7 +9,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 
-public record BabyCreate(
+public record BabyUpdate(
         @NotBlank(message = "이름을 입력해주세요.")
         @Size(max = 20, message = "이름의 최대 길이는 20자 입니다.")
         String name,
@@ -36,6 +36,6 @@ public record BabyCreate(
         FamilyRelation relation) {
 
     @Builder
-    public BabyCreate {
+    public BabyUpdate {
     }
 }

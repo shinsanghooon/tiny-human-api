@@ -9,9 +9,18 @@ import java.io.IOException;
 
 public class FakeMultipartFile {
 
-    public static MultipartFile createMultipartFile() {
+    public static MultipartFile createMultipartFile(boolean isUpdate) {
         // 샘플 이미지 파일을 읽어서 멀티 파트 파일로 변경 후 넘겨준다.
-        String filePath = "src/test/resources/assets/test.png";
+        String filePath;
+        String fileName;
+
+        if (isUpdate) {
+            fileName = "update.png";
+            filePath = "src/test/resources/assets/update.png";
+        } else {
+            fileName = "test.png";
+            filePath = "src/test/resources/assets/test.png";
+        }
 
         // Load the file as a byte array
         File file = new File(filePath);
@@ -23,9 +32,9 @@ public class FakeMultipartFile {
         }
         // Create a MockMultipartFile
         MultipartFile multipartFile = new MockMultipartFile(
-                "text.jpeg",   // Original file name
-                "text.jpeg",   // Original file name
-                "image/jpeg",  // Content type
+                fileName,   // Original file name
+                fileName,   // Original file name
+                "image/png",  // Content type
                 fileBytes      // File content as byte array
         );
         return multipartFile;

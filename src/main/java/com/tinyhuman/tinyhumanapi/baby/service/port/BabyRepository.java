@@ -9,4 +9,7 @@ public interface BabyRepository {
     Baby save(Baby baby);
 
     Optional<Baby> findById(Long id);
+
+    void delete(Long id);
+
 }

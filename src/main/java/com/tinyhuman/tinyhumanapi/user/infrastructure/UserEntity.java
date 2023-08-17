@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Where;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -32,20 +34,27 @@ public class UserEntity extends BaseEntity {
     private String password;
 
     @Column(name = "status")
-    @Enumerated
+    @Enumerated(EnumType.STRING)
     private UserStatus status;
 
     @Column(name = "last_login_at")
     private LocalDateTime lastLoginAt;
 
+    @OneToMany(mappedBy = "user")
+    private final List<UserBabyRelationEntity> userBabyRelations = new ArrayList<>();
+
+    @Column(name="is_deleted")
+    private boolean isDeleted = false;
+
     @Builder
-    public UserEntity(Long id, String name, String email, String password, UserStatus status, LocalDateTime lastLoginAt) {
+    public UserEntity(Long id, String name, String email, String password, UserStatus status, LocalDateTime lastLoginAt, boolean isDeleted) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.password = password;
         this.status = status;
         this.lastLoginAt = lastLoginAt;
+        this.isDeleted = isDeleted;
     }
 
     public static UserEntity fromModel(User user) {
@@ -56,6 +65,7 @@ public class UserEntity extends BaseEntity {
                 .password(user.password())
                 .status(user.status())
                 .lastLoginAt(user.lastLoginAt())
+                .isDeleted(user.isDeleted())
                 .build();
     }
 
@@ -67,6 +77,11 @@ public class UserEntity extends BaseEntity {
                 .password(this.password)
                 .status(this.status)
                 .lastLoginAt(this.lastLoginAt)
+                .isDeleted(this.isDeleted)
                 .build();
+    }
+
+    public void addRelation(UserBabyRelationEntity userBabyRelation) {
+        userBabyRelations.add(userBabyRelation);
     }
 }

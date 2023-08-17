@@ -1,6 +1,7 @@
 package com.tinyhuman.tinyhumanapi.baby.domain;
 
 import com.tinyhuman.tinyhumanapi.baby.enums.Gender;
+import com.tinyhuman.tinyhumanapi.common.domain.exception.ResourceNotFoundException;
 import lombok.Builder;
 
 import java.time.LocalDate;
@@ -12,6 +13,11 @@ public record BabyResponse(Long id, String name, Gender gender, LocalDate dayOfB
     }
 
     public static BabyResponse fromModel(Baby baby) {
+
+        if (baby.isDeleted()) {
+            throw new ResourceNotFoundException("Baby", baby.id());
+        }
+
         return BabyResponse.builder()
                 .id(baby.id())
                 .name(baby.name())

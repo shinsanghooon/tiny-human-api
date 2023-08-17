@@ -11,7 +11,8 @@ public record User(
         String email,
         String password,
         UserStatus status,
-        LocalDateTime lastLoginAt
+        LocalDateTime lastLoginAt,
+        boolean isDeleted
 ) {
 
     @Builder
@@ -24,6 +25,7 @@ public record User(
                 .email(userCreate.email())
                 .password(userCreate.password())
                 .status(UserStatus.ACTIVE)
+                .isDeleted(false)
                 .build();
     }
 
