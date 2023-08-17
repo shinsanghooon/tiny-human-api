@@ -22,6 +22,6 @@ aws:
   s3:
     bucketName: tiny-human-dev
     path:
-      profile: images/babyId/profile
-      diary: images/babyId/diary
-      album: images/babyId/album
+      profile: images/babyId/profile/
+      diary: images/babyId/diary/
+      album: images/babyId/album/
