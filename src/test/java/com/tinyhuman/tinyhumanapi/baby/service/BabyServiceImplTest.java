@@ -3,6 +3,7 @@ package com.tinyhuman.tinyhumanapi.baby.service;
 import com.tinyhuman.tinyhumanapi.baby.domain.Baby;
 import com.tinyhuman.tinyhumanapi.baby.domain.BabyCreate;
 import com.tinyhuman.tinyhumanapi.baby.domain.BabyResponse;
+import com.tinyhuman.tinyhumanapi.baby.domain.BabyUpdate;
 import com.tinyhuman.tinyhumanapi.baby.enums.Gender;
 import com.tinyhuman.tinyhumanapi.baby.mock.FakeBabyRepository;
 import com.tinyhuman.tinyhumanapi.baby.mock.FakeImageService;
@@ -90,7 +91,7 @@ class BabyServiceImplTest {
                     .dayOfBirth(LocalDate.of(2022, 9, 30))
                     .build();
 
-            MultipartFile multipartFile = FakeMultipartFile.createMultipartFile();
+            MultipartFile multipartFile = FakeMultipartFile.createMultipartFile(false);
             BabyResponse response = babyServiceImpl.register(babyCreate, multipartFile);
 
             assertThat(response.id()).isNotNull();
@@ -119,6 +120,61 @@ class BabyServiceImplTest {
             assertThat(baby.profileImgUrl()).isEqualTo("test_url");
         }
     }
+
+    @Nested
+    @DisplayName("아기 정보를 수정할 수 있다.")
+    class UpdateBaby {
+
+        @Test
+        @DisplayName("아기 정보를 수정할 수 있다.")
+        void updateBabyWithoutImage() {
+            BabyUpdate babyUpdate = BabyUpdate.builder()
+                    .name("김수정")
+                    .gender(Gender.MALE)
+                    .nickName("김진짜")
+                    .dayOfBirth(LocalDate.of(2022, 10, 4))
+                    .timeOfBirth(18)
+                    .build();
+
+            BabyResponse updatedUser = babyServiceImpl.update(1L, babyUpdate, null);
+
+            assertThat(updatedUser.id()).isNotNull();
+            assertThat(updatedUser.name()).isEqualTo(babyUpdate.name());
+            assertThat(updatedUser.gender()).isEqualTo(babyUpdate.gender());
+            assertThat(updatedUser.nickName()).isEqualTo(babyUpdate.nickName());
+            assertThat(updatedUser.dayOfBirth()).isEqualTo(babyUpdate.dayOfBirth());
+            assertThat(updatedUser.timeOfBirth()).isEqualTo(babyUpdate.timeOfBirth());
+
+        }
+        @Test
+        @DisplayName("아기 정보와 프로필 사진을 수정할 수 있다.")
+        void updateBabyWithFile() {
+
+            BabyResponse originalUser = babyServiceImpl.findById(1L);
+
+            BabyUpdate babyUpdate = BabyUpdate.builder()
+                    .name("김수정")
+                    .gender(Gender.MALE)
+                    .nickName("김진짜")
+                    .dayOfBirth(LocalDate.of(2022, 10, 4))
+                    .timeOfBirth(18)
+                    .build();
+
+            MultipartFile multipartFile = FakeMultipartFile.createMultipartFile(true);
+            BabyResponse updatedUser = babyServiceImpl.update(1L, babyUpdate, multipartFile);
+
+            assertThat(updatedUser.id()).isNotNull();
+            assertThat(updatedUser.name()).isEqualTo(babyUpdate.name());
+            assertThat(updatedUser.gender()).isEqualTo(babyUpdate.gender());
+            assertThat(updatedUser.nickName()).isEqualTo(babyUpdate.nickName());
+            assertThat(updatedUser.dayOfBirth()).isEqualTo(babyUpdate.dayOfBirth());
+            assertThat(updatedUser.timeOfBirth()).isEqualTo(babyUpdate.timeOfBirth());
+
+            assertThat(updatedUser.profileImgUrl()).isNotEqualTo(originalUser.profileImgUrl());
+        }
+    }
+
+
 
     @Nested
     @DisplayName("아기를 삭제할 수 있다.")
