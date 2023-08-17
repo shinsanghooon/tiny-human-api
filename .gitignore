@@ -37,3 +37,4 @@ out/
 .vscode/
 
 aws.yml
+.DS_Store
