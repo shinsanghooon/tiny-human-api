@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/babies")
 @RequiredArgsConstructor
@@ -19,6 +21,12 @@ public class BabyCreateController {
     @ResponseStatus(HttpStatus.CREATED)
     public BabyResponse register(@RequestPart @Valid BabyCreate babyCreate, @RequestPart MultipartFile file) {
         return babyService.register(babyCreate, file);
+    }
+
+    @GetMapping("my")
+    @ResponseStatus(HttpStatus.OK)
+    public List<BabyResponse> getMyBabies() {
+        return babyService.getMyBabies();
     }
 
     @DeleteMapping("{id}")

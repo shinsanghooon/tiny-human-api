@@ -9,6 +9,11 @@ import com.tinyhuman.tinyhumanapi.common.domain.exception.ResourceNotFoundExcept
 import com.tinyhuman.tinyhumanapi.diary.domain.Diary;
 import com.tinyhuman.tinyhumanapi.diary.service.port.DiaryRepository;
 import com.tinyhuman.tinyhumanapi.integration.service.ImageService;
+import com.tinyhuman.tinyhumanapi.user.domain.User;
+import com.tinyhuman.tinyhumanapi.user.domain.UserBabyRelation;
+import com.tinyhuman.tinyhumanapi.user.enums.UserBabyRole;
+import com.tinyhuman.tinyhumanapi.user.service.port.UserBabyRelationRepository;
+import com.tinyhuman.tinyhumanapi.user.service.port.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -28,16 +33,34 @@ public class BabyServiceImpl implements BabyService {
 
     private final DiaryRepository diaryRepository;
 
+    private final UserRepository userRepository;
+
+    private final UserBabyRelationRepository userBabyRelationRepository;
+
     @Value("${aws.s3.path.profile}")
     private String s3UploadPath;
 
     @Override
     public BabyResponse register(BabyCreate babyCreate, MultipartFile file) {
 
-        String s3FullPath = imageService.sendImage(file, s3UploadPath);
-        Baby newBaby = Baby.fromCreate(babyCreate, s3FullPath);
+        // TODO: Login 구현 후 작업
+        Long userId = 1L;
+        User user = findUser(userId);
 
-        return BabyResponse.fromModel(babyRepository.save(newBaby));
+        String s3FullPath = imageService.sendImage(file, s3UploadPath);
+        Baby baby = babyRepository.save(Baby.fromCreate(babyCreate, s3FullPath));
+
+        // user-baby-relation
+        UserBabyRelation userBabyRelation = UserBabyRelation.builder()
+                .user(user)
+                .baby(baby)
+                .relation(babyCreate.relation())
+                .userBabyRole(UserBabyRole.ADMIN)
+                .build();
+
+        userBabyRelationRepository.save(userBabyRelation);
+
+        return BabyResponse.fromModel(baby);
     }
 
     @Override
@@ -51,7 +74,15 @@ public class BabyServiceImpl implements BabyService {
     public List<BabyResponse> getMyBabies() {
         // TODO: Login 구현 후 작업
         Long userId = 1L;
-        return null;
+
+        User user = findUser(userId);
+        List<UserBabyRelation> myBabies = userBabyRelationRepository.findByUser(user);
+
+        return myBabies.stream()
+                .map(UserBabyRelation::baby)
+                .map(BabyResponse::fromModel)
+                .toList();
+
     }
 
     @Override
@@ -67,6 +98,11 @@ public class BabyServiceImpl implements BabyService {
             Diary deletedDiary = diary.delete();
             diaryRepository.save(deletedDiary);
         });
-
     }
+
+    private User findUser(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User", userId));
+    }
+
 }

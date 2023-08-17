@@ -4,6 +4,7 @@ import com.tinyhuman.tinyhumanapi.baby.domain.Baby;
 import com.tinyhuman.tinyhumanapi.baby.enums.Gender;
 import com.tinyhuman.tinyhumanapi.common.infrastructure.BaseEntity;
 import com.tinyhuman.tinyhumanapi.diary.infrastructure.DiaryEntity;
+import com.tinyhuman.tinyhumanapi.user.infrastructure.UserBabyRelationEntity;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -51,7 +52,10 @@ public class BabyEntity extends BaseEntity {
     private final List<DiaryEntity> diaries = new ArrayList<>();
 
     @Column(name="is_deleted")
-    private Boolean isDeleted = false;
+    private boolean isDeleted = false;
+
+    @OneToMany(mappedBy = "baby")
+    private final List<UserBabyRelationEntity> userBabyRelations = new ArrayList<>();
 
     @Builder
     public BabyEntity(Long id, String name, LocalDate dayOfBirth, int timeOfBirth, Gender gender, String nickName, String profileImgUrl, Long userId, Boolean isDeleted) {
@@ -94,5 +98,9 @@ public class BabyEntity extends BaseEntity {
 
     public void addDiary(DiaryEntity diary) {
         diaries.add(diary);
+    }
+
+    public void addRelation(UserBabyRelationEntity userBabyRelation) {
+        userBabyRelations.add(userBabyRelation);
     }
 }
