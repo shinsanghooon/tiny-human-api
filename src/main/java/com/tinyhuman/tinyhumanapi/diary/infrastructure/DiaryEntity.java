@@ -83,8 +83,8 @@ public class DiaryEntity extends BaseEntity {
                 .writer(this.writer)
                 .likeCount(this.likeCount)
                 .created_at(this.getCreatedAt())
-                .baby(this.baby.toModel())
                 .isDeleted(this.isDeleted)
+                .baby(this.baby.toModel())
                 .build();
     }
 

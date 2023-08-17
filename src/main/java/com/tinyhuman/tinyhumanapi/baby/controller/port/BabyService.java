@@ -10,6 +10,8 @@ public interface BabyService {
 
     BabyResponse register(BabyCreate babyCreate, MultipartFile file);
 
+    BabyResponse findById(Long id);
+
     List<BabyResponse> getMyBabies();
 
     void delete(Long id);

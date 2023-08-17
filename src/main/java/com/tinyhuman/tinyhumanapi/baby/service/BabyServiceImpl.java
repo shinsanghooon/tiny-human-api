@@ -6,6 +6,8 @@ import com.tinyhuman.tinyhumanapi.baby.domain.BabyCreate;
 import com.tinyhuman.tinyhumanapi.baby.domain.BabyResponse;
 import com.tinyhuman.tinyhumanapi.baby.service.port.BabyRepository;
 import com.tinyhuman.tinyhumanapi.common.domain.exception.ResourceNotFoundException;
+import com.tinyhuman.tinyhumanapi.diary.domain.Diary;
+import com.tinyhuman.tinyhumanapi.diary.service.port.DiaryRepository;
 import com.tinyhuman.tinyhumanapi.integration.service.ImageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,6 +26,8 @@ public class BabyServiceImpl implements BabyService {
 
     private final ImageService imageService;
 
+    private final DiaryRepository diaryRepository;
+
     @Value("${aws.s3.path.profile}")
     private String s3UploadPath;
 
@@ -37,6 +41,13 @@ public class BabyServiceImpl implements BabyService {
     }
 
     @Override
+    public BabyResponse findById(Long id) {
+        Baby baby = babyRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Baby", id));
+        return BabyResponse.fromModel(baby);
+    }
+
+    @Override
     public List<BabyResponse> getMyBabies() {
         // TODO: Login 구현 후 작업
         Long userId = 1L;
@@ -45,8 +56,17 @@ public class BabyServiceImpl implements BabyService {
 
     @Override
     public void delete(Long id) {
-        Baby baby = babyRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Baby", id));
+        Baby baby = babyRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Baby", id));
         Baby deletedBaby = baby.delete();
         babyRepository.save(deletedBaby);
+
+        List<Diary> diaries = diaryRepository.findByBaby(baby);
+
+        diaries.forEach(diary -> {
+            Diary deletedDiary = diary.delete();
+            diaryRepository.save(deletedDiary);
+        });
+
     }
 }

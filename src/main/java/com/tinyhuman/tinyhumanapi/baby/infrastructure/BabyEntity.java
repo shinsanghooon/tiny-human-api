@@ -88,7 +88,6 @@ public class BabyEntity extends BaseEntity {
                 .gender(this.gender)
                 .nickName(this.nickName)
                 .profileImgUrl(this.profileImgUrl)
-                .diaries(this.diaries.stream().map(DiaryEntity::toModel).toList())
                 .isDeleted(this.isDeleted)
                 .build();
     }

@@ -20,4 +20,16 @@ public record Diary(Long id, int daysAfterBirth, String writer, int likeCount,
                 .baby(baby)
                 .build();
     }
+
+    public Diary delete() {
+        return Diary.builder()
+                .id(this.id)
+                .daysAfterBirth(this.daysAfterBirth)
+                .writer(this.writer)
+                .likeCount(this.likeCount)
+                .created_at(this.created_at)
+                .baby(this.baby)
+                .isDeleted(true)
+                .build();
+    }
 }

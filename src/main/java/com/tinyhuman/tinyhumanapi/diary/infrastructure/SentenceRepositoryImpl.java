@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
@@ -25,6 +24,7 @@ public class SentenceRepositoryImpl implements SentenceRepository {
                 .map(s -> Sentence.builder()
                         .id(s.getId())
                         .sentence(s.getSentence())
+                        .diary(s.getDiary().toModel())
                         .build()
                 ).toList();
     }

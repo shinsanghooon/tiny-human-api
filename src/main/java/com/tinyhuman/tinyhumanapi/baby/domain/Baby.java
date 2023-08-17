@@ -1,13 +1,11 @@
 package com.tinyhuman.tinyhumanapi.baby.domain;
 
 import com.tinyhuman.tinyhumanapi.baby.enums.Gender;
-import com.tinyhuman.tinyhumanapi.diary.domain.Diary;
 import lombok.Builder;
 
 import java.time.LocalDate;
-import java.util.List;
 
-public record Baby(Long id, String name, Gender gender, LocalDate dayOfBirth, int timeOfBirth, String nickName, String profileImgUrl, List<Diary> diaries, boolean isDeleted) {
+public record Baby(Long id, String name, Gender gender, LocalDate dayOfBirth, int timeOfBirth, String nickName, String profileImgUrl,  boolean isDeleted) {
 
     @Builder
     public Baby {
