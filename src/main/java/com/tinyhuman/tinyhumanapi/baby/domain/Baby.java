@@ -35,4 +35,17 @@ public record Baby(Long id, String name, Gender gender, LocalDate dayOfBirth, in
                 .isDeleted(true)
                 .build();
     }
+
+    public Baby update(BabyUpdate babyUpdate, String s3ImgUrl) {
+        return Baby.builder()
+                .id(this.id)
+                .name(babyUpdate.name())
+                .gender(babyUpdate.gender())
+                .nickName(babyUpdate.nickName())
+                .dayOfBirth(babyUpdate.dayOfBirth())
+                .timeOfBirth(babyUpdate.timeOfBirth())
+                .profileImgUrl(s3ImgUrl)
+                .isDeleted(false)
+                .build();
+    }
 }

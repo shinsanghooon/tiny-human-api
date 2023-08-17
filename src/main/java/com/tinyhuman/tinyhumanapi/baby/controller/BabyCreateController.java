@@ -2,6 +2,7 @@ package com.tinyhuman.tinyhumanapi.baby.controller;
 
 import com.tinyhuman.tinyhumanapi.baby.domain.BabyCreate;
 import com.tinyhuman.tinyhumanapi.baby.domain.BabyResponse;
+import com.tinyhuman.tinyhumanapi.baby.domain.BabyUpdate;
 import com.tinyhuman.tinyhumanapi.baby.service.BabyServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +34,14 @@ public class BabyCreateController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable("id") Long id) {
         babyService.delete(id);
+    }
+
+    @PatchMapping("{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public BabyResponse update(@PathVariable("id") Long id, @RequestPart @Valid BabyUpdate babyUpdate,
+                               @RequestPart(value="file", required = false) MultipartFile file) {
+        System.out.println("file = " + file);
+        return babyService.update(id, babyUpdate, file);
     }
 
 }

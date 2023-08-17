@@ -4,6 +4,7 @@ import com.tinyhuman.tinyhumanapi.baby.controller.port.BabyService;
 import com.tinyhuman.tinyhumanapi.baby.domain.Baby;
 import com.tinyhuman.tinyhumanapi.baby.domain.BabyCreate;
 import com.tinyhuman.tinyhumanapi.baby.domain.BabyResponse;
+import com.tinyhuman.tinyhumanapi.baby.domain.BabyUpdate;
 import com.tinyhuman.tinyhumanapi.baby.service.port.BabyRepository;
 import com.tinyhuman.tinyhumanapi.common.domain.exception.ResourceNotFoundException;
 import com.tinyhuman.tinyhumanapi.diary.domain.Diary;
@@ -65,8 +66,7 @@ public class BabyServiceImpl implements BabyService {
 
     @Override
     public BabyResponse findById(Long id) {
-        Baby baby = babyRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Baby", id));
+        Baby baby = findBaby(id);
         return BabyResponse.fromModel(baby);
     }
 
@@ -82,13 +82,11 @@ public class BabyServiceImpl implements BabyService {
                 .map(UserBabyRelation::baby)
                 .map(BabyResponse::fromModel)
                 .toList();
-
     }
 
     @Override
     public void delete(Long id) {
-        Baby baby = babyRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Baby", id));
+        Baby baby = findBaby(id);
         Baby deletedBaby = baby.delete();
         babyRepository.save(deletedBaby);
 
@@ -98,6 +96,28 @@ public class BabyServiceImpl implements BabyService {
             Diary deletedDiary = diary.delete();
             diaryRepository.save(deletedDiary);
         });
+    }
+    @Override
+    public BabyResponse update(Long id, BabyUpdate babyUpdate, MultipartFile file) {
+        Baby baby = findBaby(id);
+
+        String s3FullPath;
+        if (file == null) {
+            s3FullPath = baby.profileImgUrl();
+        } else {
+            s3FullPath = imageService.sendImage(file, s3UploadPath);
+        }
+
+        Baby updatedBaby = baby.update(babyUpdate, s3FullPath);
+        Baby savedBaby = babyRepository.save(updatedBaby);
+
+        return BabyResponse.fromModel(savedBaby);
+    }
+
+
+    private Baby findBaby(Long id) {
+        return babyRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Baby", id));
     }
 
     private User findUser(Long userId) {
