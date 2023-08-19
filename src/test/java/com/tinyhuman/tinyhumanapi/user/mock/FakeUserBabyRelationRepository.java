@@ -2,11 +2,13 @@ package com.tinyhuman.tinyhumanapi.user.mock;
 
 import com.tinyhuman.tinyhumanapi.user.domain.User;
 import com.tinyhuman.tinyhumanapi.user.domain.UserBabyRelation;
+import com.tinyhuman.tinyhumanapi.user.infrastructure.UserBabyMappingId;
 import com.tinyhuman.tinyhumanapi.user.service.port.UserBabyRelationRepository;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Predicate;
 
 public class FakeUserBabyRelationRepository implements UserBabyRelationRepository {
@@ -27,4 +29,13 @@ public class FakeUserBabyRelationRepository implements UserBabyRelationRepositor
                 .filter(r -> r.user().id().equals(user.id()))
                 .toList();
     }
+
+    @Override
+    public Optional<UserBabyRelation> findById(UserBabyMappingId userBabyMappingId) {
+        return data.stream()
+                .filter(r -> r.user().id().equals(userBabyMappingId.getUserId()))
+                .filter(r -> r.baby().id().equals(userBabyMappingId.getBabyId()))
+                .findAny();
+    }
+
 }
