@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface DiaryJpaRepository extends JpaRepository<DiaryEntity, Long> {
-
     List<DiaryEntity> findByBaby(BabyEntity baby);
+
+    List<DiaryEntity> findByBabyId(Long babyId);
 }

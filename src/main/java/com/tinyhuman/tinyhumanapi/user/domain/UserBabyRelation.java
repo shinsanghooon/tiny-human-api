@@ -10,4 +10,11 @@ public record UserBabyRelation(User user, Baby baby, FamilyRelation relation, Us
     @Builder
     public UserBabyRelation {
     }
+
+    public boolean hasReadRole() {
+        if (this.userBabyRole == UserBabyRole.UNKNOWN) {
+            return false;
+        }
+        return true;
+    }
 }

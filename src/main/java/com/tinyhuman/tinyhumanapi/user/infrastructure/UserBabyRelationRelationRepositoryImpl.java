@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @Repository
@@ -27,5 +28,12 @@ public class UserBabyRelationRelationRepositoryImpl implements UserBabyRelationR
         return userBabyRelationJpaRepository.findByUser(UserEntity.fromModel(user)).stream()
                 .map(UserBabyRelationEntity::toModel)
                 .toList();
+    }
+
+    @Override
+    public Optional<UserBabyRelation> findById(UserBabyMappingId userBabyMappingId) {
+        return userBabyRelationJpaRepository.findById(userBabyMappingId)
+                .map(UserBabyRelationEntity::toModel);
+
     }
 }

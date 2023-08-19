@@ -3,6 +3,7 @@ package com.tinyhuman.tinyhumanapi.diary.infrastructure;
 import com.tinyhuman.tinyhumanapi.baby.infrastructure.BabyEntity;
 import com.tinyhuman.tinyhumanapi.common.infrastructure.BaseEntity;
 import com.tinyhuman.tinyhumanapi.diary.domain.Diary;
+import com.tinyhuman.tinyhumanapi.user.infrastructure.UserEntity;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,11 +27,12 @@ public class DiaryEntity extends BaseEntity {
     @Column(name = "days_after_birth")
     private int daysAfterBirth;
 
-    @Column(name="writer")
-    private String writer;
-
     @Column(name="like_count")
     private int likeCount;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private UserEntity user;
 
     @OneToMany(mappedBy = "diary")
     private final List<SentenceEntity> sentences = new ArrayList<>();
@@ -43,16 +45,27 @@ public class DiaryEntity extends BaseEntity {
     private BabyEntity baby;
 
     @Column(name="is_deleted")
-    private Boolean isDeleted = false;
+    private boolean isDeleted = false;
 
     @Builder
-    public DiaryEntity(Long id, int daysAfterBirth, String writer, int likeCount, boolean isDeleted, BabyEntity baby) {
+    public DiaryEntity(Long id, int daysAfterBirth, UserEntity user, int
+            likeCount, boolean isDeleted, BabyEntity baby) {
         this.id = id;
         this.daysAfterBirth = daysAfterBirth;
-        this.writer = writer;
+        this.user = setUser(user);
         this.likeCount = likeCount;
         this.baby = setBaby(baby);
         this.isDeleted = isDeleted;
+    }
+
+    private UserEntity setUser(UserEntity user) {
+        if (this.user != null) {
+            this.user.getDiaries().remove(this);
+        }
+        this.user = user;
+        user.addDiary(this);
+
+        return user;
     }
 
     private BabyEntity setBaby(BabyEntity baby) {
@@ -69,7 +82,7 @@ public class DiaryEntity extends BaseEntity {
         return DiaryEntity.builder()
                 .id(diary.id())
                 .daysAfterBirth(diary.daysAfterBirth())
-                .writer(diary.writer())
+                .user(UserEntity.fromModel(diary.user()))
                 .likeCount(diary.likeCount())
                 .baby(BabyEntity.fromModel(diary.baby()))
                 .isDeleted(diary.isDeleted())
@@ -80,11 +93,13 @@ public class DiaryEntity extends BaseEntity {
         return Diary.builder()
                 .id(this.id)
                 .daysAfterBirth(this.daysAfterBirth)
-                .writer(this.writer)
+                .user(this.user.toModel())
                 .likeCount(this.likeCount)
                 .created_at(this.getCreatedAt())
                 .isDeleted(this.isDeleted)
                 .baby(this.baby.toModel())
+                .sentences(this.sentences.stream().map(SentenceEntity::toModel).toList())
+                .pictures(this.pictures.stream().map(PictureEntity::toModel).toList())
                 .build();
     }
 
