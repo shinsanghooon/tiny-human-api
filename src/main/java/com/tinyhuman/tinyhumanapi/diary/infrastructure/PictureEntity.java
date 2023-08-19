@@ -1,18 +1,17 @@
 package com.tinyhuman.tinyhumanapi.diary.infrastructure;
 
 import com.tinyhuman.tinyhumanapi.common.infrastructure.BaseEntity;
+import com.tinyhuman.tinyhumanapi.diary.domain.Diary;
 import com.tinyhuman.tinyhumanapi.diary.domain.Picture;
 import com.tinyhuman.tinyhumanapi.diary.enums.ContentType;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Where;
 
 @Entity
 @Getter
 @Table(name = "pictures")
-@Where(clause = "is_deleted=false")
 @NoArgsConstructor
 public class PictureEntity extends BaseEntity {
 
@@ -53,13 +52,13 @@ public class PictureEntity extends BaseEntity {
         return diary;
     }
 
-    public static PictureEntity fromModel(Picture picture) {
+    public static PictureEntity fromModel(Picture picture, Diary diary) {
         return PictureEntity.builder()
                 .id(picture.id())
                 .contentType(picture.contentType())
                 .isMainPicture(picture.isMainPicture())
                 .originalS3Url(picture.originalS3Url())
-                .diary(DiaryEntity.fromModel(picture.diary()))
+                .diary(DiaryEntity.fromModel(diary))
                 .build();
     }
 
@@ -69,7 +68,7 @@ public class PictureEntity extends BaseEntity {
                 .isMainPicture(this.isMainPicture)
                 .contentType(this.contentType)
                 .originalS3Url(this.originalS3Url)
-                .diary(this.diary.toModel())
+                .diaryId(this.diary.getId())
                 .build();
     }
 }

@@ -1,6 +1,7 @@
 package com.tinyhuman.tinyhumanapi.user.infrastructure;
 
 import com.tinyhuman.tinyhumanapi.common.infrastructure.BaseEntity;
+import com.tinyhuman.tinyhumanapi.diary.infrastructure.DiaryEntity;
 import com.tinyhuman.tinyhumanapi.user.domain.User;
 import com.tinyhuman.tinyhumanapi.user.enums.UserStatus;
 import jakarta.persistence.*;
@@ -43,6 +44,9 @@ public class UserEntity extends BaseEntity {
     @OneToMany(mappedBy = "user")
     private final List<UserBabyRelationEntity> userBabyRelations = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user")
+    private final List<DiaryEntity> diaries = new ArrayList<>();
+
     @Column(name="is_deleted")
     private boolean isDeleted = false;
 
@@ -83,5 +87,9 @@ public class UserEntity extends BaseEntity {
 
     public void addRelation(UserBabyRelationEntity userBabyRelation) {
         userBabyRelations.add(userBabyRelation);
+    }
+
+    public void addDiary(DiaryEntity diary) {
+        diaries.add(diary);
     }
 }

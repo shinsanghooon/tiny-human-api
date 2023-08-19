@@ -1,17 +1,16 @@
 package com.tinyhuman.tinyhumanapi.diary.infrastructure;
 
 import com.tinyhuman.tinyhumanapi.common.infrastructure.BaseEntity;
+import com.tinyhuman.tinyhumanapi.diary.domain.Diary;
 import com.tinyhuman.tinyhumanapi.diary.domain.Sentence;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Where;
 
 @Entity
 @Getter
 @Table(name = "sentences")
-@Where(clause = "is_deleted=false")
 @NoArgsConstructor
 public class SentenceEntity extends BaseEntity {
 
@@ -43,11 +42,19 @@ public class SentenceEntity extends BaseEntity {
         return diary;
     }
 
-    public static SentenceEntity fromModel(Sentence sentence) {
+    public static SentenceEntity fromModel(Sentence sentence, Diary diary) {
         return SentenceEntity.builder()
                 .id(sentence.id())
                 .sentence(sentence.sentence())
-                .diary(DiaryEntity.fromModel(sentence.diary()))
+                .diary(DiaryEntity.fromModel(diary))
+                .build();
+    }
+
+    public Sentence toModel() {
+        return Sentence.builder()
+                .id(this.id)
+                .sentence(this.sentence)
+                .diaryId(this.diary.getId())
                 .build();
     }
 }

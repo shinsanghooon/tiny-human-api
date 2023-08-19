@@ -18,13 +18,13 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DiaryCreateController {
 
-    private final DiaryService diaryServiceImpl;
+    private final DiaryService diaryService;
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public DiaryResponse createDiary(@RequestPart @Valid DiaryCreate diaryCreate,
-                                     @RequestPart @Size(max = 5, message="사진 및 동영상은 최대 업로드 개수는 5개입니다.") List<MultipartFile> files) {
-        return diaryServiceImpl.create(diaryCreate, files);
+                                     @RequestPart(required=false) @Size(max = 5, message="사진 및 동영상은 최대 업로드 개수는 5개입니다.") List<MultipartFile> files) {
+        return diaryService.create(diaryCreate, files);
     }
 
 }

@@ -6,21 +6,25 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public record DiaryResponse(Long id, int daysAfterBirth, String writer, int likeCount,
-                            LocalDateTime createdAt, List<Sentence> sentences, List<Picture> pictures) {
+                            LocalDateTime createdAt, boolean isDeleted, List<Sentence> sentences, List<Picture> pictures) {
 
     @Builder
     public DiaryResponse {
     }
 
-    public static DiaryResponse fromModel(Diary diary, List<Sentence> sentences, List<Picture> pictures) {
+    public static DiaryResponse fromModel(Diary diary) {
+
+
         return DiaryResponse.builder()
                 .id(diary.id())
                 .daysAfterBirth(diary.daysAfterBirth())
-                .writer(diary.writer())
+                .writer(diary.user().name())
                 .likeCount(diary.likeCount())
                 .createdAt(diary.created_at())
-                .sentences(sentences)
-                .pictures(pictures)
+                .sentences(diary.sentences())
+                .pictures(diary.pictures())
+                .isDeleted(diary.isDeleted())
                 .build();
     }
+
 }
