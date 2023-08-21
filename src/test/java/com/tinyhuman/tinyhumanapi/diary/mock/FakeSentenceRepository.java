@@ -43,7 +43,6 @@ public class FakeSentenceRepository implements SentenceRepository {
         data.removeIf(s -> Objects.equals(s.id(), sentence.id()));
         data.add(newSentence);
 
-        System.out.println("diary = " + diary.sentences().size());
         return sentence;
     }
 

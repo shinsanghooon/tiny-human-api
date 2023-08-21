@@ -81,6 +81,25 @@ class DiaryDetailServiceImplTest {
         fakeDiaryRepository.save(diaryWithSentence);
 
         fakeSentenceRepository.saveAll(sentences, diaryWithSentence);
+
+        Picture picture1 = Picture.builder()
+                .isMainPicture(true)
+                .diaryId(1L)
+                .build();
+
+        Picture picture2 = Picture.builder()
+                .isMainPicture(false)
+                .diaryId(1L)
+                .build();
+
+        List<Picture> pictures = List.of(picture1, picture2);
+
+        fakePictureRepository.saveAll(pictures, diaryWithSentence);
+        Diary diaryWithSentenceAndPicture = diaryWithSentence.addPictures(pictures);
+
+        fakeDiaryRepository.save(diaryWithSentenceAndPicture);
+        fakePictureRepository.saveAll(pictures, diaryWithSentenceAndPicture);
+
     }
 
     @Nested
@@ -136,6 +155,26 @@ class DiaryDetailServiceImplTest {
         }
     }
 
+    @Nested
+    @DisplayName("메인 사진을 변경한다.")
+    class ChangeMainPicture {
+
+        @Test
+        @DisplayName("기존 메인 Picture Id와 변경할 메인 Picture Id를 입력 받아 메인 사진을 변경한다.")
+        void changeMainPicture() {
+
+            Long diaryId = 1L;
+            Long currentMainPictureId = 1L;
+            Long newMainPictureId = 2L;
+
+            List<Picture> pictures = diaryDetailServiceImpl.changeMainPicture(diaryId, currentMainPictureId, newMainPictureId);
+            Picture mainToNormalPicture = pictures.get(0);
+            Picture normalToMainPicture = pictures.get(1);
+
+            assertThat(mainToNormalPicture.isMainPicture()).isFalse();
+            assertThat(normalToMainPicture.isMainPicture()).isTrue();
+        }
+    }
 
 
 }
