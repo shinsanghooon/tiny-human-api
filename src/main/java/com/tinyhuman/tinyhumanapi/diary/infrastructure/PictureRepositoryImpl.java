@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -24,6 +25,11 @@ public class PictureRepositoryImpl implements PictureRepository {
         return pictureEntities.stream()
                 .map(PictureEntity::toModel)
                 .toList();
+    }
+
+    @Override
+    public Optional<Picture> findById(Long id) {
+        return pictureJpaRepository.findById(id).map(PictureEntity::toModel);
     }
 
 }

@@ -13,8 +13,6 @@ public record DiaryResponse(Long id, int daysAfterBirth, String writer, int like
     }
 
     public static DiaryResponse fromModel(Diary diary) {
-
-
         return DiaryResponse.builder()
                 .id(diary.id())
                 .daysAfterBirth(diary.daysAfterBirth())

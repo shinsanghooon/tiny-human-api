@@ -8,4 +8,26 @@ public record Picture(Long id, boolean isMainPicture, ContentType contentType, S
     @Builder
     public Picture {
     }
+
+    public Picture assignToMain() {
+        return Picture.builder()
+                .id(this.id)
+                .isMainPicture(true)
+                .contentType(this.contentType)
+                .originalS3Url(this.originalS3Url)
+                .diaryId(this.diaryId)
+                .build();
+    }
+
+    public Picture assignToNormal() {
+        return Picture.builder()
+                .id(this.id)
+                .isMainPicture(false)
+                .contentType(this.contentType)
+                .originalS3Url(this.originalS3Url)
+                .diaryId(this.diaryId)
+                .build();
+    }
+
+
 }
