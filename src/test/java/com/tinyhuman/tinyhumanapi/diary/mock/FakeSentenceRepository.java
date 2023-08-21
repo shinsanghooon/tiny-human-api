@@ -7,6 +7,7 @@ import com.tinyhuman.tinyhumanapi.diary.service.port.SentenceRepository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class FakeSentenceRepository implements SentenceRepository {
@@ -29,5 +30,15 @@ public class FakeSentenceRepository implements SentenceRepository {
             data.add(newSentence);
         }
         return sentences;
+    }
+
+    @Override
+    public Sentence save(Sentence sentence) {
+        return null;
+    }
+
+    @Override
+    public Optional<Sentence> findById(Long id) {
+        return Optional.empty();
     }
 }
