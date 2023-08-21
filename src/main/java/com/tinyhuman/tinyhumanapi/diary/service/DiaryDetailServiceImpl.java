@@ -27,20 +27,30 @@ public class DiaryDetailServiceImpl implements DiaryDetailService {
 
     @Override
     public DiaryResponse updateSentence(Long diaryId, Long sentenceId, SentenceCreate newSentence) {
+        Diary diary = diaryRepository.findById(diaryId)
+                .orElseThrow(() -> new ResourceNotFoundException("Diary", diaryId));
+
         Sentence sentence = sentenceRepository.findById(sentenceId)
                 .orElseThrow(() -> new ResourceNotFoundException("Sentences", sentenceId));
 
         Sentence updatedSentence = sentence.update(newSentence);
-        sentenceRepository.save(updatedSentence);
+        sentenceRepository.save(updatedSentence, diary);
 
-        Diary diary = diaryRepository.findById(diaryId)
+        Diary updatedDiary = diaryRepository.findById(diaryId)
                 .orElseThrow(() -> new ResourceNotFoundException("Diary", diaryId));
-        return DiaryResponse.fromModel(diary);
+        return DiaryResponse.fromModel(updatedDiary);
     }
 
     @Override
     public void deleteSentence(Long diaryId, Long sentenceId) {
+        Diary diary = diaryRepository.findById(diaryId)
+                .orElseThrow(() -> new ResourceNotFoundException("Diary", diaryId));
 
+        Sentence sentence = sentenceRepository.findById(sentenceId)
+                .orElseThrow(() -> new ResourceNotFoundException("Sentences", sentenceId));
+
+        Sentence deletedSentence = sentence.delete();
+        sentenceRepository.save(deletedSentence, diary);
     }
 
     @Override

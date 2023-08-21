@@ -3,7 +3,7 @@ package com.tinyhuman.tinyhumanapi.diary.domain;
 import lombok.Builder;
 import java.util.List;
 
-public record Sentence(Long id, String sentence, Long diaryId) {
+public record Sentence(Long id, String sentence, Long diaryId, boolean isDeleted) {
 
     @Builder
     public Sentence {
@@ -18,6 +18,15 @@ public record Sentence(Long id, String sentence, Long diaryId) {
                 .id(this.id)
                 .sentence(newSentence.sentence())
                 .diaryId(this.diaryId)
+                .build();
+    }
+
+    public Sentence delete() {
+        return Sentence.builder()
+                .id(this.id)
+                .sentence(this.sentence)
+                .diaryId(this.diaryId)
+                .isDeleted(true)
                 .build();
     }
 }

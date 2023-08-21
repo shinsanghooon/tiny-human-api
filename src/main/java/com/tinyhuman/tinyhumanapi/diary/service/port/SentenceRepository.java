@@ -10,7 +10,7 @@ public interface SentenceRepository {
 
     List<Sentence> saveAll(List<Sentence> Sentences, Diary savedDiary);
 
-    Sentence save(Sentence sentence);
+    Sentence save(Sentence sentence, Diary diary);
 
     Optional<Sentence> findById(Long id);
 

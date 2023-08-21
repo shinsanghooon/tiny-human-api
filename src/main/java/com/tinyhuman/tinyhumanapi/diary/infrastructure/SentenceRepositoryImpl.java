@@ -33,13 +33,13 @@ public class SentenceRepositoryImpl implements SentenceRepository {
     }
 
     @Override
-    public Sentence save(Sentence sentence) {
-        return null;
+    public Sentence save(Sentence sentence, Diary diary) {
+        return sentenceJpaRepository.save(SentenceEntity.fromModel(sentence, diary)).toModel();
     }
 
     @Override
     public Optional<Sentence> findById(Long id) {
-        return Optional.empty();
+        return sentenceJpaRepository.findById(id).map(SentenceEntity::toModel);
     }
 
 }
