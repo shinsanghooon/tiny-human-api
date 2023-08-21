@@ -2,16 +2,15 @@ package com.tinyhuman.tinyhumanapi.diary.service;
 
 import com.tinyhuman.tinyhumanapi.common.domain.exception.ResourceNotFoundException;
 import com.tinyhuman.tinyhumanapi.diary.controller.port.DiaryDetailService;
-import com.tinyhuman.tinyhumanapi.diary.domain.Diary;
-import com.tinyhuman.tinyhumanapi.diary.domain.DiaryResponse;
-import com.tinyhuman.tinyhumanapi.diary.domain.Sentence;
-import com.tinyhuman.tinyhumanapi.diary.domain.SentenceCreate;
+import com.tinyhuman.tinyhumanapi.diary.domain.*;
 import com.tinyhuman.tinyhumanapi.diary.service.port.DiaryRepository;
 import com.tinyhuman.tinyhumanapi.diary.service.port.PictureRepository;
 import com.tinyhuman.tinyhumanapi.diary.service.port.SentenceRepository;
 import lombok.Builder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 
 @Service
@@ -32,8 +31,7 @@ public class DiaryDetailServiceImpl implements DiaryDetailService {
 
     @Override
     public DiaryResponse updateSentence(Long diaryId, Long sentenceId, SentenceCreate newSentence) {
-        Diary diary = diaryRepository.findById(diaryId)
-                .orElseThrow(() -> new ResourceNotFoundException("Diary", diaryId));
+        Diary diary = getDiary(diaryId);
 
         Sentence sentence = sentenceRepository.findById(sentenceId)
                 .orElseThrow(() -> new ResourceNotFoundException("Sentences", sentenceId));
@@ -41,16 +39,14 @@ public class DiaryDetailServiceImpl implements DiaryDetailService {
         Sentence updatedSentence = sentence.update(newSentence);
         sentenceRepository.save(updatedSentence, diary);
 
-        Diary updatedDiary = diaryRepository.findById(diaryId)
-                .orElseThrow(() -> new ResourceNotFoundException("Diary", diaryId));
+        Diary updatedDiary = getDiary(diaryId);
 
         return DiaryResponse.fromModel(updatedDiary);
     }
 
     @Override
     public Sentence deleteSentence(Long diaryId, Long sentenceId) {
-        Diary diary = diaryRepository.findById(diaryId)
-                .orElseThrow(() -> new ResourceNotFoundException("Diary", diaryId));
+        Diary diary = getDiary(diaryId);
 
         Sentence sentence = sentenceRepository.findById(sentenceId)
                 .orElseThrow(() -> new ResourceNotFoundException("Sentences", sentenceId));
@@ -59,13 +55,31 @@ public class DiaryDetailServiceImpl implements DiaryDetailService {
         return sentenceRepository.save(deletedSentence, diary);
     }
 
-    @Override
-    public void changeMainPicture(Long diaryId, Long currentMainPictureId, Long newMainPictureId) {
 
+    @Override
+    public List<Picture> changeMainPicture(Long diaryId, Long currentMainPictureId, Long newMainPictureId) {
+        Diary diary = getDiary(diaryId);
+        Picture currentMainPicture = pictureRepository.findById(currentMainPictureId)
+                .orElseThrow(() -> new ResourceNotFoundException("Picture", currentMainPictureId));
+
+        Picture newMainPicture = pictureRepository.findById(newMainPictureId)
+                .orElseThrow(() -> new ResourceNotFoundException("Picture", currentMainPictureId));
+
+        Picture mainToNormalPicture = currentMainPicture.assignToNormal();
+        Picture normalToMainPicture = newMainPicture.assignToMain();
+
+        return pictureRepository.saveAll(List.of(mainToNormalPicture, normalToMainPicture), diary);
     }
 
     @Override
     public void deletePicture(Long diaryId, Long pictureId) {
 
+    }
+
+
+    private Diary getDiary(Long diaryId) {
+        Diary diary = diaryRepository.findById(diaryId)
+                .orElseThrow(() -> new ResourceNotFoundException("Diary", diaryId));
+        return diary;
     }
 }
