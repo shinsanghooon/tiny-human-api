@@ -9,14 +9,13 @@ import com.tinyhuman.tinyhumanapi.diary.domain.SentenceCreate;
 import com.tinyhuman.tinyhumanapi.diary.service.port.DiaryRepository;
 import com.tinyhuman.tinyhumanapi.diary.service.port.PictureRepository;
 import com.tinyhuman.tinyhumanapi.diary.service.port.SentenceRepository;
-import lombok.RequiredArgsConstructor;
+import lombok.Builder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
 @Transactional
-@RequiredArgsConstructor
 public class DiaryDetailServiceImpl implements DiaryDetailService {
 
     private final DiaryRepository diaryRepository;
@@ -24,6 +23,12 @@ public class DiaryDetailServiceImpl implements DiaryDetailService {
     private final SentenceRepository sentenceRepository;
 
     private final PictureRepository pictureRepository;
+    @Builder
+    public DiaryDetailServiceImpl(DiaryRepository diaryRepository, SentenceRepository sentenceRepository, PictureRepository pictureRepository) {
+        this.diaryRepository = diaryRepository;
+        this.sentenceRepository = sentenceRepository;
+        this.pictureRepository = pictureRepository;
+    }
 
     @Override
     public DiaryResponse updateSentence(Long diaryId, Long sentenceId, SentenceCreate newSentence) {
@@ -38,11 +43,12 @@ public class DiaryDetailServiceImpl implements DiaryDetailService {
 
         Diary updatedDiary = diaryRepository.findById(diaryId)
                 .orElseThrow(() -> new ResourceNotFoundException("Diary", diaryId));
+
         return DiaryResponse.fromModel(updatedDiary);
     }
 
     @Override
-    public void deleteSentence(Long diaryId, Long sentenceId) {
+    public Sentence deleteSentence(Long diaryId, Long sentenceId) {
         Diary diary = diaryRepository.findById(diaryId)
                 .orElseThrow(() -> new ResourceNotFoundException("Diary", diaryId));
 
@@ -50,7 +56,7 @@ public class DiaryDetailServiceImpl implements DiaryDetailService {
                 .orElseThrow(() -> new ResourceNotFoundException("Sentences", sentenceId));
 
         Sentence deletedSentence = sentence.delete();
-        sentenceRepository.save(deletedSentence, diary);
+        return sentenceRepository.save(deletedSentence, diary);
     }
 
     @Override
