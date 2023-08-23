@@ -38,6 +38,9 @@ aws:
       profile: images/babyId/profile/
       diary: images/babyId/diary/
       album: images/babyId/album/
+jwt:
+  issuer: abc@tinyhuman.com
+  secret_key: gqe213bfl3quh2
 logging:
   level:
     org.hibernate.sql: debug

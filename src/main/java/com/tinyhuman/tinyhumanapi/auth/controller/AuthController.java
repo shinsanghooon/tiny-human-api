@@ -1,6 +1,7 @@
 package com.tinyhuman.tinyhumanapi.auth.controller;
 
 import com.tinyhuman.tinyhumanapi.auth.domain.LoginRequest;
+import com.tinyhuman.tinyhumanapi.auth.domain.TokenResponse;
 import com.tinyhuman.tinyhumanapi.auth.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -16,8 +17,8 @@ public class AuthController {
 
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("login")
-    public void login(@Valid @RequestBody LoginRequest loginRequest) {
-        authService.login(loginRequest);
+    public TokenResponse login(@Valid @RequestBody LoginRequest loginRequest) {
+        return authService.login(loginRequest);
     }
 
 }

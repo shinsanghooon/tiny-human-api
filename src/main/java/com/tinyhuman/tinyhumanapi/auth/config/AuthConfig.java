@@ -37,8 +37,7 @@ public class AuthConfig {
                             .requestMatchers(HttpMethod.GET, "/api/v1/users/email/duplicate-check").permitAll()
                             .anyRequest().authenticated()
                 )
-                .formLogin(AbstractHttpConfigurer::disable
-                )
+                .formLogin(AbstractHttpConfigurer::disable)
                 .logout(logout -> logout
                         .logoutUrl("/api/v1/auth/logout")
                         .deleteCookies("JSESSIONID")
