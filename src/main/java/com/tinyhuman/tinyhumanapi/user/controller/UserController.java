@@ -1,7 +1,9 @@
 package com.tinyhuman.tinyhumanapi.user.controller;
 
 import com.tinyhuman.tinyhumanapi.user.controller.port.UserService;
+import com.tinyhuman.tinyhumanapi.user.domain.EmailDuplicateCheck;
 import com.tinyhuman.tinyhumanapi.user.domain.UserResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -18,4 +20,10 @@ public class UserController {
         return userService.getUser(userId);
     }
 
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/email/duplicate-check")
+    public void checkEmailDuplicated(@RequestBody @Valid EmailDuplicateCheck emailDuplicateCheck) {
+        userService.checkEmailDuplicated(emailDuplicateCheck.email());
+    }
 }

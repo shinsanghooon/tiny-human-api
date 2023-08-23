@@ -22,4 +22,15 @@ public class UserRepositoryImpl implements UserRepository {
     public Optional<User> findById(Long id) {
         return userJpaRepository.findById(id).map(UserEntity::toModel);
     }
+
+    @Override
+    public Optional<User> findByEmail(String email) {
+        return userJpaRepository.findByEmail(email).map(UserEntity::toModel);
+    }
+
+    @Override
+    public boolean existsByEmail(String email) {
+        return userJpaRepository.existsByEmail(email);
+    }
+
 }
