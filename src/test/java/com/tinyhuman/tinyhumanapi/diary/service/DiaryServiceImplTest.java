@@ -1,6 +1,6 @@
 package com.tinyhuman.tinyhumanapi.diary.service;
 
-import com.tinyhuman.tinyhumanapi.auth.service.FakeAuthService;
+import com.tinyhuman.tinyhumanapi.auth.mock.FakeAuthService;
 import com.tinyhuman.tinyhumanapi.baby.domain.Baby;
 import com.tinyhuman.tinyhumanapi.baby.enums.Gender;
 import com.tinyhuman.tinyhumanapi.baby.mock.FakeBabyRepository;

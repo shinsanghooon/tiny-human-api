@@ -8,7 +8,7 @@ import com.tinyhuman.tinyhumanapi.auth.domain.TokenResponse;
 import com.tinyhuman.tinyhumanapi.common.domain.exception.ResourceNotFoundException;
 import com.tinyhuman.tinyhumanapi.user.domain.User;
 import com.tinyhuman.tinyhumanapi.user.service.port.UserRepository;
-import lombok.RequiredArgsConstructor;
+import lombok.Builder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,7 +16,6 @@ import java.time.Duration;
 
 @Service
 @Transactional
-@RequiredArgsConstructor
 public class TokenServiceImpl implements TokenService {
 
     private final CustomTokenProvider customTokenProvider;
@@ -24,6 +23,13 @@ public class TokenServiceImpl implements TokenService {
     private final RefreshTokenService refreshTokenService;
 
     private final UserRepository userRepository;
+
+    @Builder
+    public TokenServiceImpl(CustomTokenProvider customTokenProvider, RefreshTokenService refreshTokenService, UserRepository userRepository) {
+        this.customTokenProvider = customTokenProvider;
+        this.refreshTokenService = refreshTokenService;
+        this.userRepository = userRepository;
+    }
 
     @Override
     public CreateAccessTokenResponse createNewAccessToken(String refreshToken) {

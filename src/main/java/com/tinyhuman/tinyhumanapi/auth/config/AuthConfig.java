@@ -1,7 +1,7 @@
 package com.tinyhuman.tinyhumanapi.auth.config;
 
 
-import com.tinyhuman.tinyhumanapi.auth.config.jwt.CustomTokenProvider;
+import com.tinyhuman.tinyhumanapi.auth.config.jwt.CustomTokenProviderImpl;
 import com.tinyhuman.tinyhumanapi.auth.config.jwt.TokenAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -25,7 +25,7 @@ public class AuthConfig {
 
     private final UserDetailsService userDetailsService;
 
-    private final CustomTokenProvider customTokenProvider;
+    private final CustomTokenProviderImpl customTokenProvider;
 
     @Bean
     public UserDetailsService userDetailsService() {

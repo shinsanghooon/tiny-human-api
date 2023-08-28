@@ -1,6 +1,6 @@
 package com.tinyhuman.tinyhumanapi.auth.service;
 
-import com.tinyhuman.tinyhumanapi.auth.config.jwt.CustomTokenProvider;
+import com.tinyhuman.tinyhumanapi.auth.config.jwt.CustomTokenProviderImpl;
 import com.tinyhuman.tinyhumanapi.auth.controller.port.AuthService;
 import com.tinyhuman.tinyhumanapi.auth.domain.LoginRequest;
 import com.tinyhuman.tinyhumanapi.auth.domain.RefreshToken;
@@ -26,7 +26,7 @@ public class AuthServiceImpl implements AuthService {
 
     private final AuthenticationManager authenticationManager;
 
-    private final CustomTokenProvider customTokenProvider;
+    private final CustomTokenProviderImpl customTokenProvider;
 
     private final UserRepository userRepository;
 

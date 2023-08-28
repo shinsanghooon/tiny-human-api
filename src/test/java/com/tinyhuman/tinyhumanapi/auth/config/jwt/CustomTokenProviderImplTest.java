@@ -13,9 +13,9 @@ import java.time.Duration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class CustomTokenProviderTest {
+class CustomTokenProviderImplTest {
 
-    private CustomTokenProvider customTokenProvider;
+    private CustomTokenProviderImpl customTokenProvider;
     private String TEST_JWT_SECRET_KEY = "testKey";
     private String TEST_JWT_ISSUER = "test";
 
@@ -25,7 +25,7 @@ class CustomTokenProviderTest {
         jwtProperties.setIssuer(TEST_JWT_ISSUER);
         jwtProperties.setSecretKey(TEST_JWT_SECRET_KEY);
 
-        this.customTokenProvider = new CustomTokenProvider(jwtProperties);
+        this.customTokenProvider = new CustomTokenProviderImpl(jwtProperties);
     }
 
     @DisplayName("사용자 정보와 만료 기간을 전달해 토큰을 만들 수 있다.")

@@ -1,4 +1,4 @@
-package com.tinyhuman.tinyhumanapi.auth.service;
+package com.tinyhuman.tinyhumanapi.auth.mock;
 
 import com.tinyhuman.tinyhumanapi.auth.controller.port.AuthService;
 import com.tinyhuman.tinyhumanapi.auth.domain.LoginRequest;

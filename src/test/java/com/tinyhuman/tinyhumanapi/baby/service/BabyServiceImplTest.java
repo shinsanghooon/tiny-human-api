@@ -1,6 +1,6 @@
 package com.tinyhuman.tinyhumanapi.baby.service;
 
-import com.tinyhuman.tinyhumanapi.auth.service.FakeAuthService;
+import com.tinyhuman.tinyhumanapi.auth.mock.FakeAuthService;
 import com.tinyhuman.tinyhumanapi.baby.domain.Baby;
 import com.tinyhuman.tinyhumanapi.baby.domain.BabyCreate;
 import com.tinyhuman.tinyhumanapi.baby.domain.BabyResponse;
