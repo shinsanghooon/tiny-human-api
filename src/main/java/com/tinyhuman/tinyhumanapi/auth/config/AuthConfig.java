@@ -13,6 +13,7 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -37,17 +38,19 @@ public class AuthConfig {
 
         http
                 .authorizeHttpRequests(authorize ->
-                    authorize
-                            .requestMatchers(HttpMethod.POST, "/api/v1/auth/login").permitAll()
-                            .requestMatchers(HttpMethod.POST, "/api/v1/users").permitAll()
-                            .requestMatchers(HttpMethod.GET, "/api/v1/users/email/duplicate-check").permitAll()
-                            .anyRequest().authenticated()
+                        authorize
+                                .requestMatchers(HttpMethod.POST, "/api/v1/auth/login").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/api/v1/users").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/v1/users/email/duplicate-check").permitAll()
+                                .anyRequest().authenticated()
                 )
                 .formLogin(AbstractHttpConfigurer::disable)
                 .logout(logout -> logout
                         .logoutUrl("/api/v1/auth/logout")
                         .deleteCookies("JSESSIONID")
                         .invalidateHttpSession(true))
+                .sessionManagement(sessionManagement ->
+                        sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .csrf(AbstractHttpConfigurer::disable)
                 .httpBasic(Customizer.withDefaults())
                 .addFilterBefore(new TokenAuthenticationFilter(customTokenProvider), UsernamePasswordAuthenticationFilter.class)
