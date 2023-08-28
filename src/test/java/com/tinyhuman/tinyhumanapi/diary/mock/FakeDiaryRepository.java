@@ -60,6 +60,14 @@ public class FakeDiaryRepository implements DiaryRepository {
                 .toList();
     }
 
+    @Override
+    public List<Diary> findByIdAndUserId(Long diaryId, Long userId) {
+        return data.stream()
+                .filter(d -> d.id().equals(diaryId))
+                .filter(d -> d.user().id().equals(userId))
+                .toList();
+    }
+
     public FakeDiaryRepository() {
     }
 }

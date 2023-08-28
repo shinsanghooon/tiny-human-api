@@ -13,9 +13,9 @@ import java.time.Duration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class TokenProviderTest {
+class CustomTokenProviderTest {
 
-    private TokenProvider tokenProvider;
+    private CustomTokenProvider customTokenProvider;
     private String TEST_JWT_SECRET_KEY = "testKey";
     private String TEST_JWT_ISSUER = "test";
 
@@ -25,7 +25,7 @@ class TokenProviderTest {
         jwtProperties.setIssuer(TEST_JWT_ISSUER);
         jwtProperties.setSecretKey(TEST_JWT_SECRET_KEY);
 
-        this.tokenProvider = new TokenProvider(jwtProperties);
+        this.customTokenProvider = new CustomTokenProvider(jwtProperties);
     }
 
     @DisplayName("사용자 정보와 만료 기간을 전달해 토큰을 만들 수 있다.")
@@ -38,7 +38,7 @@ class TokenProviderTest {
                 .email("test@abc.com")
                 .build();
 
-        TokenResponse tokenResponse = tokenProvider.generationToken(user, Duration.ofHours(2));
+        TokenResponse tokenResponse = customTokenProvider.generationToken(user, Duration.ofHours(2));
 
         Long userId = Jwts.parser()
                 .setSigningKey(TEST_JWT_SECRET_KEY)
@@ -61,9 +61,9 @@ class TokenProviderTest {
                 .email("test@abc.com")
                 .build();
 
-        TokenResponse tokenResponse = tokenProvider.generationToken(user, Duration.ofDays(10));
+        TokenResponse tokenResponse = customTokenProvider.generationToken(user, Duration.ofDays(10));
 
-        boolean result = tokenProvider.checkValidToken(tokenResponse.accessToken());
+        boolean result = customTokenProvider.checkValidToken(tokenResponse.accessToken());
 
         assertThat(result).isTrue();
     }
@@ -78,9 +78,9 @@ class TokenProviderTest {
                 .email("test@abc.com")
                 .build();
 
-        TokenResponse tokenResponse = tokenProvider.generationToken(user, Duration.ofDays(-10));
+        TokenResponse tokenResponse = customTokenProvider.generationToken(user, Duration.ofDays(-10));
 
-        boolean result = tokenProvider.checkValidToken(tokenResponse.accessToken());
+        boolean result = customTokenProvider.checkValidToken(tokenResponse.accessToken());
 
         assertThat(result).isFalse();
     }
@@ -95,8 +95,8 @@ class TokenProviderTest {
                 .email("test@abc.com")
                 .build();
 
-        TokenResponse tokenResponse = tokenProvider.generationToken(user, Duration.ofDays(10));
-        Authentication authentication = tokenProvider.getAuthentication(tokenResponse.accessToken());
+        TokenResponse tokenResponse = customTokenProvider.generationToken(user, Duration.ofDays(10));
+        Authentication authentication = customTokenProvider.getAuthentication(tokenResponse.accessToken());
 
         assertThat(authentication.getName()).isEqualTo("test@abc.com");
     }
@@ -111,9 +111,9 @@ class TokenProviderTest {
                 .email("test@abc.com")
                 .build();
 
-        TokenResponse tokenResponse = tokenProvider.generationToken(user, Duration.ofDays(10));
+        TokenResponse tokenResponse = customTokenProvider.generationToken(user, Duration.ofDays(10));
 
-        Long userId = tokenProvider.getUserId(tokenResponse.accessToken());
+        Long userId = customTokenProvider.getUserId(tokenResponse.accessToken());
 
         assertThat(user.id()).isEqualTo(userId);
 

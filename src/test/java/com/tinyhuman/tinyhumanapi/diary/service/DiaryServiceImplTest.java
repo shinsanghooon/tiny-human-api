@@ -1,5 +1,6 @@
 package com.tinyhuman.tinyhumanapi.diary.service;
 
+import com.tinyhuman.tinyhumanapi.auth.service.FakeAuthService;
 import com.tinyhuman.tinyhumanapi.baby.domain.Baby;
 import com.tinyhuman.tinyhumanapi.baby.enums.Gender;
 import com.tinyhuman.tinyhumanapi.baby.mock.FakeBabyRepository;
@@ -49,6 +50,7 @@ class DiaryServiceImplTest {
         FakeSentenceRepository fakeSentenceRepository = new FakeSentenceRepository();
         FakePictureRepository fakePictureRepository = new FakePictureRepository();
         FakeUserBabyRelationRepository fakeUserBabyRelationRepository = new FakeUserBabyRelationRepository();
+        FakeAuthService fakeAuthService = new FakeAuthService();
 
         this.diaryServiceImpl = DiaryServiceImpl
                 .builder()
@@ -59,6 +61,7 @@ class DiaryServiceImplTest {
                 .pictureRepository(fakePictureRepository)
                 .userRepository(fakeUserRepository)
                 .userBabyRelationRepository(fakeUserBabyRelationRepository)
+                .authService(fakeAuthService)
                 .build();
 
         UserCreate userCreate1 = UserCreate.builder()
