@@ -6,7 +6,6 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Header;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -18,9 +17,9 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Set;
 
-@RequiredArgsConstructor(access=AccessLevel.PUBLIC)
+@RequiredArgsConstructor
 @Service
-public class TokenProvider {
+public class CustomTokenProvider {
 
     private final JwtProperties jwtProperties;
 

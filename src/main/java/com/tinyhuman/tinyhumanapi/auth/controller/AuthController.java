@@ -1,8 +1,8 @@
 package com.tinyhuman.tinyhumanapi.auth.controller;
 
+import com.tinyhuman.tinyhumanapi.auth.controller.port.AuthService;
 import com.tinyhuman.tinyhumanapi.auth.domain.LoginRequest;
 import com.tinyhuman.tinyhumanapi.auth.domain.TokenResponse;
-import com.tinyhuman.tinyhumanapi.auth.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

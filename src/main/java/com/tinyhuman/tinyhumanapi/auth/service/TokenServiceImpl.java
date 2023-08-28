@@ -1,6 +1,6 @@
 package com.tinyhuman.tinyhumanapi.auth.service;
 
-import com.tinyhuman.tinyhumanapi.auth.config.jwt.TokenProvider;
+import com.tinyhuman.tinyhumanapi.auth.config.jwt.CustomTokenProvider;
 import com.tinyhuman.tinyhumanapi.auth.controller.port.RefreshTokenService;
 import com.tinyhuman.tinyhumanapi.auth.controller.port.TokenService;
 import com.tinyhuman.tinyhumanapi.auth.domain.CreateAccessTokenResponse;
@@ -19,20 +19,22 @@ import java.time.Duration;
 @RequiredArgsConstructor
 public class TokenServiceImpl implements TokenService {
 
-    private final TokenProvider tokenProvider;
+    private final CustomTokenProvider customTokenProvider;
+
     private final RefreshTokenService refreshTokenService;
+
     private final UserRepository userRepository;
 
     @Override
     public CreateAccessTokenResponse createNewAccessToken(String refreshToken) {
-        if (!tokenProvider.checkValidToken(refreshToken)) {
+        if (!customTokenProvider.checkValidToken(refreshToken)) {
             throw new IllegalArgumentException("Unexpected Token");
         }
 
         Long userId = refreshTokenService.findByRefreshToken(refreshToken).userId();
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("Users", userId));
 
-        TokenResponse tokenResponse = tokenProvider.generationToken(user, Duration.ofHours(2));
+        TokenResponse tokenResponse = customTokenProvider.generationToken(user, Duration.ofHours(2));
 
         return CreateAccessTokenResponse.builder()
                 .accessToken(tokenResponse.accessToken())

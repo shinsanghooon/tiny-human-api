@@ -6,14 +6,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Collection;
 
-public class SecurityUser implements UserDetails {
+public class LoginUser implements UserDetails {
 
     private final String username;
 
     private final String password;
 
 
-    public SecurityUser(String username, String password) {
+    public LoginUser(String username, String password) {
         this.username = username;
         this.password = password;
     }

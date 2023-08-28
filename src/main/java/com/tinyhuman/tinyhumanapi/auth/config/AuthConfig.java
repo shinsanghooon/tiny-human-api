@@ -1,17 +1,21 @@
 package com.tinyhuman.tinyhumanapi.auth.config;
 
 
+import com.tinyhuman.tinyhumanapi.auth.config.jwt.CustomTokenProvider;
+import com.tinyhuman.tinyhumanapi.auth.config.jwt.TokenAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @RequiredArgsConstructor
@@ -20,6 +24,8 @@ public class AuthConfig {
     private final AuthenticationProvider authenticationProvider;
 
     private final UserDetailsService userDetailsService;
+
+    private final CustomTokenProvider customTokenProvider;
 
     @Bean
     public UserDetailsService userDetailsService() {
@@ -43,6 +49,8 @@ public class AuthConfig {
                         .deleteCookies("JSESSIONID")
                         .invalidateHttpSession(true))
                 .csrf(AbstractHttpConfigurer::disable)
+                .httpBasic(Customizer.withDefaults())
+                .addFilterBefore(new TokenAuthenticationFilter(customTokenProvider), UsernamePasswordAuthenticationFilter.class)
         ;
 
         return http.build();

@@ -1,6 +1,6 @@
 package com.tinyhuman.tinyhumanapi.auth.service;
 
-import com.tinyhuman.tinyhumanapi.auth.config.SecurityUser;
+import com.tinyhuman.tinyhumanapi.auth.config.LoginUser;
 import com.tinyhuman.tinyhumanapi.common.domain.exception.ResourceNotFoundException;
 import com.tinyhuman.tinyhumanapi.user.domain.User;
 import com.tinyhuman.tinyhumanapi.user.service.port.UserRepository;
@@ -20,6 +20,6 @@ public class JpaUserDetailService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(username)
                 .orElseThrow(() -> new ResourceNotFoundException("User-email", username));
-        return new SecurityUser(user.email(), user.password());
+        return new LoginUser(user.email(), user.password());
     }
 }

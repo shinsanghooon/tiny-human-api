@@ -1,7 +1,7 @@
 package com.tinyhuman.tinyhumanapi.auth.service;
 
 import com.tinyhuman.tinyhumanapi.auth.config.EmailAuthentication;
-import com.tinyhuman.tinyhumanapi.auth.config.SecurityUser;
+import com.tinyhuman.tinyhumanapi.auth.config.LoginUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -27,7 +27,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         String username = authentication.getName();
         String password = String.valueOf(authentication.getCredentials());
 
-        SecurityUser userDetails = (SecurityUser) jpaUserDetailService.loadUserByUsername(username);
+        LoginUser userDetails = (LoginUser) jpaUserDetailService.loadUserByUsername(username);
         if (!userDetails.checkPassword(password, passwordEncoder)) {
             throw new BadCredentialsException("인증에 실패했습니다.");
         }

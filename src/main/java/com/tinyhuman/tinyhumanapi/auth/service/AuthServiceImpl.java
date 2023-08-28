@@ -1,6 +1,7 @@
 package com.tinyhuman.tinyhumanapi.auth.service;
 
-import com.tinyhuman.tinyhumanapi.auth.config.jwt.TokenProvider;
+import com.tinyhuman.tinyhumanapi.auth.config.jwt.CustomTokenProvider;
+import com.tinyhuman.tinyhumanapi.auth.controller.port.AuthService;
 import com.tinyhuman.tinyhumanapi.auth.domain.LoginRequest;
 import com.tinyhuman.tinyhumanapi.auth.domain.RefreshToken;
 import com.tinyhuman.tinyhumanapi.auth.domain.TokenResponse;
@@ -21,11 +22,11 @@ import java.time.Duration;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class AuthService {
+public class AuthServiceImpl implements AuthService {
 
     private final AuthenticationManager authenticationManager;
 
-    private final TokenProvider tokenProvider;
+    private final CustomTokenProvider customTokenProvider;
 
     private final UserRepository userRepository;
 
@@ -42,7 +43,7 @@ public class AuthService {
         User user = userRepository.findByEmail(authentication.getName())
                 .orElseThrow(() -> new ResourceNotFoundException("Users-email", authentication.getName()));
 
-        TokenResponse tokenResponse = tokenProvider.generationToken(user, Duration.ofHours(2));
+        TokenResponse tokenResponse = customTokenProvider.generationToken(user, Duration.ofHours(2));
 
         RefreshToken refreshToken = RefreshToken.builder()
                 .userId(user.id())
@@ -52,6 +53,12 @@ public class AuthService {
         refreshTokenRepository.save(refreshToken);
 
         return tokenResponse;
+    }
+
+    public User getUserOutOfSecurityContextHolder() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User-email", email));
     }
 }
 
