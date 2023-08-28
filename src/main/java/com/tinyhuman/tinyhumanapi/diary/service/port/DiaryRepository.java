@@ -16,4 +16,6 @@ public interface DiaryRepository {
 
     List<Diary> findByBabyId(Long babyId);
 
+    List<Diary> findByIdAndUserId(Long diaryId, Long userId);
+
 }

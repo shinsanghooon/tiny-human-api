@@ -1,5 +1,6 @@
 package com.tinyhuman.tinyhumanapi.diary.service;
 
+import com.tinyhuman.tinyhumanapi.auth.controller.port.AuthService;
 import com.tinyhuman.tinyhumanapi.baby.domain.Baby;
 import com.tinyhuman.tinyhumanapi.baby.service.port.BabyRepository;
 import com.tinyhuman.tinyhumanapi.common.domain.exception.ResourceNotFoundException;
@@ -44,8 +45,10 @@ public class DiaryServiceImpl implements DiaryService {
 
     private final UserBabyRelationRepository userBabyRelationRepository;
 
+    private final AuthService authService;
+
     @Builder
-    public DiaryServiceImpl(DiaryRepository diaryRepository, SentenceRepository sentenceRepository, PictureRepository pictureRepository, BabyRepository babyRepository, UserRepository userRepository, ImageService imageService, UserBabyRelationRepository userBabyRelationRepository) {
+    public DiaryServiceImpl(DiaryRepository diaryRepository, SentenceRepository sentenceRepository, PictureRepository pictureRepository, BabyRepository babyRepository, UserRepository userRepository, ImageService imageService, UserBabyRelationRepository userBabyRelationRepository, AuthService authService) {
         this.diaryRepository = diaryRepository;
         this.sentenceRepository = sentenceRepository;
         this.pictureRepository = pictureRepository;
@@ -53,6 +56,7 @@ public class DiaryServiceImpl implements DiaryService {
         this.userRepository = userRepository;
         this.imageService = imageService;
         this.userBabyRelationRepository = userBabyRelationRepository;
+        this.authService = authService;
     }
 
     @Value("${aws.s3.path.diary}")
@@ -115,8 +119,8 @@ public class DiaryServiceImpl implements DiaryService {
 
     @Override
     public List<DiaryResponse> getMyDiariesByBaby(Long babyId) {
-        // TODO
-        Long userId = 1L;
+        User user = authService.getUserOutOfSecurityContextHolder();
+        Long userId = user.id();
 
         UserBabyRelation userBabyRelation = userBabyRelationRepository.findById(new UserBabyMappingId(userId, babyId))
                 .orElseThrow(() -> new ResourceNotFoundException("UserBabyRelation", userId + "-" + babyId));
