@@ -20,7 +20,8 @@ public class BabyCreateController {
     private final BabyServiceImpl babyService;
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public BabyResponse register(@RequestPart @Valid BabyCreate babyCreate, @RequestPart MultipartFile file) {
+    public BabyResponse register(@RequestPart @Valid BabyCreate babyCreate,
+                                 @RequestPart(required = false) MultipartFile file) {
         return babyService.register(babyCreate, file);
     }
 
@@ -40,7 +41,6 @@ public class BabyCreateController {
     @ResponseStatus(HttpStatus.OK)
     public BabyResponse update(@PathVariable("id") Long id, @RequestPart @Valid BabyUpdate babyUpdate,
                                @RequestPart(value="file", required = false) MultipartFile file) {
-        System.out.println("file = " + file);
         return babyService.update(id, babyUpdate, file);
     }
 

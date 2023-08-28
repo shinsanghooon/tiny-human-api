@@ -38,6 +38,11 @@ public class DiaryRepositoryImpl implements DiaryRepository {
 
     }
 
+    @Override
+    public List<Diary> findByIdAndUserId(Long diaryId, Long userId) {
+        return mapToModels(diaryJpaRepository.findByIdAndUserId(diaryId, userId));
+    }
+
     private List<Diary> mapToModels(List<DiaryEntity> diaryEntities) {
         return diaryEntities.stream()
                 .map(DiaryEntity::toModel)

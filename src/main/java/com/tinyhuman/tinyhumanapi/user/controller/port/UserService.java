@@ -8,4 +8,6 @@ public interface UserService {
     UserResponse registerUser(UserCreate userCreate);
 
     UserResponse getUser(Long userId);
+
+    void checkEmailDuplicated(String email);
 }

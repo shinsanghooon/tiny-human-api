@@ -1,5 +1,6 @@
 package com.tinyhuman.tinyhumanapi.baby.service;
 
+import com.tinyhuman.tinyhumanapi.auth.mock.FakeAuthService;
 import com.tinyhuman.tinyhumanapi.baby.domain.Baby;
 import com.tinyhuman.tinyhumanapi.baby.domain.BabyCreate;
 import com.tinyhuman.tinyhumanapi.baby.domain.BabyResponse;
@@ -39,6 +40,7 @@ class BabyServiceImplTest {
         FakeUserRepository fakeUserRepository = new FakeUserRepository();
         FakeUserBabyRelationRepository fakeUserBabyRelationRepository = new FakeUserBabyRelationRepository();
         UserBabyRelationServiceImpl userBabyRelationService = new UserBabyRelationServiceImpl(fakeUserBabyRelationRepository);
+        FakeAuthService fakeAuthService = new FakeAuthService();
 
         this.babyServiceImpl = BabyServiceImpl
                 .builder()
@@ -47,6 +49,7 @@ class BabyServiceImplTest {
                 .diaryRepository(fakeDiaryRepository)
                 .userRepository(fakeUserRepository)
                 .userBabyRelationService(userBabyRelationService)
+                .authService(fakeAuthService)
                 .build();
 
         UserCreate userCreate1 = UserCreate.builder()

@@ -9,4 +9,6 @@ public interface DiaryJpaRepository extends JpaRepository<DiaryEntity, Long> {
     List<DiaryEntity> findByBaby(BabyEntity baby);
 
     List<DiaryEntity> findByBabyId(Long babyId);
+
+    List<DiaryEntity> findByIdAndUserId(Long diaryId, Long userId);
 }
