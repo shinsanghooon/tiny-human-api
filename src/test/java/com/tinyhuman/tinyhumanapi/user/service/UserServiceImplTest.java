@@ -8,6 +8,8 @@ import com.tinyhuman.tinyhumanapi.user.mock.FakeUserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -17,7 +19,8 @@ class UserServiceImplTest {
     @BeforeEach
     void init() {
         FakeUserRepository fakeUserRepository = new FakeUserRepository();
-        this.userServiceImpl = new UserServiceImpl(fakeUserRepository);
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        this.userServiceImpl = new UserServiceImpl(fakeUserRepository, passwordEncoder);
 
         UserCreate userCreate1 = UserCreate.builder()
                 .name("홈버그")

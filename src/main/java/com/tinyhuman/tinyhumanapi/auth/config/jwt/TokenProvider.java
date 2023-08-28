@@ -38,6 +38,7 @@ public class TokenProvider {
                 .setIssuedAt(now)
                 .setExpiration(expiry)
                 .setSubject(user.email())
+                .claim("userId", user.id())
                 .signWith(SignatureAlgorithm.HS256, jwtProperties.getSecretKey())
                 .compact();
 
@@ -75,7 +76,7 @@ public class TokenProvider {
 
     public Long getUserId(String token) {
         Claims claims = getClaims(token);
-        return claims.get("id", Long.class);
+        return claims.get("userId", Long.class);
     }
 
     private Claims getClaims(String token) {
