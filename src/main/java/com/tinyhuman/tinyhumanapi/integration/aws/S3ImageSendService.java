@@ -4,6 +4,7 @@ import com.tinyhuman.tinyhumanapi.integration.service.ImageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.async.AsyncRequestBody;
 import software.amazon.awssdk.services.s3.S3AsyncClient;
@@ -20,8 +21,14 @@ public class S3ImageSendService implements ImageService {
 
     private final S3AsyncClient s3AsyncClient;
 
+    private int MAX_FILE_SIZE = 15 * 1024 * 1024;
+
     @Override
     public String sendImage(MultipartFile file, String s3UploadPath) {
+
+        if (file.getSize() > MAX_FILE_SIZE) {
+            throw new MaxUploadSizeExceededException(file.getSize());
+        }
 
         byte[] imageBytes = getImageBytes(file);
 
