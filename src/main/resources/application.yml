@@ -30,7 +30,7 @@ spring:
   servlet:
     multipart:
       max-file-size: 15MB
-      max-request-size: 75MB
+      max-request-size: 300MB
 aws:
   s3:
     bucketName: tiny-human-dev
