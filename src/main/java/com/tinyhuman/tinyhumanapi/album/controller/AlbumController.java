@@ -1,5 +1,6 @@
 package com.tinyhuman.tinyhumanapi.album.controller;
 
+import com.tinyhuman.tinyhumanapi.album.controller.dto.AlbumDelete;
 import com.tinyhuman.tinyhumanapi.album.controller.dto.AlbumResponse;
 import com.tinyhuman.tinyhumanapi.album.controller.port.AlbumService;
 import jakarta.validation.constraints.Size;
@@ -38,7 +39,7 @@ public class AlbumController {
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{babyId}/albums")
-    public void deleteAlbums(@PathVariable("babyId") Long babyId, @RequestBody List<Long> albums) {
+    public void deleteAlbums(@PathVariable("babyId") Long babyId, @RequestBody AlbumDelete albums) {
         albumService.delete(albums);
     }
 

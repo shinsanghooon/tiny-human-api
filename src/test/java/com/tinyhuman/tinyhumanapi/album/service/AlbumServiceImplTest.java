@@ -1,6 +1,8 @@
 package com.tinyhuman.tinyhumanapi.album.service;
 
+import com.tinyhuman.tinyhumanapi.album.controller.dto.AlbumDelete;
 import com.tinyhuman.tinyhumanapi.album.controller.dto.AlbumResponse;
+import com.tinyhuman.tinyhumanapi.album.domain.Album;
 import com.tinyhuman.tinyhumanapi.album.mock.FakeAlbumRepository;
 import com.tinyhuman.tinyhumanapi.auth.mock.FakeAuthService;
 import com.tinyhuman.tinyhumanapi.baby.domain.Baby;
@@ -101,7 +103,6 @@ class AlbumServiceImplTest {
 
         @BeforeEach
         void fileSetup() {
-
             for (int i = 0; i < 5; i++) {
                 String name = "image_" + i;
                 String originalFileName = "original_" + i;
@@ -153,6 +154,44 @@ class AlbumServiceImplTest {
     }
 
 
+    @Nested
+    @DisplayName("앨범을 삭제한다.")
+    class DeleteAlbums {
+
+        List<MultipartFile> files = new ArrayList<>();
+
+        @BeforeEach
+        @DisplayName("임시 이미지 파일 5개를 미리 저장해둔다.")
+        void fileSetup() {
+            for (int i = 0; i < 5; i++) {
+                String name = "image_" + i;
+                String originalFileName = "original_" + i;
+                String contentType = "image/png";
+                int byteLength = 2000000 * (i + 1); // 2MB
+                MultipartFile file = FakeMultipartFile.creatMockMultipartFile(name, originalFileName, contentType, byteLength);
+                files.add(file);
+            }
+            List<AlbumResponse> albumResponses = albumServiceImpl.uploadAlbums(1L, files);
+        }
+
+        @Test
+        @DisplayName("삭제할 앨범 id를 입력받아 앨범을 삭제한다.")
+        void deleteAlbums() {
+
+            List<Long> deleteIds = List.of(1L, 2L);
+
+            AlbumDelete albumDelete = AlbumDelete.builder()
+                    .ids(deleteIds)
+                    .build();
+
+            List<Album> deletedAlbums = albumServiceImpl.delete(albumDelete);
+
+            assertThat(deletedAlbums).allSatisfy(album -> {
+                assertThat(album).extracting("id").contains(deleteIds);
+                assertThat(album.isDeleted()).isTrue();
+            });
+        }
+    }
 
 
 

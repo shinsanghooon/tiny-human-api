@@ -35,4 +35,11 @@ public class FakeAlbumRepository implements AlbumRepository {
 
         return newAlbums;
     }
+
+    @Override
+    public List<Album> findAllByIds(List<Long> ids) {
+        return data.stream()
+                .filter(ids::contains)
+                .toList();
+    }
 }

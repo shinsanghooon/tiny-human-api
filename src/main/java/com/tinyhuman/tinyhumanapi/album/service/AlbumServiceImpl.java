@@ -1,5 +1,6 @@
 package com.tinyhuman.tinyhumanapi.album.service;
 
+import com.tinyhuman.tinyhumanapi.album.controller.dto.AlbumDelete;
 import com.tinyhuman.tinyhumanapi.album.controller.dto.AlbumResponse;
 import com.tinyhuman.tinyhumanapi.album.controller.port.AlbumService;
 import com.tinyhuman.tinyhumanapi.album.domain.Album;
@@ -36,12 +37,11 @@ public class AlbumServiceImpl implements AlbumService {
     private final AuthService authService;
 
     @Builder
-    public AlbumServiceImpl(AlbumRepository albumRepository, ImageService imageService, UserBabyRelationRepository userBabyRelationRepository, AuthService authService, String s3UploadPath) {
+    public AlbumServiceImpl(AlbumRepository albumRepository, ImageService imageService, UserBabyRelationRepository userBabyRelationRepository, AuthService authService) {
         this.albumRepository = albumRepository;
         this.imageService = imageService;
         this.userBabyRelationRepository = userBabyRelationRepository;
         this.authService = authService;
-        this.s3UploadPath = s3UploadPath;
     }
 
     @Value("${aws.s3.path.album}")
@@ -87,11 +87,10 @@ public class AlbumServiceImpl implements AlbumService {
     }
 
     @Override
-    public void delete(List<Long> ids) {
-        List<Album> albums = albumRepository.findAllByIds(ids);
+    public List<Album> delete(AlbumDelete albumDelete) {
+        List<Album> albums = albumRepository.findAllByIds(albumDelete.ids());
         List<Album> newAlbums = albums.stream().map(Album::deleteAlbum).toList();
-
-        albumRepository.saveAll(newAlbums);
+        return albumRepository.saveAll(newAlbums);
     }
 
     @Override
