@@ -17,4 +17,10 @@ public record UserBabyRelation(User user, Baby baby, FamilyRelation relation, Us
         }
         return true;
     }
+
+    public boolean isParent() {
+        FamilyRelation relation = this.relation();
+        return relation.equals(FamilyRelation.FATHER) || relation.equals(FamilyRelation.MOTHER);
+    }
+
 }
