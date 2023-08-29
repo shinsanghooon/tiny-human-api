@@ -2,6 +2,7 @@ package com.tinyhuman.tinyhumanapi.album.mock;
 
 import com.tinyhuman.tinyhumanapi.album.domain.Album;
 import com.tinyhuman.tinyhumanapi.album.service.port.AlbumRepository;
+import com.tinyhuman.tinyhumanapi.common.domain.exception.ResourceNotFoundException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +41,21 @@ public class FakeAlbumRepository implements AlbumRepository {
     public List<Album> findAllByIds(List<Long> ids) {
         return data.stream()
                 .filter(ids::contains)
+                .toList();
+    }
+
+    @Override
+    public Album findByIdAndBabyId(Long id, Long babyId) {
+        return data.stream()
+                .filter(a -> a.id().equals(id) && a.babyId().equals(babyId))
+                .findAny()
+                .orElseThrow(() -> new ResourceNotFoundException("Album", id));
+    }
+
+    @Override
+    public List<Album> findByBabyId(Long babyId) {
+        return data.stream()
+                .filter(a -> a.babyId().equals(babyId))
                 .toList();
     }
 }

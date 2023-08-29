@@ -10,6 +10,7 @@ import com.tinyhuman.tinyhumanapi.baby.enums.Gender;
 import com.tinyhuman.tinyhumanapi.baby.mock.FakeImageService;
 import com.tinyhuman.tinyhumanapi.baby.mock.FakeMultipartFile;
 import com.tinyhuman.tinyhumanapi.common.domain.exception.UnauthorizedAccessException;
+import com.tinyhuman.tinyhumanapi.common.enums.ContentType;
 import com.tinyhuman.tinyhumanapi.user.domain.User;
 import com.tinyhuman.tinyhumanapi.user.domain.UserBabyRelation;
 import com.tinyhuman.tinyhumanapi.user.enums.FamilyRelation;
@@ -98,6 +99,7 @@ class AlbumServiceImplTest {
     }
 
     @Nested
+    @DisplayName("사진 및 영상을 업로드 한다.")
     class UploadAlbums{
         List<MultipartFile> files = new ArrayList<>();
 
@@ -171,7 +173,8 @@ class AlbumServiceImplTest {
                 MultipartFile file = FakeMultipartFile.creatMockMultipartFile(name, originalFileName, contentType, byteLength);
                 files.add(file);
             }
-            List<AlbumResponse> albumResponses = albumServiceImpl.uploadAlbums(1L, files);
+
+            albumServiceImpl.uploadAlbums(1L, files);
         }
 
         @Test
@@ -194,6 +197,50 @@ class AlbumServiceImplTest {
     }
 
 
+    @Nested
+    @DisplayName("앨범을 조회한다.")
+    class GetAlbums {
+
+        List<MultipartFile> files = new ArrayList<>();
+        Long babyId = 1L;
+        @BeforeEach
+        @DisplayName("임시 이미지 파일 10개를 미리 저장해둔다.")
+        void fileSetup() {
+            for (int i = 0; i < 10; i++) {
+                String name = "image_" + i;
+                String originalFileName = "original_" + i;
+                String contentType = "image/png";
+                int byteLength = 1000000 * (i + 1); // 2MB
+                MultipartFile file = FakeMultipartFile.creatMockMultipartFile(name, originalFileName, contentType, byteLength);
+                files.add(file);
+            }
+
+            albumServiceImpl.uploadAlbums(babyId, files);
+        }
+
+        @Test
+        @DisplayName("아기 id와 앨범 id를 입력 받아 상세 정보를 조회한다.")
+        void getAlbumDetail() {
+            Long albumId = 4L;
+            AlbumResponse album = albumServiceImpl.findByIdAndBabyId(albumId, babyId);
+
+            assertThat(album.id()).isEqualTo(albumId);
+            assertThat(album.babyId()).isEqualTo(babyId);
+            assertThat(album.contentType()).isEqualTo(ContentType.PICTURE);
+            assertThat(album.originalS3Url()).contains("original_3");
+
+        }
+
+        @Test
+        @DisplayName("아기 id를 입력 받아 앨범 전체를 조회한다.")
+        void getAllAlbum() {
+
+            List<AlbumResponse> albums = albumServiceImpl.getAlbumsByBaby(babyId);
+
+            assertThat(albums.size()).isEqualTo(10);
+            assertThat(albums).extracting("babyId").containsOnly(babyId);
+        }
+    }
 
 
 
