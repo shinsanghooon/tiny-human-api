@@ -19,4 +19,8 @@ public class AlbumRepositoryImpl implements AlbumRepository {
         List<AlbumEntity> albumEntities = albums.stream().map(AlbumEntity::fromModel).toList();
         return albumJpaRepository.saveAll(albumEntities).stream().map(AlbumEntity::toModel).toList();
     }
+
+    public List<Album> findAllByIds(List<Long> ids) {
+        return albumJpaRepository.findAllById(ids).stream().map(AlbumEntity::toModel).toList();
+    }
 }

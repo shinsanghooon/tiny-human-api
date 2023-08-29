@@ -8,4 +8,14 @@ public record Album(Long id, Long babyId, ContentType contentType, String origin
     @Builder
     public Album {
     }
+
+
+    public Album deleteAlbum() {
+        return Album.builder()
+                .id(this.id)
+                .babyId(this.babyId)
+                .contentType(this.contentType)
+                .originalS3Url(this.originalS3Url)
+                .isDeleted(true)
+                .build();}
 }

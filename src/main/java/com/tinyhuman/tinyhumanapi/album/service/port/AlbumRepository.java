@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface AlbumRepository {
     List<Album> saveAll(List<Album> albums);
+
+    List<Album> findAllByIds(List<Long> ids);
 }

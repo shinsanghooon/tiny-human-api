@@ -87,8 +87,11 @@ public class AlbumServiceImpl implements AlbumService {
     }
 
     @Override
-    public void delete(List<Long> albums) {
+    public void delete(List<Long> ids) {
+        List<Album> albums = albumRepository.findAllByIds(ids);
+        List<Album> newAlbums = albums.stream().map(Album::deleteAlbum).toList();
 
+        albumRepository.saveAll(newAlbums);
     }
 
     @Override
