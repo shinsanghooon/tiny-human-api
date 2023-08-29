@@ -55,7 +55,7 @@ public class AlbumServiceImpl implements AlbumService {
 
     @Override
     public List<AlbumResponse> getAlbumsByBaby(Long babyId) {
-        return null;
+        return albumRepository.findByBabyId(babyId).stream().map(AlbumResponse::fromModel).toList();
     }
 
     @Override
