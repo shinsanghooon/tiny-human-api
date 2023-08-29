@@ -1,4 +1,4 @@
-package com.tinyhuman.tinyhumanapi.diary.enums;
+package com.tinyhuman.tinyhumanapi.common.enums;
 
 public enum ContentType {
     PICTURE("Picture", "사진"),
