@@ -14,7 +14,7 @@ import com.tinyhuman.tinyhumanapi.user.domain.User;
 import com.tinyhuman.tinyhumanapi.user.domain.UserBabyRelation;
 import com.tinyhuman.tinyhumanapi.user.infrastructure.UserBabyMappingId;
 import com.tinyhuman.tinyhumanapi.user.service.port.UserBabyRelationRepository;
-import lombok.RequiredArgsConstructor;
+import lombok.Builder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,7 +25,6 @@ import java.util.List;
 
 @Service
 @Transactional
-@RequiredArgsConstructor
 public class AlbumServiceImpl implements AlbumService {
 
     private final AlbumRepository albumRepository;
@@ -35,6 +34,15 @@ public class AlbumServiceImpl implements AlbumService {
     private final UserBabyRelationRepository userBabyRelationRepository;
 
     private final AuthService authService;
+
+    @Builder
+    public AlbumServiceImpl(AlbumRepository albumRepository, ImageService imageService, UserBabyRelationRepository userBabyRelationRepository, AuthService authService, String s3UploadPath) {
+        this.albumRepository = albumRepository;
+        this.imageService = imageService;
+        this.userBabyRelationRepository = userBabyRelationRepository;
+        this.authService = authService;
+        this.s3UploadPath = s3UploadPath;
+    }
 
     @Value("${aws.s3.path.album}")
     private String s3UploadPath;

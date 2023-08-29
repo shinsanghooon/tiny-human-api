@@ -39,4 +39,13 @@ public class FakeMultipartFile {
         );
         return multipartFile;
     }
+
+    public static MockMultipartFile creatMockMultipartFile(String name, String originalFileName, String contentType, int byteLength) {
+        return  new MockMultipartFile(
+                name,
+                originalFileName,
+                contentType,
+                new byte[byteLength]
+        );
+    }
 }
