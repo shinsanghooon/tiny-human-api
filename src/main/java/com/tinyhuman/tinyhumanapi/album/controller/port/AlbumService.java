@@ -15,5 +15,5 @@ public interface AlbumService {
 
     List<Album> delete(AlbumDelete albums);
 
-    AlbumResponse findById(Long albumId, Long babyId);
+    AlbumResponse findByIdAndBabyId(Long albumId, Long babyId);
 }

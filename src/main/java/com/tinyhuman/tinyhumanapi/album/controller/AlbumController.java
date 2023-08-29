@@ -33,8 +33,8 @@ public class AlbumController {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/{babyId}/albums/{albumId}")
-    public AlbumResponse getAlbums(@PathVariable("babyId") Long babyId, @PathVariable("albumId") Long albumId) {
-        return albumService.findById(albumId, babyId);
+    public AlbumResponse getAlbum(@PathVariable("babyId") Long babyId, @PathVariable("albumId") Long albumId) {
+        return albumService.findByIdAndBabyId(albumId, babyId);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)

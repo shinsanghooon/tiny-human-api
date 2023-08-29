@@ -3,6 +3,7 @@ package com.tinyhuman.tinyhumanapi.album.infrastructure;
 
 import com.tinyhuman.tinyhumanapi.album.domain.Album;
 import com.tinyhuman.tinyhumanapi.album.service.port.AlbumRepository;
+import com.tinyhuman.tinyhumanapi.common.domain.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -13,6 +14,13 @@ import java.util.List;
 public class AlbumRepositoryImpl implements AlbumRepository {
 
     private final AlbumJpaRepository albumJpaRepository;
+
+    @Override
+    public Album findByIdAndBabyId(Long id, Long babyId) {
+        return albumJpaRepository.findByIdAndBabyId(id, babyId)
+                .orElseThrow(() -> new ResourceNotFoundException("Album", id))
+                .toModel();
+    }
 
     @Override
     public List<Album> saveAll(List<Album> albums) {

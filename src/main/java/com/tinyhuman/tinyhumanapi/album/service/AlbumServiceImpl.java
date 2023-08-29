@@ -48,6 +48,12 @@ public class AlbumServiceImpl implements AlbumService {
     private String s3UploadPath;
 
     @Override
+    public AlbumResponse findByIdAndBabyId(Long albumId, Long babyId) {
+        Album album = albumRepository.findByIdAndBabyId(albumId, babyId);
+        return AlbumResponse.fromModel(album);
+    }
+
+    @Override
     public List<AlbumResponse> getAlbumsByBaby(Long babyId) {
         return null;
     }
@@ -93,8 +99,5 @@ public class AlbumServiceImpl implements AlbumService {
         return albumRepository.saveAll(newAlbums);
     }
 
-    @Override
-    public AlbumResponse findById(Long albumId, Long babyId) {
-        return null;
-    }
+
 }
