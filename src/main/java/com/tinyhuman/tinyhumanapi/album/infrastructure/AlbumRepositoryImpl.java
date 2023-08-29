@@ -31,4 +31,9 @@ public class AlbumRepositoryImpl implements AlbumRepository {
     public List<Album> findAllByIds(List<Long> ids) {
         return albumJpaRepository.findAllById(ids).stream().map(AlbumEntity::toModel).toList();
     }
+
+    @Override
+    public List<Album> findByBabyId(Long babyId) {
+        return albumJpaRepository.findByBabyId(babyId).stream().map(AlbumEntity::toModel).toList();
+    }
 }
