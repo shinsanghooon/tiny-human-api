@@ -3,7 +3,7 @@ package com.tinyhuman.tinyhumanapi.diary.infrastructure;
 import com.tinyhuman.tinyhumanapi.common.infrastructure.BaseEntity;
 import com.tinyhuman.tinyhumanapi.diary.domain.Diary;
 import com.tinyhuman.tinyhumanapi.diary.domain.Picture;
-import com.tinyhuman.tinyhumanapi.diary.enums.ContentType;
+import com.tinyhuman.tinyhumanapi.common.enums.ContentType;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;

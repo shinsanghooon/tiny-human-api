@@ -7,7 +7,7 @@ import com.tinyhuman.tinyhumanapi.common.domain.exception.ResourceNotFoundExcept
 import com.tinyhuman.tinyhumanapi.common.domain.exception.UnauthorizedAccessException;
 import com.tinyhuman.tinyhumanapi.diary.controller.port.DiaryService;
 import com.tinyhuman.tinyhumanapi.diary.domain.*;
-import com.tinyhuman.tinyhumanapi.diary.enums.ContentType;
+import com.tinyhuman.tinyhumanapi.common.enums.ContentType;
 import com.tinyhuman.tinyhumanapi.diary.service.port.DiaryRepository;
 import com.tinyhuman.tinyhumanapi.diary.service.port.PictureRepository;
 import com.tinyhuman.tinyhumanapi.diary.service.port.SentenceRepository;
