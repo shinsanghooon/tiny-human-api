@@ -5,7 +5,7 @@ import com.tinyhuman.tinyhumanapi.auth.controller.port.RefreshTokenService;
 import com.tinyhuman.tinyhumanapi.auth.controller.port.TokenService;
 import com.tinyhuman.tinyhumanapi.auth.domain.CreateAccessTokenResponse;
 import com.tinyhuman.tinyhumanapi.auth.domain.TokenResponse;
-import com.tinyhuman.tinyhumanapi.common.domain.exception.ResourceNotFoundException;
+import com.tinyhuman.tinyhumanapi.common.exception.ResourceNotFoundException;
 import com.tinyhuman.tinyhumanapi.user.domain.User;
 import com.tinyhuman.tinyhumanapi.user.service.port.UserRepository;
 import lombok.Builder;

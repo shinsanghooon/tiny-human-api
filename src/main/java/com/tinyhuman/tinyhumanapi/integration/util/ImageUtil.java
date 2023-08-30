@@ -1,6 +1,6 @@
 package com.tinyhuman.tinyhumanapi.integration.util;
 
-import com.tinyhuman.tinyhumanapi.common.domain.exception.NotSupportedContentTypeException;
+import com.tinyhuman.tinyhumanapi.common.exception.NotSupportedContentTypeException;
 import com.tinyhuman.tinyhumanapi.common.enums.ContentType;
 import org.springframework.web.multipart.MultipartFile;
 

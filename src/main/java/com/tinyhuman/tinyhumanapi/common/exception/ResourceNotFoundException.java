@@ -1,4 +1,4 @@
-package com.tinyhuman.tinyhumanapi.common.domain.exception;
+package com.tinyhuman.tinyhumanapi.common.exception;
 
 public class ResourceNotFoundException extends RuntimeException {
 
