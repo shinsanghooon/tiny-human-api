@@ -1,7 +1,7 @@
 package com.tinyhuman.tinyhumanapi.baby.domain;
 
 import com.tinyhuman.tinyhumanapi.baby.enums.Gender;
-import com.tinyhuman.tinyhumanapi.common.domain.exception.ResourceNotFoundException;
+import com.tinyhuman.tinyhumanapi.common.exception.ResourceNotFoundException;
 import lombok.Builder;
 
 import java.time.LocalDate;

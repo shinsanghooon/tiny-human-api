@@ -1,6 +1,6 @@
 package com.tinyhuman.tinyhumanapi.diary.service;
 
-import com.tinyhuman.tinyhumanapi.common.domain.exception.ResourceNotFoundException;
+import com.tinyhuman.tinyhumanapi.common.exception.ResourceNotFoundException;
 import com.tinyhuman.tinyhumanapi.diary.controller.port.DiaryDetailService;
 import com.tinyhuman.tinyhumanapi.diary.domain.*;
 import com.tinyhuman.tinyhumanapi.diary.service.port.DiaryRepository;

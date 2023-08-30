@@ -1,7 +1,7 @@
 package com.tinyhuman.tinyhumanapi.auth.service;
 
 import com.tinyhuman.tinyhumanapi.auth.config.LoginUser;
-import com.tinyhuman.tinyhumanapi.common.domain.exception.ResourceNotFoundException;
+import com.tinyhuman.tinyhumanapi.common.exception.ResourceNotFoundException;
 import com.tinyhuman.tinyhumanapi.user.domain.User;
 import com.tinyhuman.tinyhumanapi.user.service.port.UserRepository;
 import lombok.RequiredArgsConstructor;

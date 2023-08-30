@@ -9,7 +9,7 @@ import com.tinyhuman.tinyhumanapi.baby.enums.Gender;
 import com.tinyhuman.tinyhumanapi.baby.mock.FakeBabyRepository;
 import com.tinyhuman.tinyhumanapi.baby.mock.FakeImageService;
 import com.tinyhuman.tinyhumanapi.baby.mock.FakeMultipartFile;
-import com.tinyhuman.tinyhumanapi.common.domain.exception.ResourceNotFoundException;
+import com.tinyhuman.tinyhumanapi.common.exception.ResourceNotFoundException;
 import com.tinyhuman.tinyhumanapi.diary.mock.FakeDiaryRepository;
 import com.tinyhuman.tinyhumanapi.user.domain.User;
 import com.tinyhuman.tinyhumanapi.user.domain.UserCreate;

@@ -2,7 +2,7 @@ package com.tinyhuman.tinyhumanapi.album.mock;
 
 import com.tinyhuman.tinyhumanapi.album.domain.Album;
 import com.tinyhuman.tinyhumanapi.album.service.port.AlbumRepository;
-import com.tinyhuman.tinyhumanapi.common.domain.exception.ResourceNotFoundException;
+import com.tinyhuman.tinyhumanapi.common.exception.ResourceNotFoundException;
 
 import java.util.ArrayList;
 import java.util.List;
