@@ -1,10 +1,13 @@
 package com.tinyhuman.tinyhumanapi.user.domain;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
 
+
+@Schema(name = "UserCreate")
 public record UserCreate(
         @NotBlank(message = "이름을 입력해주세요.")
         @Size(max = 20, message = "이름의 최대 길이는 20자 입니다.")

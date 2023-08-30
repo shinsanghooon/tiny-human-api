@@ -1,6 +1,7 @@
 -- users
 INSERT INTO tinyhuman_db.users (is_deleted, status, created_at, id, last_login_at, updated_at, created_by, email, name, password, updated_by) VALUES (false, 'ACTIVE', '2023-08-17 15:27:48.051351', 1, null, '2023-08-17 15:27:48.051351', null, 'godshin@gmail.com', '신', '1234', null);
 INSERT INTO tinyhuman_db.users (is_deleted, status, created_at, id, last_login_at, updated_at, created_by, email, name, password, updated_by) VALUES (false, 'ACTIVE', '2023-08-17 15:27:48.051351', 2, null, '2023-08-17 15:27:48.051351', null, 'kimreal@gmail.com', '김진짜', '1234', null);
+INSERT INTO tinyhuman_db.users (is_deleted, created_at, id, last_login_at, updated_at, created_by, email, name, password, status, updated_by) VALUES (false, '2023-08-30 16:58:18.491488', 3, null, '2023-08-30 16:58:18.491488', null, 'shinsanghooon@gmail.com', '신상훈', '$2a$04$weOfsS5XBbblFiIYRuzmW.7rpRoVTTx9vIkAIp1HNw32z4xJFh8xO', 'ACTIVE', null);
 
 -- babies
 INSERT INTO tinyhuman_db.babies (day_of_birth, is_deleted, time_of_birth, created_at, id, updated_at, user_id, created_by, gender, name, nick_name, profile_img_url, updated_by) VALUES ('2022-09-27', false, 14, '2023-08-17 15:27:50.345741', 1, '2023-08-17 15:27:50.345741', null, null, 'FEMALE', '신지안', '리카', 'https://tiny-human-dev.s3.ap-northeast-2.amazonaws.com/images/1/profile/DSCF7306.JPG', null);
