@@ -25,6 +25,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse registerUser(UserCreate userCreate) {
 
+        checkEmailDuplicated(userCreate.email());
+
         UserCreate encryptedUserCreate = UserCreate.builder()
                 .name(userCreate.name())
                 .password(passwordEncoder.encode(userCreate.password()))
