@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -45,14 +46,27 @@ public class AuthServiceImpl implements AuthService {
 
         TokenResponse tokenResponse = customTokenProvider.generationToken(user, Duration.ofHours(2));
 
-        RefreshToken refreshToken = RefreshToken.builder()
-                .userId(user.id())
-                .refreshToken(tokenResponse.refreshToken())
-                .build();
+        RefreshToken newRefreshToken = generateNewRefreshToken(user, tokenResponse);
 
-        refreshTokenRepository.save(refreshToken);
+        refreshTokenRepository.save(newRefreshToken);
 
         return tokenResponse;
+    }
+
+    private RefreshToken generateNewRefreshToken(User user, TokenResponse tokenResponse) {
+        Optional<RefreshToken> findRefreshToken = refreshTokenRepository.findByUserId(user.id());
+
+        RefreshToken newRefreshToken;
+        if (findRefreshToken.isPresent()) {
+            RefreshToken refreshToken = findRefreshToken.get();
+            newRefreshToken = refreshToken.update(tokenResponse.refreshToken());
+        } else {
+            newRefreshToken = RefreshToken.builder()
+                    .userId(user.id())
+                    .refreshToken(tokenResponse.refreshToken())
+                    .build();
+        }
+        return newRefreshToken;
     }
 
     public User getUserOutOfSecurityContextHolder() {
