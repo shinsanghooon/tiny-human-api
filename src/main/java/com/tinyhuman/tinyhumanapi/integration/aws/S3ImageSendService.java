@@ -62,12 +62,13 @@ public class S3ImageSendService implements ImageService {
     }
 
     @Override
-    public String getPreSignedUrlForUpload(String keyName) {
+    public String getPreSignedUrlForUpload(String keyName, String mimeType) {
 
         // keyName is filename including directory path
         PutObjectRequest objectRequest = PutObjectRequest.builder()
                 .bucket(bucketName)
                 .key(keyName)
+                .contentType(mimeType)
                 .build();
 
         PutObjectPresignRequest preSignRequest = PutObjectPresignRequest.builder()

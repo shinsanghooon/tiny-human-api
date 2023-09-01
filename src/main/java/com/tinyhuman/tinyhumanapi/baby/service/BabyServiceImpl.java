@@ -12,6 +12,7 @@ import com.tinyhuman.tinyhumanapi.diary.domain.Diary;
 import com.tinyhuman.tinyhumanapi.diary.service.port.DiaryRepository;
 import com.tinyhuman.tinyhumanapi.integration.aws.S3Util;
 import com.tinyhuman.tinyhumanapi.integration.service.ImageService;
+import com.tinyhuman.tinyhumanapi.integration.util.ImageUtil;
 import com.tinyhuman.tinyhumanapi.user.controller.port.UserBabyRelationService;
 import com.tinyhuman.tinyhumanapi.user.domain.User;
 import com.tinyhuman.tinyhumanapi.user.domain.UserBabyRelation;
@@ -59,11 +60,14 @@ public class BabyServiceImpl implements BabyService {
         User user = authService.getUserOutOfSecurityContextHolder();
 
         String keyName = S3Util.addUserIdToImagePath(s3UploadPath, user.id(), babyCreate.fileName());
-        String preSignedUrl = imageService.getPreSignedUrlForUpload(keyName);
-        System.out.println("preSignedUrl = " + preSignedUrl);
+        System.out.println("keyName = " + keyName);
+        String mimeType = ImageUtil.guessMimeType(babyCreate.fileName());
+        System.out.println("mimeType = " + mimeType);
 
         Baby baby = babyRepository.save(Baby.fromCreate(babyCreate, keyName));
         userBabyRelationService.establishRelationUserToBaby(babyCreate, user, baby);
+
+        String preSignedUrl = imageService.getPreSignedUrlForUpload(keyName, mimeType);
 
         return BabyResponse.fromModel(baby, preSignedUrl);
     }
