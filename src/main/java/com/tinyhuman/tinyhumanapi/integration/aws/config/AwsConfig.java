@@ -8,6 +8,7 @@ import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3AsyncClient;
+import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 
 @Configuration
 public class AwsConfig {
@@ -27,10 +28,17 @@ public class AwsConfig {
     @Bean
     public S3AsyncClient s3AsyncClient(AwsCredentialsProvider credentialsProvider) {
         return S3AsyncClient.builder()
-                .region(Region.of("ap-northeast-2"))
+                .region(Region.AP_NORTHEAST_2)
                 .credentialsProvider(credentialsProvider)
                 .build();
     }
 
+    @Bean
+    public S3Presigner s3PreSigner(AwsCredentialsProvider credentialsProvider) {
+        return S3Presigner.builder()
+                .region(Region.AP_NORTHEAST_2)
+                .credentialsProvider(credentialsProvider)
+                .build();
+    }
 
 }

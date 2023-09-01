@@ -25,7 +25,7 @@ public class FakeBabyRepository implements BabyRepository {
                     .nickName(baby.nickName())
                     .timeOfBirth(baby.timeOfBirth())
                     .dayOfBirth(baby.dayOfBirth())
-                    .profileImgUrl(baby.profileImgUrl())
+                    .profileImgKeyName(baby.profileImgKeyName())
                     .isDeleted(false)
                     .build();
             data.add(newBaby);

@@ -1,5 +1,6 @@
 package com.tinyhuman.tinyhumanapi.album.service;
 
+import com.tinyhuman.tinyhumanapi.album.controller.dto.AlbumCreate;
 import com.tinyhuman.tinyhumanapi.album.controller.dto.AlbumDelete;
 import com.tinyhuman.tinyhumanapi.album.controller.dto.AlbumResponse;
 import com.tinyhuman.tinyhumanapi.album.domain.Album;
@@ -8,9 +9,8 @@ import com.tinyhuman.tinyhumanapi.auth.mock.FakeAuthService;
 import com.tinyhuman.tinyhumanapi.baby.domain.Baby;
 import com.tinyhuman.tinyhumanapi.baby.enums.Gender;
 import com.tinyhuman.tinyhumanapi.baby.mock.FakeImageService;
-import com.tinyhuman.tinyhumanapi.baby.mock.FakeMultipartFile;
-import com.tinyhuman.tinyhumanapi.common.exception.UnauthorizedAccessException;
 import com.tinyhuman.tinyhumanapi.common.enums.ContentType;
+import com.tinyhuman.tinyhumanapi.common.exception.UnauthorizedAccessException;
 import com.tinyhuman.tinyhumanapi.user.domain.User;
 import com.tinyhuman.tinyhumanapi.user.domain.UserBabyRelation;
 import com.tinyhuman.tinyhumanapi.user.enums.FamilyRelation;
@@ -18,8 +18,6 @@ import com.tinyhuman.tinyhumanapi.user.enums.UserBabyRole;
 import com.tinyhuman.tinyhumanapi.user.enums.UserStatus;
 import com.tinyhuman.tinyhumanapi.user.mock.FakeUserBabyRelationRepository;
 import org.junit.jupiter.api.*;
-import org.springframework.web.multipart.MaxUploadSizeExceededException;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -61,7 +59,7 @@ class AlbumServiceImplTest {
                 .nickName("초코")
                 .timeOfBirth(20)
                 .dayOfBirth(LocalDate.of(2022, 9, 20))
-                .profileImgUrl("test_url")
+                .profileImgKeyName("test_url")
                 .isDeleted(false)
                 .build();
 
@@ -72,7 +70,7 @@ class AlbumServiceImplTest {
                 .nickName("딸기")
                 .timeOfBirth(12)
                 .dayOfBirth(LocalDate.of(2022, 5, 20))
-                .profileImgUrl("baby")
+                .profileImgKeyName("baby")
                 .isDeleted(false)
                 .build();
 
@@ -101,17 +99,13 @@ class AlbumServiceImplTest {
     @Nested
     @DisplayName("사진 및 영상을 업로드 한다.")
     class UploadAlbums{
-        List<MultipartFile> files = new ArrayList<>();
+        List<AlbumCreate> files = new ArrayList<>();
 
         @BeforeEach
         void fileSetup() {
-            for (int i = 0; i < 5; i++) {
-                String name = "image_" + i;
-                String originalFileName = "original_" + i;
-                String contentType = "image/png";
-                int byteLength = 2000000 * (i + 1); // 2MB
-                MultipartFile file = FakeMultipartFile.creatMockMultipartFile(name, originalFileName, contentType, byteLength);
-                files.add(file);
+            for (int i = 0; i < 10; i++) {
+                String originalFileName = "original_" + i + ".png";
+                files.add(new AlbumCreate(originalFileName));
             }
         }
 
@@ -136,23 +130,6 @@ class AlbumServiceImplTest {
                     .isInstanceOf(UnauthorizedAccessException.class)
                     .hasMessageContaining("접근 권한이 없습니다");
         }
-
-        @DisplayName("사진 용량이 15MB를 넘으면 예외를 던진다.")
-        @Test
-        void over15MB() {
-
-            String name = "image_over" ;
-            String originalFileName = "original_over";
-            String contentType = "image/png";
-            int byteLength = 2000000 * 100; // 2MB
-            MultipartFile file = FakeMultipartFile.creatMockMultipartFile(name, originalFileName, contentType, byteLength);
-            files.add(file);
-
-            assertThatThrownBy(() -> albumServiceImpl.uploadAlbums(1L, files))
-                    .isInstanceOf(MaxUploadSizeExceededException.class)
-                    .hasMessageContaining("bytes exceeded");
-
-        }
     }
 
 
@@ -160,18 +137,14 @@ class AlbumServiceImplTest {
     @DisplayName("앨범을 삭제한다.")
     class DeleteAlbums {
 
-        List<MultipartFile> files = new ArrayList<>();
+        List<AlbumCreate> files = new ArrayList<>();
 
         @BeforeEach
         @DisplayName("임시 이미지 파일 5개를 미리 저장해둔다.")
         void fileSetup() {
             for (int i = 0; i < 5; i++) {
-                String name = "image_" + i;
-                String originalFileName = "original_" + i;
-                String contentType = "image/png";
-                int byteLength = 2000000 * (i + 1); // 2MB
-                MultipartFile file = FakeMultipartFile.creatMockMultipartFile(name, originalFileName, contentType, byteLength);
-                files.add(file);
+                String originalFileName = "original_" + i + ".png";
+                files.add(new AlbumCreate(originalFileName));
             }
 
             albumServiceImpl.uploadAlbums(1L, files);
@@ -201,18 +174,14 @@ class AlbumServiceImplTest {
     @DisplayName("앨범을 조회한다.")
     class GetAlbums {
 
-        List<MultipartFile> files = new ArrayList<>();
+        List<AlbumCreate> files = new ArrayList<>();
         Long babyId = 1L;
         @BeforeEach
         @DisplayName("임시 이미지 파일 10개를 미리 저장해둔다.")
         void fileSetup() {
             for (int i = 0; i < 10; i++) {
-                String name = "image_" + i;
-                String originalFileName = "original_" + i;
-                String contentType = "image/png";
-                int byteLength = 1000000 * (i + 1); // 2MB
-                MultipartFile file = FakeMultipartFile.creatMockMultipartFile(name, originalFileName, contentType, byteLength);
-                files.add(file);
+                String originalFileName = "original_" + i + ".png";
+                files.add(new AlbumCreate(originalFileName));
             }
 
             albumServiceImpl.uploadAlbums(babyId, files);
@@ -227,7 +196,7 @@ class AlbumServiceImplTest {
             assertThat(album.id()).isEqualTo(albumId);
             assertThat(album.babyId()).isEqualTo(babyId);
             assertThat(album.contentType()).isEqualTo(ContentType.PICTURE);
-            assertThat(album.originalS3Url()).contains("original_3");
+            assertThat(album.preSignedUrl()).contains("original_3");
 
         }
 

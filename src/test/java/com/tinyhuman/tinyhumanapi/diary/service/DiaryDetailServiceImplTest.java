@@ -51,7 +51,7 @@ class DiaryDetailServiceImplTest {
                 .nickName("초코")
                 .timeOfBirth(20)
                 .dayOfBirth(LocalDate.of(2022, 9, 20))
-                .profileImgUrl("test_url")
+                .profileImgKeyName("test_url")
                 .isDeleted(false)
                 .build();
 
@@ -68,18 +68,17 @@ class DiaryDetailServiceImplTest {
                 .build();
 
         Diary diary = Diary.fromCreate(diaryCreate, baby, user);
+        Diary savedDiary = fakeDiaryRepository.save(diary);
+
         List<Sentence> sentences = Sentence.from(diaryCreate)
                 .stream()
                 .map(s -> Sentence.builder()
                         .sentence(s.sentence())
-                        .diaryId(diary.id())
+                        .diaryId(savedDiary.id())
                         .build())
                 .toList();
-        List<Sentence> savedSentences = fakeSentenceRepository.saveAll(sentences, diary);
-
-        Diary diaryWithSentence = diary.addSentences(savedSentences);
-        fakeDiaryRepository.save(diaryWithSentence);
-
+        List<Sentence> savedSentences = fakeSentenceRepository.saveAll(sentences, savedDiary);
+        Diary diaryWithSentence = savedDiary.addSentences(savedSentences);
         fakeSentenceRepository.saveAll(sentences, diaryWithSentence);
 
         Picture picture1 = Picture.builder()

@@ -1,5 +1,6 @@
 package com.tinyhuman.tinyhumanapi.album.controller;
 
+import com.tinyhuman.tinyhumanapi.album.controller.dto.AlbumCreate;
 import com.tinyhuman.tinyhumanapi.album.controller.dto.AlbumDelete;
 import com.tinyhuman.tinyhumanapi.album.controller.dto.AlbumResponse;
 import com.tinyhuman.tinyhumanapi.album.controller.port.AlbumService;
@@ -10,7 +11,6 @@ import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -27,7 +27,7 @@ public class AlbumController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/{babyId}/albums")
     public List<AlbumResponse> uploadAlbums(@PathVariable("babyId") Long babyId,
-                                         @RequestPart(required=false) @Size(max = 20, message="사진 및 동영상은 최대 업로드 개수는 20개입니다.") List<MultipartFile> files) {
+                                         @RequestBody @Size(max = 20, message="사진 및 동영상은 최대 업로드 개수는 20개입니다.") List<AlbumCreate> files) {
         return albumService.uploadAlbums(babyId, files);
     }
 

@@ -29,7 +29,7 @@ class BabyTest {
         assertThat(baby.nickName()).isEqualTo(babyCreate.nickName());
         assertThat(baby.timeOfBirth()).isEqualTo(babyCreate.timeOfBirth());
         assertThat(baby.dayOfBirth()).isEqualTo(babyCreate.dayOfBirth());
-        assertThat(baby.profileImgUrl()).isEqualTo(s3ImgUrl);
+        assertThat(baby.profileImgKeyName()).isEqualTo(s3ImgUrl);
 
     }
 

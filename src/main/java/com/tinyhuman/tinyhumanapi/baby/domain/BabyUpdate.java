@@ -18,6 +18,8 @@ public record BabyUpdate(
         @Enumerated
         Gender gender,
 
+        String keyName,
+
         @NotNull
         @DateTimeFormat(pattern = "yyyy-MM-dd")
         LocalDate dayOfBirth,

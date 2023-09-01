@@ -5,13 +5,10 @@ import com.tinyhuman.tinyhumanapi.baby.domain.Baby;
 import com.tinyhuman.tinyhumanapi.baby.enums.Gender;
 import com.tinyhuman.tinyhumanapi.baby.mock.FakeBabyRepository;
 import com.tinyhuman.tinyhumanapi.baby.mock.FakeImageService;
-import com.tinyhuman.tinyhumanapi.baby.mock.FakeMultipartFile;
+import com.tinyhuman.tinyhumanapi.common.enums.ContentType;
 import com.tinyhuman.tinyhumanapi.common.exception.ResourceNotFoundException;
 import com.tinyhuman.tinyhumanapi.common.exception.UnauthorizedAccessException;
-import com.tinyhuman.tinyhumanapi.diary.domain.Diary;
-import com.tinyhuman.tinyhumanapi.diary.domain.DiaryCreate;
-import com.tinyhuman.tinyhumanapi.diary.domain.DiaryResponse;
-import com.tinyhuman.tinyhumanapi.diary.domain.SentenceCreate;
+import com.tinyhuman.tinyhumanapi.diary.domain.*;
 import com.tinyhuman.tinyhumanapi.diary.mock.FakeDiaryRepository;
 import com.tinyhuman.tinyhumanapi.diary.mock.FakePictureRepository;
 import com.tinyhuman.tinyhumanapi.diary.mock.FakeSentenceRepository;
@@ -26,10 +23,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -77,7 +72,7 @@ class DiaryServiceImplTest {
                 .nickName("초코")
                 .timeOfBirth(20)
                 .dayOfBirth(LocalDate.of(2022, 9, 20))
-                .profileImgUrl("test_url")
+                .profileImgKeyName("test_url")
                 .isDeleted(false)
                 .build();
 
@@ -87,16 +82,50 @@ class DiaryServiceImplTest {
                 .mapToObj(i -> SentenceCreate.builder().sentence("안녕하세요[" + i + "]").build())
                 .toList();
 
+        // Save Diary
         DiaryCreate diaryCreate = DiaryCreate.builder()
                 .babyId(1L)
                 .daysAfterBirth(10)
                 .likeCount(0)
                 .userId(1L)
-                .sentences(sentenceCreateArrayList)
                 .build();
 
         Diary diary = Diary.fromCreate(diaryCreate, savedBaby, user);
-        fakeDiaryRepository.save(diary);
+
+        Diary savedDiary = fakeDiaryRepository.save(diary);
+
+
+        // Save Sentence
+        List<Sentence> sentenceModels = sentenceCreateArrayList.stream()
+                .map(s -> Sentence.builder()
+                        .sentence(s.sentence())
+                        .diaryId(savedDiary.id())
+                        .build())
+                .toList();
+
+        List<Sentence> savedSentence = fakeSentenceRepository.saveAll(sentenceModels, savedDiary);
+        savedDiary.addSentences(savedSentence);
+
+        List<Picture> pictures = List.of(
+                Picture.builder()
+                        .diaryId(1L)
+                        .isMainPicture(true)
+                        .keyName("abc.test")
+                        .preSignedUrl("abc.test")
+                        .contentType(ContentType.PICTURE)
+                        .build(),
+
+                Picture.builder()
+                        .diaryId(1L)
+                        .isMainPicture(true)
+                        .keyName("abc2.test")
+                        .preSignedUrl("abc2.test")
+                        .contentType(ContentType.PICTURE)
+                        .build()
+        );
+
+        fakePictureRepository.saveAll(pictures, savedDiary);
+
 
         fakeUserBabyRelationRepository.save(UserBabyRelation.builder()
                 .user(User.builder().id(1L).build())
@@ -118,12 +147,14 @@ class DiaryServiceImplTest {
     @DisplayName("일기를 등록한다.")
     class RegisterDiary {
         @Test
-        @DisplayName("DiaryCreate와 파일을 입력 받아 일기를 등록한다.")
+        @DisplayName("DiaryCreate을 입력 받아 일기를 등록한다.")
         void registerDiary() {
 
             List<SentenceCreate> sentenceCreateArrayList = IntStream.range(0, 5)
                     .mapToObj(i -> SentenceCreate.builder().sentence("안녕하세요[" + i + "]").build())
                     .toList();
+
+            List<PictureCreate> pictureCreates = List.of(new PictureCreate("picture.png"), new PictureCreate("picture2.png"));
 
             DiaryCreate diaryCreate = DiaryCreate.builder()
                     .babyId(1L)
@@ -131,18 +162,19 @@ class DiaryServiceImplTest {
                     .likeCount(0)
                     .userId(1L)
                     .sentences(sentenceCreateArrayList)
+                    .files(pictureCreates)
                     .build();
 
-            MultipartFile multipartFile = FakeMultipartFile.createMultipartFile(false);
-            List<MultipartFile> diaryPictures = List.of(multipartFile);
-            DiaryResponse diaryResponse = diaryServiceImpl.create(diaryCreate, diaryPictures);
+            DiaryResponse diaryResponse = diaryServiceImpl.create(diaryCreate);
+
+            List<Sentence> sentences = diaryResponse.sentences();
 
             assertThat(diaryResponse.id()).isNotNull();
             assertThat(diaryResponse.daysAfterBirth()).isEqualTo(diaryCreate.daysAfterBirth());
             assertThat(diaryResponse.likeCount()).isEqualTo(diaryCreate.likeCount());
             assertThat(diaryResponse.sentences().size()).isEqualTo(diaryCreate.sentences().size());
 
-            assertThat(diaryResponse.pictures().size()).isEqualTo(diaryPictures.size());
+            assertThat(diaryResponse.pictures().size()).isEqualTo(pictureCreates.size());
         }
 
         @Test
@@ -151,6 +183,7 @@ class DiaryServiceImplTest {
             List<SentenceCreate> sentenceCreateArrayList = IntStream.range(0, 5)
                     .mapToObj(i -> SentenceCreate.builder().sentence("안녕하세요[" + i + "]").build())
                     .toList();
+            List<PictureCreate> pictureCreates = List.of(new PictureCreate("picture.png"), new PictureCreate("picture2.png"));
 
             DiaryCreate diaryCreate = DiaryCreate.builder()
                     .babyId(9999L)
@@ -158,12 +191,10 @@ class DiaryServiceImplTest {
                     .likeCount(0)
                     .userId(1L)
                     .sentences(sentenceCreateArrayList)
+                    .files(pictureCreates)
                     .build();
 
-            MultipartFile multipartFile = FakeMultipartFile.createMultipartFile(false);
-            List<MultipartFile> diaryPictures = List.of(multipartFile);
-
-            assertThatThrownBy(() -> diaryServiceImpl.create(diaryCreate, diaryPictures))
+            assertThatThrownBy(() -> diaryServiceImpl.create(diaryCreate))
                     .isInstanceOf(ResourceNotFoundException.class);
         }
     }
@@ -181,15 +212,18 @@ class DiaryServiceImplTest {
                     .mapToObj(i -> SentenceCreate.builder().sentence("안녕하세요[" + i + "]").build())
                     .toList();
 
+            List<PictureCreate> pictureCreates = List.of(new PictureCreate("picture.png"), new PictureCreate("picture2.png"));
+
             DiaryCreate diaryCreate = DiaryCreate.builder()
                     .babyId(1L)
                     .daysAfterBirth(10)
                     .likeCount(100)
                     .userId(1L)
                     .sentences(sentenceCreateArrayList)
+                    .files(pictureCreates)
                     .build();
 
-            diaryServiceImpl.create(diaryCreate, new ArrayList<MultipartFile>());
+            diaryServiceImpl.create(diaryCreate);
 
         }
 
@@ -203,7 +237,7 @@ class DiaryServiceImplTest {
             assertThat(diary.likeCount()).isEqualTo(100);
             assertThat(diary.writer()).isEqualTo("홈버그");
             assertThat(diary.sentences().size()).isEqualTo(5);
-            assertThat(diary.pictures().size()).isEqualTo(0);
+            assertThat(diary.pictures().size()).isEqualTo(2);
 
         }
 
@@ -231,8 +265,6 @@ class DiaryServiceImplTest {
             assertThatThrownBy(() -> diaryServiceImpl.getMyDiariesByBaby(babyId))
                     .isInstanceOf(UnauthorizedAccessException.class);
         }
-
-
     }
 
 
@@ -244,18 +276,10 @@ class DiaryServiceImplTest {
         @DisplayName("DiaryId를 입력 받아 일기를 삭제한다.")
         void deleteDiary() {
             Long id = 1L;
-            DiaryResponse diary = diaryServiceImpl.findById(id);
-
             Diary deletedDiary = diaryServiceImpl.delete(id);
 
-            // 조회해서 결과가 없는 것으로 확인
             assertThat(deletedDiary.id()).isEqualTo(id);
-            assertThat(diary.isDeleted()).isFalse();
             assertThat(deletedDiary.isDeleted()).isTrue();
         }
-
     }
-
-
-
 }

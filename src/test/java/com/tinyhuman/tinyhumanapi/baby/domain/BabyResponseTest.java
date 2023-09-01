@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 class BabyResponseTest {
 
@@ -21,10 +20,10 @@ class BabyResponseTest {
                 .nickName("초코")
                 .timeOfBirth(10)
                 .dayOfBirth(LocalDate.of(2022, 9, 20))
-                .profileImgUrl("https://image.com/1234")
+                .profileImgKeyName("https://image.com/1234")
                 .build();
 
-        BabyResponse babyResponse = BabyResponse.fromModel(baby);
+        BabyResponse babyResponse = BabyResponse.fromModel(baby, "presignedUrl");
 
         assertThat(babyResponse.id()).isEqualTo(baby.id());
         assertThat(babyResponse.name()).isEqualTo(baby.name());
@@ -32,7 +31,7 @@ class BabyResponseTest {
         assertThat(babyResponse.nickName()).isEqualTo(baby.nickName());
         assertThat(babyResponse.timeOfBirth()).isEqualTo(baby.timeOfBirth());
         assertThat(babyResponse.dayOfBirth()).isEqualTo(baby.dayOfBirth());
-        assertThat(babyResponse.profileImgUrl()).isEqualTo(baby.profileImgUrl());
+        assertThat(babyResponse.preSignedUrl()).isEqualTo("presignedUrl");
     }
 
 }

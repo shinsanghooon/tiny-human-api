@@ -1,20 +1,33 @@
 package com.tinyhuman.tinyhumanapi.integration.util;
 
-import com.tinyhuman.tinyhumanapi.common.exception.NotSupportedContentTypeException;
 import com.tinyhuman.tinyhumanapi.common.enums.ContentType;
-import org.springframework.web.multipart.MultipartFile;
+import com.tinyhuman.tinyhumanapi.common.exception.NotSupportedContentTypeException;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 public class ImageUtil {
-    public static ContentType getContentType(MultipartFile file) {
-        String fileContentType = file.getContentType();
+    public static ContentType getContentType(String fileName) {
         ContentType contentType;
-        if (fileContentType.startsWith("image")) {
+        if (fileName.startsWith("image")) {
             contentType = ContentType.PICTURE;
-        } else if (fileContentType.startsWith("video")) {
+        } else if (fileName.startsWith("video")) {
             contentType = ContentType.VIDEO;
         } else {
-            throw new NotSupportedContentTypeException(fileContentType);
+            throw new NotSupportedContentTypeException(fileName);
         }
         return contentType;
     }
+
+    public static String guessMimeType(String fileName){
+        Path path = new File(fileName).toPath();
+        try {
+            return Files.probeContentType(path);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }

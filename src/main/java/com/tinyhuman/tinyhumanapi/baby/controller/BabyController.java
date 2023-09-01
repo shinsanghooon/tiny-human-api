@@ -1,6 +1,7 @@
 package com.tinyhuman.tinyhumanapi.baby.controller;
 
 import com.tinyhuman.tinyhumanapi.baby.domain.BabyCreate;
+import com.tinyhuman.tinyhumanapi.baby.domain.BabyImageUpdate;
 import com.tinyhuman.tinyhumanapi.baby.domain.BabyResponse;
 import com.tinyhuman.tinyhumanapi.baby.domain.BabyUpdate;
 import com.tinyhuman.tinyhumanapi.baby.service.BabyServiceImpl;
@@ -11,7 +12,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -26,9 +26,8 @@ public class BabyController {
             @ApiResponse(responseCode = "201", description = "아기 등록 성공")})
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public BabyResponse register(@RequestPart @Valid BabyCreate babyCreate,
-                                 @RequestPart(required = false) MultipartFile file) {
-        return babyService.register(babyCreate, file);
+    public BabyResponse register(@RequestBody @Valid BabyCreate babyCreate) {
+        return babyService.register(babyCreate);
     }
 
     @Operation(summary = "나의 아기 조회 API", responses = {
@@ -53,9 +52,16 @@ public class BabyController {
             @ApiResponse(responseCode = "200", description = "아기 정보 수정 성공")})
     @PatchMapping("{id}")
     @ResponseStatus(HttpStatus.OK)
-    public BabyResponse update(@PathVariable("id") Long id, @RequestPart @Valid BabyUpdate babyUpdate,
-                               @RequestPart(value="file", required = false) MultipartFile file) {
-        return babyService.update(id, babyUpdate, file);
+    public BabyResponse update(@PathVariable("id") Long id, @RequestBody @Valid BabyUpdate babyUpdate) {
+        return babyService.update(id, babyUpdate);
+    }
+
+    @Operation(summary = "아기 프로필 사진 수정 API", responses = {
+            @ApiResponse(responseCode = "200", description = "아기 이미지 수정 성공")})
+    @PatchMapping("{id}/image")
+    @ResponseStatus(HttpStatus.OK)
+    public BabyResponse updateProfileImage(@PathVariable("id") Long id, @RequestBody @Valid BabyImageUpdate babyImageUpdate) {
+        return babyService.updateProfileImage(id, babyImageUpdate.fileName());
     }
 
 }

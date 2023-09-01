@@ -10,16 +10,16 @@ import com.tinyhuman.tinyhumanapi.baby.service.port.BabyRepository;
 import com.tinyhuman.tinyhumanapi.common.exception.ResourceNotFoundException;
 import com.tinyhuman.tinyhumanapi.diary.domain.Diary;
 import com.tinyhuman.tinyhumanapi.diary.service.port.DiaryRepository;
+import com.tinyhuman.tinyhumanapi.integration.aws.S3Util;
 import com.tinyhuman.tinyhumanapi.integration.service.ImageService;
+import com.tinyhuman.tinyhumanapi.integration.util.ImageUtil;
 import com.tinyhuman.tinyhumanapi.user.controller.port.UserBabyRelationService;
 import com.tinyhuman.tinyhumanapi.user.domain.User;
 import com.tinyhuman.tinyhumanapi.user.domain.UserBabyRelation;
 import com.tinyhuman.tinyhumanapi.user.service.port.UserRepository;
 import lombok.Builder;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -49,26 +49,30 @@ public class BabyServiceImpl implements BabyService {
         this.authService = authService;
     }
 
-    @Value("${aws.s3.path.profile}")
-    private String s3UploadPath;
+    private String BABY_PROFILE_UPLOAD_PATH = "images/userId/baby/profile/";
 
     @Override
-    public BabyResponse register(BabyCreate babyCreate, MultipartFile file) {
+    public BabyResponse register(BabyCreate babyCreate) {
 
         User user = authService.getUserOutOfSecurityContextHolder();
 
-        String s3FullPath = imageService.sendImage(file, s3UploadPath);
-        Baby baby = babyRepository.save(Baby.fromCreate(babyCreate, s3FullPath));
+        String keyName = S3Util.addUserIdToImagePath(BABY_PROFILE_UPLOAD_PATH, user.id(), babyCreate.fileName());
+        String mimeType = ImageUtil.guessMimeType(babyCreate.fileName());
 
+        Baby baby = babyRepository.save(Baby.fromCreate(babyCreate, keyName));
         userBabyRelationService.establishRelationUserToBaby(babyCreate, user, baby);
 
-        return BabyResponse.fromModel(baby);
+        String preSignedUrl = imageService.getPreSignedUrlForUpload(keyName, mimeType);
+
+        return BabyResponse.fromModel(baby, preSignedUrl);
     }
 
     @Override
     public BabyResponse findById(Long id) {
         Baby baby = findBaby(id);
-        return BabyResponse.fromModel(baby);
+        String profileImgKeyName = baby.profileImgKeyName();
+        String preSignedUrlForRead = imageService.getPreSignedUrlForRead(profileImgKeyName);
+        return BabyResponse.fromModel(baby, preSignedUrlForRead);
     }
 
     @Override
@@ -78,7 +82,10 @@ public class BabyServiceImpl implements BabyService {
 
         return myBabies.stream()
                 .map(UserBabyRelation::baby)
-                .map(BabyResponse::fromModel)
+                .map(b -> {
+                    String preSignedUrlForRead = imageService.getPreSignedUrlForRead(b.profileImgKeyName());
+                    return BabyResponse.fromModel(b, preSignedUrlForRead);
+                })
                 .toList();
     }
 
@@ -96,20 +103,32 @@ public class BabyServiceImpl implements BabyService {
         });
     }
     @Override
-    public BabyResponse update(Long id, BabyUpdate babyUpdate, MultipartFile file) {
+    public BabyResponse update(Long id, BabyUpdate babyUpdate) {
+
         Baby baby = findBaby(id);
 
-        String s3FullPath;
-        if (file == null) {
-            s3FullPath = baby.profileImgUrl();
-        } else {
-            s3FullPath = imageService.sendImage(file, s3UploadPath);
-        }
+        Baby updatedBaby = baby.update(babyUpdate);
+        Baby savedBaby = babyRepository.save(updatedBaby);
+        String preSignedUrlForRead = imageService.getPreSignedUrlForRead(savedBaby.profileImgKeyName());
 
-        Baby updatedBaby = baby.update(babyUpdate, s3FullPath);
+        return BabyResponse.fromModel(savedBaby, preSignedUrlForRead);
+    }
+
+    @Override
+    public BabyResponse updateProfileImage(Long id, String fileName) {
+
+        Baby baby = findBaby(id);
+        User user = authService.getUserOutOfSecurityContextHolder();
+
+        String keyName = S3Util.addUserIdToImagePath(BABY_PROFILE_UPLOAD_PATH, user.id(), fileName);
+        String mimeType = ImageUtil.guessMimeType(fileName);
+        String preSignedUrl = imageService.getPreSignedUrlForUpload(keyName, mimeType);
+
+        Baby updatedBaby = baby.updateOnlyImage(keyName);
         Baby savedBaby = babyRepository.save(updatedBaby);
 
-        return BabyResponse.fromModel(savedBaby);
+        return BabyResponse.fromModel(savedBaby, preSignedUrl);
+
     }
 
 
