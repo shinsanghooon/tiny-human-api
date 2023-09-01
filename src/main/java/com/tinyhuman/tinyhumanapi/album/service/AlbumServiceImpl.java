@@ -1,14 +1,16 @@
 package com.tinyhuman.tinyhumanapi.album.service;
 
+import com.tinyhuman.tinyhumanapi.album.controller.dto.AlbumCreate;
 import com.tinyhuman.tinyhumanapi.album.controller.dto.AlbumDelete;
 import com.tinyhuman.tinyhumanapi.album.controller.dto.AlbumResponse;
 import com.tinyhuman.tinyhumanapi.album.controller.port.AlbumService;
 import com.tinyhuman.tinyhumanapi.album.domain.Album;
 import com.tinyhuman.tinyhumanapi.album.service.port.AlbumRepository;
 import com.tinyhuman.tinyhumanapi.auth.controller.port.AuthService;
+import com.tinyhuman.tinyhumanapi.common.enums.ContentType;
 import com.tinyhuman.tinyhumanapi.common.exception.ResourceNotFoundException;
 import com.tinyhuman.tinyhumanapi.common.exception.UnauthorizedAccessException;
-import com.tinyhuman.tinyhumanapi.common.enums.ContentType;
+import com.tinyhuman.tinyhumanapi.integration.aws.S3Util;
 import com.tinyhuman.tinyhumanapi.integration.service.ImageService;
 import com.tinyhuman.tinyhumanapi.integration.util.ImageUtil;
 import com.tinyhuman.tinyhumanapi.user.domain.User;
@@ -16,10 +18,8 @@ import com.tinyhuman.tinyhumanapi.user.domain.UserBabyRelation;
 import com.tinyhuman.tinyhumanapi.user.infrastructure.UserBabyMappingId;
 import com.tinyhuman.tinyhumanapi.user.service.port.UserBabyRelationRepository;
 import lombok.Builder;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,22 +44,34 @@ public class AlbumServiceImpl implements AlbumService {
         this.authService = authService;
     }
 
-    @Value("${aws.s3.path.album}")
-    private String s3UploadPath;
+    private final String ALBUM_UPLOAD_PATH = "images/babyId/album/";
 
     @Override
     public AlbumResponse findByIdAndBabyId(Long albumId, Long babyId) {
         Album album = albumRepository.findByIdAndBabyId(albumId, babyId);
-        return AlbumResponse.fromModel(album);
+        String preSignedUrl = getPreSignedUrlFromKeyName(album);
+        return AlbumResponse.fromModel(album, preSignedUrl);
     }
 
     @Override
     public List<AlbumResponse> getAlbumsByBaby(Long babyId) {
-        return albumRepository.findByBabyId(babyId).stream().map(AlbumResponse::fromModel).toList();
+        return albumRepository.findByBabyId(babyId).stream().map(album -> {
+            String preSignedUrl = getPreSignedUrlFromKeyName(album);
+            return AlbumResponse.fromModel(album, preSignedUrl);
+        }).toList();
+    }
+
+    private String getPreSignedUrlFromKeyName(Album album) {
+        String keyName = album.keyName();
+        String[] split = keyName.split("/");
+        String fileName = split[split.length - 1];
+        String mimeType = ImageUtil.guessMimeType(fileName);
+
+        return imageService.getPreSignedUrlForUpload(keyName, mimeType);
     }
 
     @Override
-    public List<AlbumResponse> uploadAlbums(Long babyId, List<MultipartFile> files) {
+    public List<AlbumResponse> uploadAlbums(Long babyId, List<AlbumCreate> files) {
 
         User user = authService.getUserOutOfSecurityContextHolder();
         UserBabyRelation userBabyRelation = userBabyRelationRepository.findById(UserBabyMappingId.builder()
@@ -74,13 +86,18 @@ public class AlbumServiceImpl implements AlbumService {
 
         List<Album> albums = new ArrayList<>();
 
-        for (MultipartFile file : files) {
-            String s3Url = imageService.sendImage(file, s3UploadPath);
-            ContentType contentType = ImageUtil.getContentType(file);
+        for (AlbumCreate albumCreate : files) {
+            String fileName = albumCreate.fileName();
+            String keyName = S3Util.addBabyIdToImagePath(ALBUM_UPLOAD_PATH, babyId, fileName);
+            String mimeType = ImageUtil.guessMimeType(fileName);
+
+            String preSignedUrl = imageService.getPreSignedUrlForUpload(keyName, mimeType);
+            ContentType contentType = ImageUtil.getContentType(mimeType);
 
             Album album = Album.builder()
                     .contentType(contentType)
-                    .originalS3Url(s3Url)
+                    .keyName(keyName)
+                    .preSignedUrl(preSignedUrl)
                     .babyId(babyId)
                     .build();
 

@@ -27,18 +27,18 @@ public class AlbumEntity extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private ContentType contentType;
 
-    @Column(name = "original_s3_url")
-    private String originalS3Url;
+    @Column(name = "key_name")
+    private String keyName;
 
     @Column(name="is_deleted")
     private boolean isDeleted = false;
 
     @Builder
-    public AlbumEntity(Long id, Long babyId, ContentType contentType, String originalS3Url, boolean isDeleted) {
+    public AlbumEntity(Long id, Long babyId, ContentType contentType, String keyName, boolean isDeleted) {
         this.id = id;
         this.babyId = babyId;
         this.contentType = contentType;
-        this.originalS3Url = originalS3Url;
+        this.keyName = keyName;
         this.isDeleted = isDeleted;
     }
 
@@ -47,7 +47,7 @@ public class AlbumEntity extends BaseEntity {
                 .id(album.id())
                 .babyId(album.babyId())
                 .contentType(album.contentType())
-                .originalS3Url(album.originalS3Url())
+                .keyName(album.keyName())
                 .isDeleted(album.isDeleted())
                 .build();
     }
@@ -57,7 +57,7 @@ public class AlbumEntity extends BaseEntity {
                 .id(this.id)
                 .babyId(this.babyId)
                 .contentType(this.contentType)
-                .originalS3Url(this.originalS3Url)
+                .keyName(this.keyName)
                 .isDeleted(this.isDeleted)
                 .build();
     }

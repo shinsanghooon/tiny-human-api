@@ -8,6 +8,12 @@ public class S3Util {
         return s3FullPathBuilder.append(path.replace("userId", id)).append(fileName).toString();
     }
 
+    public static String addBabyIdToImagePath(String path, Long babyId, String fileName) {
+        StringBuilder s3FullPathBuilder = new StringBuilder();
+        String id = String.valueOf(babyId);
+        return s3FullPathBuilder.append(path.replace("babyId", id)).append(fileName).toString();
+    }
+
     public static String getAccessUrl(String bucketName, String s3FullPath) {
         StringBuffer accessUrl = new StringBuffer();
         return accessUrl.append("https://")
