@@ -1,6 +1,7 @@
 package com.tinyhuman.tinyhumanapi.integration.aws;
 
 import com.tinyhuman.tinyhumanapi.integration.service.ImageService;
+import com.tinyhuman.tinyhumanapi.integration.util.ImageUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -109,5 +110,13 @@ public class S3ImageSendService implements ImageService {
             throw new RuntimeException("Failed to read file bytes.", e);
         }
         return imageBytes;
+    }
+
+    public String getPreSignedUrlForReadFromKeyName(String keyName) {
+        String[] split = keyName.split("/");
+        String fileName = split[split.length - 1];
+        String mimeType = ImageUtil.guessMimeType(fileName);
+
+        return getPreSignedUrlForRead(keyName);
     }
 }

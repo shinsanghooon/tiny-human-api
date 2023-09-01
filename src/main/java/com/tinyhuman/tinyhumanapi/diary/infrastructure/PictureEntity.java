@@ -26,19 +26,19 @@ public class PictureEntity extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private ContentType contentType;
 
-    @Column(name = "original_s3_url")
-    private String originalS3Url;
+    @Column(name = "key_name")
+    private String keyName;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "diary_id")
     private DiaryEntity diary;
 
     @Builder
-    public PictureEntity(Long id, boolean isMainPicture, ContentType contentType, String originalS3Url, DiaryEntity diary) {
+    public PictureEntity(Long id, boolean isMainPicture, ContentType contentType, String keyName, DiaryEntity diary) {
         this.id = id;
         this.isMainPicture = isMainPicture;
         this.contentType = contentType;
-        this.originalS3Url = originalS3Url;
+        this.keyName = keyName;
         this.diary = setDiary(diary);
     }
 
@@ -57,7 +57,7 @@ public class PictureEntity extends BaseEntity {
                 .id(picture.id())
                 .contentType(picture.contentType())
                 .isMainPicture(picture.isMainPicture())
-                .originalS3Url(picture.originalS3Url())
+                .keyName(picture.keyName())
                 .diary(DiaryEntity.fromModel(diary))
                 .build();
     }
@@ -67,7 +67,7 @@ public class PictureEntity extends BaseEntity {
                 .id(this.id)
                 .isMainPicture(this.isMainPicture)
                 .contentType(this.contentType)
-                .originalS3Url(this.originalS3Url)
+                .keyName(this.keyName)
                 .diaryId(this.diary.getId())
                 .build();
     }
