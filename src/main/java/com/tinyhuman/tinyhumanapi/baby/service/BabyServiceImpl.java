@@ -56,8 +56,6 @@ public class BabyServiceImpl implements BabyService {
 
         User user = authService.getUserOutOfSecurityContextHolder();
 
-        System.out.println(BABY_PROFILE_UPLOAD_PATH);
-
         String keyName = S3Util.addUserIdToImagePath(BABY_PROFILE_UPLOAD_PATH, user.id(), babyCreate.fileName());
         String mimeType = ImageUtil.guessMimeType(babyCreate.fileName());
 
@@ -65,7 +63,6 @@ public class BabyServiceImpl implements BabyService {
         userBabyRelationService.establishRelationUserToBaby(babyCreate, user, baby);
 
         String preSignedUrl = imageService.getPreSignedUrlForUpload(keyName, mimeType);
-        System.out.println("preSignedUrl = " + preSignedUrl);
 
         return BabyResponse.fromModel(baby, preSignedUrl);
     }

@@ -23,7 +23,11 @@ public record DiaryCreate(
 
         @NotNull
         @Size(max = 3, message = "글을 하루에 3개까지 작성이 가능합니다.")
-        List<SentenceCreate> sentences) {
+        List<SentenceCreate> sentences,
+
+        @Size(max = 5, message="사진 및 동영상은 최대 업로드 개수는 5개입니다.")
+        List<PictureCreate> files
+        ) {
 
     @Builder
     public DiaryCreate {
