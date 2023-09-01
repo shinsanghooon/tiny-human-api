@@ -21,7 +21,6 @@ import lombok.Builder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -108,21 +107,31 @@ public class BabyServiceImpl implements BabyService {
         });
     }
     @Override
-    public BabyResponse update(Long id, BabyUpdate babyUpdate, MultipartFile file) {
+    public BabyResponse update(Long id, BabyUpdate babyUpdate) {
         Baby baby = findBaby(id);
 
-        String s3FullPath;
-        if (file == null) {
-            s3FullPath = baby.profileImgKeyName();
-        } else {
-            s3FullPath = imageService.sendImage(file, s3UploadPath);
-        }
-
-        Baby updatedBaby = baby.update(babyUpdate, s3FullPath);
+        Baby updatedBaby = baby.update(babyUpdate);
         Baby savedBaby = babyRepository.save(updatedBaby);
         String preSignedUrlForRead = imageService.getPreSignedUrlForRead(savedBaby.profileImgKeyName());
 
         return BabyResponse.fromModel(savedBaby, preSignedUrlForRead);
+    }
+
+    @Override
+    public BabyResponse updateProfileImage(Long id, String fileName) {
+
+        Baby baby = findBaby(id);
+        User user = authService.getUserOutOfSecurityContextHolder();
+
+        String keyName = S3Util.addUserIdToImagePath(s3UploadPath, user.id(), fileName);
+        String mimeType = ImageUtil.guessMimeType(fileName);
+        String preSignedUrl = imageService.getPreSignedUrlForUpload(keyName, mimeType);
+
+        Baby updatedBaby = baby.updateOnlyImage(keyName);
+        Baby savedBaby = babyRepository.save(updatedBaby);
+
+        return BabyResponse.fromModel(savedBaby, preSignedUrl);
+
     }
 
 
