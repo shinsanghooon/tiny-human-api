@@ -8,9 +8,16 @@ import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.async.AsyncRequestBody;
 import software.amazon.awssdk.services.s3.S3AsyncClient;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.presigner.S3Presigner;
+import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
+import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequest;
+import software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequest;
+import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
 
 import java.io.IOException;
+import java.time.Duration;
 
 @Service
 @RequiredArgsConstructor
@@ -20,6 +27,8 @@ public class S3ImageSendService implements ImageService {
     private String bucketName;
 
     private final S3AsyncClient s3AsyncClient;
+
+    private final S3Presigner s3Presigner;
 
     private int MAX_FILE_SIZE = 15 * 1024 * 1024;
 
@@ -51,6 +60,44 @@ public class S3ImageSendService implements ImageService {
 
         return S3Util.getAccessUrl(bucketName, s3FullPath);
     }
+
+    @Override
+    public String getPreSignedUrlForUpload(String keyName) {
+
+        // keyName is filename including directory path
+        PutObjectRequest objectRequest = PutObjectRequest.builder()
+                .bucket(bucketName)
+                .key(keyName)
+                .build();
+
+        PutObjectPresignRequest preSignRequest = PutObjectPresignRequest.builder()
+                .signatureDuration(Duration.ofMinutes(2))
+                .putObjectRequest(objectRequest)
+                .build();
+
+        PresignedPutObjectRequest preSignedRequest = s3Presigner.presignPutObject(preSignRequest);
+
+        return preSignedRequest.url().toString();
+    }
+
+    @Override
+    public String getPreSignedUrlForRead(String keyName) {
+
+        GetObjectRequest objectRequest = GetObjectRequest.builder()
+                .bucket(bucketName)
+                .key(keyName)
+                .build();
+
+        GetObjectPresignRequest preSignRequest = GetObjectPresignRequest.builder()
+                .signatureDuration(Duration.ofMinutes(60))
+                .getObjectRequest(objectRequest)
+                .build();
+
+        PresignedGetObjectRequest preSignedRequest = s3Presigner.presignGetObject(preSignRequest);
+
+        return preSignedRequest.url().toString();
+    }
+
 
     private static byte[] getImageBytes(MultipartFile file) {
         byte[] imageBytes;

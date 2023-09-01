@@ -35,7 +35,7 @@ aws:
   s3:
     bucketName: tiny-human-dev
     path:
-      profile: images/babyId/profile/
+      profile: images/userId/baby/profile/
       diary: images/babyId/diary/
       album: images/babyId/album/
 jwt:
