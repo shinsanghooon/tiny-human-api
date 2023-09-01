@@ -41,7 +41,7 @@ class UserBabyRelationServiceImplTest {
                 .nickName("초코")
                 .timeOfBirth(20)
                 .dayOfBirth(LocalDate.of(2022, 9, 20))
-                .profileImgUrl("test_url")
+                .profileImgKeyName("test_url")
                 .isDeleted(false)
                 .build();
 
@@ -52,7 +52,7 @@ class UserBabyRelationServiceImplTest {
                 .nickName("딸기")
                 .timeOfBirth(10)
                 .dayOfBirth(LocalDate.of(2023, 9, 20))
-                .profileImgUrl("test_url")
+                .profileImgKeyName("test_url")
                 .isDeleted(false)
                 .build();
 

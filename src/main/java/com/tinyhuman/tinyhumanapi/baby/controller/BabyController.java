@@ -58,9 +58,9 @@ public class BabyController {
 
     @Operation(summary = "아기 프로필 사진 수정 API", responses = {
             @ApiResponse(responseCode = "200", description = "아기 이미지 수정 성공")})
-    @PatchMapping("{id}")
+    @PatchMapping("{id}/image")
     @ResponseStatus(HttpStatus.OK)
-    public BabyResponse update(@PathVariable("id") Long id, @RequestBody @Valid BabyImageUpdate babyImageUpdate) {
+    public BabyResponse updateProfileImage(@PathVariable("id") Long id, @RequestBody @Valid BabyImageUpdate babyImageUpdate) {
         return babyService.updateProfileImage(id, babyImageUpdate.fileName());
     }
 

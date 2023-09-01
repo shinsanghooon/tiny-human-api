@@ -18,7 +18,6 @@ import com.tinyhuman.tinyhumanapi.user.domain.User;
 import com.tinyhuman.tinyhumanapi.user.domain.UserBabyRelation;
 import com.tinyhuman.tinyhumanapi.user.service.port.UserRepository;
 import lombok.Builder;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,23 +49,23 @@ public class BabyServiceImpl implements BabyService {
         this.authService = authService;
     }
 
-    @Value("${aws.s3.path.profile}")
-    private String s3UploadPath;
+    private String BABY_PROFILE_UPLOAD_PATH = "images/userId/baby/profile/";
 
     @Override
     public BabyResponse register(BabyCreate babyCreate) {
 
         User user = authService.getUserOutOfSecurityContextHolder();
 
-        String keyName = S3Util.addUserIdToImagePath(s3UploadPath, user.id(), babyCreate.fileName());
-        System.out.println("keyName = " + keyName);
+        System.out.println(BABY_PROFILE_UPLOAD_PATH);
+
+        String keyName = S3Util.addUserIdToImagePath(BABY_PROFILE_UPLOAD_PATH, user.id(), babyCreate.fileName());
         String mimeType = ImageUtil.guessMimeType(babyCreate.fileName());
-        System.out.println("mimeType = " + mimeType);
 
         Baby baby = babyRepository.save(Baby.fromCreate(babyCreate, keyName));
         userBabyRelationService.establishRelationUserToBaby(babyCreate, user, baby);
 
         String preSignedUrl = imageService.getPreSignedUrlForUpload(keyName, mimeType);
+        System.out.println("preSignedUrl = " + preSignedUrl);
 
         return BabyResponse.fromModel(baby, preSignedUrl);
     }
@@ -108,6 +107,7 @@ public class BabyServiceImpl implements BabyService {
     }
     @Override
     public BabyResponse update(Long id, BabyUpdate babyUpdate) {
+
         Baby baby = findBaby(id);
 
         Baby updatedBaby = baby.update(babyUpdate);
@@ -123,7 +123,7 @@ public class BabyServiceImpl implements BabyService {
         Baby baby = findBaby(id);
         User user = authService.getUserOutOfSecurityContextHolder();
 
-        String keyName = S3Util.addUserIdToImagePath(s3UploadPath, user.id(), fileName);
+        String keyName = S3Util.addUserIdToImagePath(BABY_PROFILE_UPLOAD_PATH, user.id(), fileName);
         String mimeType = ImageUtil.guessMimeType(fileName);
         String preSignedUrl = imageService.getPreSignedUrlForUpload(keyName, mimeType);
 

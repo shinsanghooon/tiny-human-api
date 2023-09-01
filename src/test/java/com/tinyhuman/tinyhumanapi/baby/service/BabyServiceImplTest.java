@@ -8,7 +8,6 @@ import com.tinyhuman.tinyhumanapi.baby.domain.BabyUpdate;
 import com.tinyhuman.tinyhumanapi.baby.enums.Gender;
 import com.tinyhuman.tinyhumanapi.baby.mock.FakeBabyRepository;
 import com.tinyhuman.tinyhumanapi.baby.mock.FakeImageService;
-import com.tinyhuman.tinyhumanapi.baby.mock.FakeMultipartFile;
 import com.tinyhuman.tinyhumanapi.common.exception.ResourceNotFoundException;
 import com.tinyhuman.tinyhumanapi.diary.mock.FakeDiaryRepository;
 import com.tinyhuman.tinyhumanapi.user.domain.User;
@@ -20,12 +19,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
 
 class BabyServiceImplTest {
 
@@ -73,7 +72,7 @@ class BabyServiceImplTest {
                 .nickName("초코")
                 .timeOfBirth(20)
                 .dayOfBirth(LocalDate.of(2022, 9, 20))
-                .profileImgUrl("test_url")
+                .profileImgKeyName("test.png")
                 .isDeleted(false)
                 .build();
 
@@ -83,6 +82,8 @@ class BabyServiceImplTest {
     @Nested
     @DisplayName("아기를 등록할 수 있다.")
     class RegisterBaby {
+
+
         @Test
         @DisplayName("BabyCreate을 이용하여 아기를 등록할 수 있다.")
         void registerBaby() {
@@ -91,11 +92,11 @@ class BabyServiceImplTest {
                     .gender(Gender.MALE)
                     .nickName("등록")
                     .timeOfBirth(14)
+                    .fileName("test.png")
                     .dayOfBirth(LocalDate.of(2022, 9, 30))
                     .build();
 
-            MultipartFile multipartFile = FakeMultipartFile.createMultipartFile(false);
-            BabyResponse response = babyServiceImpl.register(babyCreate, multipartFile);
+            BabyResponse response = babyServiceImpl.register(babyCreate);
 
             assertThat(response.id()).isNotNull();
             assertThat(response.name()).isEqualTo(babyCreate.name());
@@ -103,7 +104,7 @@ class BabyServiceImplTest {
             assertThat(response.nickName()).isEqualTo(babyCreate.nickName());
             assertThat(response.timeOfBirth()).isEqualTo(babyCreate.timeOfBirth());
             assertThat(response.dayOfBirth()).isEqualTo(babyCreate.dayOfBirth());
-            assertThat(response.profileImgUrl()).isNotNull();
+            assertThat(response.preSignedUrl()).contains("images/1/baby/profile/" + babyCreate.fileName());
         }
     }
 
@@ -120,7 +121,6 @@ class BabyServiceImplTest {
             assertThat(baby.name()).isEqualTo("김가나");
             assertThat(baby.gender()).isEqualTo(Gender.MALE);
             assertThat(baby.dayOfBirth()).isEqualTo(LocalDate.of(2022, 9, 20));
-            assertThat(baby.profileImgUrl()).isEqualTo("test_url");
         }
     }
 
@@ -139,7 +139,7 @@ class BabyServiceImplTest {
                     .timeOfBirth(18)
                     .build();
 
-            BabyResponse updatedUser = babyServiceImpl.update(1L, babyUpdate, null);
+            BabyResponse updatedUser = babyServiceImpl.update(1L, babyUpdate);
 
             assertThat(updatedUser.id()).isNotNull();
             assertThat(updatedUser.name()).isEqualTo(babyUpdate.name());
@@ -152,32 +152,19 @@ class BabyServiceImplTest {
         @Test
         @DisplayName("아기 정보와 프로필 사진을 수정할 수 있다.")
         void updateBabyWithFile() {
-
+            String newFile = "update.png";
             BabyResponse originalUser = babyServiceImpl.findById(1L);
-
-            BabyUpdate babyUpdate = BabyUpdate.builder()
-                    .name("김수정")
-                    .gender(Gender.MALE)
-                    .nickName("김진짜")
-                    .dayOfBirth(LocalDate.of(2022, 10, 4))
-                    .timeOfBirth(18)
-                    .build();
-
-            MultipartFile multipartFile = FakeMultipartFile.createMultipartFile(true);
-            BabyResponse updatedUser = babyServiceImpl.update(1L, babyUpdate, multipartFile);
+            BabyResponse updatedUser = babyServiceImpl.updateProfileImage(1L, newFile);
 
             assertThat(updatedUser.id()).isNotNull();
-            assertThat(updatedUser.name()).isEqualTo(babyUpdate.name());
-            assertThat(updatedUser.gender()).isEqualTo(babyUpdate.gender());
-            assertThat(updatedUser.nickName()).isEqualTo(babyUpdate.nickName());
-            assertThat(updatedUser.dayOfBirth()).isEqualTo(babyUpdate.dayOfBirth());
-            assertThat(updatedUser.timeOfBirth()).isEqualTo(babyUpdate.timeOfBirth());
-
-            assertThat(updatedUser.profileImgUrl()).isNotEqualTo(originalUser.profileImgUrl());
+            assertThat(updatedUser.name()).isEqualTo(originalUser.name());
+            assertThat(updatedUser.gender()).isEqualTo(originalUser.gender());
+            assertThat(updatedUser.nickName()).isEqualTo(originalUser.nickName());
+            assertThat(updatedUser.dayOfBirth()).isEqualTo(originalUser.dayOfBirth());
+            assertThat(updatedUser.timeOfBirth()).isEqualTo(originalUser.timeOfBirth());
+            assertThat(updatedUser.preSignedUrl()).contains(newFile);
         }
     }
-
-
 
     @Nested
     @DisplayName("아기를 삭제할 수 있다.")

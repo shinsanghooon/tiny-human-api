@@ -77,7 +77,7 @@ class DiaryServiceImplTest {
                 .nickName("초코")
                 .timeOfBirth(20)
                 .dayOfBirth(LocalDate.of(2022, 9, 20))
-                .profileImgUrl("test_url")
+                .profileImgKeyName("test_url")
                 .isDeleted(false)
                 .build();
 

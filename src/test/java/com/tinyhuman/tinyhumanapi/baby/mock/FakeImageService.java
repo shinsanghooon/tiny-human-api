@@ -18,4 +18,16 @@ public class FakeImageService implements ImageService {
         s3UploadPath = "test";
         return "http://localhost:8080/" + s3UploadPath + "/" + file.getOriginalFilename();
     }
+
+    @Override
+    public String getPreSignedUrlForUpload(String keyName, String mimeType) {
+        return keyName;
+    }
+
+    @Override
+    public String getPreSignedUrlForRead(String keyName) {
+        return keyName;
+    }
+
+
 }
