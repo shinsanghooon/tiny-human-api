@@ -156,7 +156,12 @@ public class DiaryServiceImpl implements DiaryService {
 
         List<Diary> babyDiaries = diaryRepository.findByBabyId(babyId);
 
-        List<Diary> diariesWithPreSignedUrl = babyDiaries.stream().map(this::addPreSignedUrlToDiary).toList();
+        List<Diary> diariesWithPreSignedUrl = babyDiaries.stream().map(d -> {
+            if (d.pictures() == null || d.pictures().size() == 0) {
+                return d;
+            }
+            return addPreSignedUrlToDiary(d);
+        }).toList();
 
         return diariesWithPreSignedUrl.stream()
                 .map(DiaryResponse::fromModel)

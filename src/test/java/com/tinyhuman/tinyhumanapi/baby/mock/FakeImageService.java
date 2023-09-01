@@ -29,5 +29,11 @@ public class FakeImageService implements ImageService {
         return keyName;
     }
 
+    @Override
+    public String getPreSignedUrlForReadFromKeyName(String keyName) {
+        return keyName;
+    }
+
+
 
 }
