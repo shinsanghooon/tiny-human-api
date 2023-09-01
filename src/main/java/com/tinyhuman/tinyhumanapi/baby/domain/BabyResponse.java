@@ -6,13 +6,13 @@ import lombok.Builder;
 
 import java.time.LocalDate;
 
-public record BabyResponse(Long id, String name, Gender gender, LocalDate dayOfBirth, int timeOfBirth, String nickName, String profileImgUrl) {
+public record BabyResponse(Long id, String name, Gender gender, LocalDate dayOfBirth, int timeOfBirth, String nickName, String preSignedUrl) {
 
     @Builder
     public BabyResponse {
     }
 
-    public static BabyResponse fromModel(Baby baby) {
+    public static BabyResponse fromModel(Baby baby, String preSignedUrl) {
 
         if (baby.isDeleted()) {
             throw new ResourceNotFoundException("Baby", baby.id());
@@ -25,7 +25,7 @@ public record BabyResponse(Long id, String name, Gender gender, LocalDate dayOfB
                 .dayOfBirth(baby.dayOfBirth())
                 .timeOfBirth(baby.timeOfBirth())
                 .nickName(baby.nickName())
-                .profileImgUrl(baby.profileImgUrl())
+                .preSignedUrl(preSignedUrl)
                 .build();
     }
 }

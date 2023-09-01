@@ -18,6 +18,8 @@ public record BabyCreate(
         @Enumerated
         Gender gender,
 
+        String fileName,
+
         @NotNull
         @DateTimeFormat(pattern = "yyyy-MM-dd")
         LocalDate dayOfBirth,

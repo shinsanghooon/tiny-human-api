@@ -26,9 +26,8 @@ public class BabyController {
             @ApiResponse(responseCode = "201", description = "아기 등록 성공")})
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public BabyResponse register(@RequestPart @Valid BabyCreate babyCreate,
-                                 @RequestPart(required = false) MultipartFile file) {
-        return babyService.register(babyCreate, file);
+    public BabyResponse register(@RequestBody @Valid BabyCreate babyCreate) {
+        return babyService.register(babyCreate);
     }
 
     @Operation(summary = "나의 아기 조회 API", responses = {

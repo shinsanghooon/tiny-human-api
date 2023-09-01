@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface BabyService {
 
-    BabyResponse register(BabyCreate babyCreate, MultipartFile file);
+    BabyResponse register(BabyCreate babyCreate);
 
     BabyResponse findById(Long id);
 

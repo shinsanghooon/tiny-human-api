@@ -10,6 +10,7 @@ import com.tinyhuman.tinyhumanapi.baby.service.port.BabyRepository;
 import com.tinyhuman.tinyhumanapi.common.exception.ResourceNotFoundException;
 import com.tinyhuman.tinyhumanapi.diary.domain.Diary;
 import com.tinyhuman.tinyhumanapi.diary.service.port.DiaryRepository;
+import com.tinyhuman.tinyhumanapi.integration.aws.S3Util;
 import com.tinyhuman.tinyhumanapi.integration.service.ImageService;
 import com.tinyhuman.tinyhumanapi.user.controller.port.UserBabyRelationService;
 import com.tinyhuman.tinyhumanapi.user.domain.User;
@@ -53,22 +54,26 @@ public class BabyServiceImpl implements BabyService {
     private String s3UploadPath;
 
     @Override
-    public BabyResponse register(BabyCreate babyCreate, MultipartFile file) {
+    public BabyResponse register(BabyCreate babyCreate) {
 
         User user = authService.getUserOutOfSecurityContextHolder();
 
-        String s3FullPath = imageService.sendImage(file, s3UploadPath);
-        Baby baby = babyRepository.save(Baby.fromCreate(babyCreate, s3FullPath));
+        String keyName = S3Util.addUserIdToImagePath(s3UploadPath, user.id(), babyCreate.fileName());
+        String preSignedUrl = imageService.getPreSignedUrlForUpload(keyName);
+        System.out.println("preSignedUrl = " + preSignedUrl);
 
+        Baby baby = babyRepository.save(Baby.fromCreate(babyCreate, keyName));
         userBabyRelationService.establishRelationUserToBaby(babyCreate, user, baby);
 
-        return BabyResponse.fromModel(baby);
+        return BabyResponse.fromModel(baby, preSignedUrl);
     }
 
     @Override
     public BabyResponse findById(Long id) {
         Baby baby = findBaby(id);
-        return BabyResponse.fromModel(baby);
+        String profileImgKeyName = baby.profileImgKeyName();
+        String preSignedUrlForRead = imageService.getPreSignedUrlForRead(profileImgKeyName);
+        return BabyResponse.fromModel(baby, preSignedUrlForRead);
     }
 
     @Override
@@ -78,7 +83,10 @@ public class BabyServiceImpl implements BabyService {
 
         return myBabies.stream()
                 .map(UserBabyRelation::baby)
-                .map(BabyResponse::fromModel)
+                .map(b -> {
+                    String preSignedUrlForRead = imageService.getPreSignedUrlForRead(b.profileImgKeyName());
+                    return BabyResponse.fromModel(b, preSignedUrlForRead);
+                })
                 .toList();
     }
 
@@ -101,15 +109,16 @@ public class BabyServiceImpl implements BabyService {
 
         String s3FullPath;
         if (file == null) {
-            s3FullPath = baby.profileImgUrl();
+            s3FullPath = baby.profileImgKeyName();
         } else {
             s3FullPath = imageService.sendImage(file, s3UploadPath);
         }
 
         Baby updatedBaby = baby.update(babyUpdate, s3FullPath);
         Baby savedBaby = babyRepository.save(updatedBaby);
+        String preSignedUrlForRead = imageService.getPreSignedUrlForRead(savedBaby.profileImgKeyName());
 
-        return BabyResponse.fromModel(savedBaby);
+        return BabyResponse.fromModel(savedBaby, preSignedUrlForRead);
     }
 
 

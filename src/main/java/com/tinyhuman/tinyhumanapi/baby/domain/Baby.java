@@ -5,7 +5,7 @@ import lombok.Builder;
 
 import java.time.LocalDate;
 
-public record Baby(Long id, String name, Gender gender, LocalDate dayOfBirth, int timeOfBirth, String nickName, String profileImgUrl,  boolean isDeleted) {
+public record Baby(Long id, String name, Gender gender, LocalDate dayOfBirth, int timeOfBirth, String nickName, String profileImgKeyName, boolean isDeleted) {
 
     @Builder
     public Baby {
@@ -18,7 +18,7 @@ public record Baby(Long id, String name, Gender gender, LocalDate dayOfBirth, in
                 .nickName(babyCreate.nickName())
                 .dayOfBirth(babyCreate.dayOfBirth())
                 .timeOfBirth(babyCreate.timeOfBirth())
-                .profileImgUrl(s3ImgUrl)
+                .profileImgKeyName(s3ImgUrl)
                 .isDeleted(false)
                 .build();
     }
@@ -31,7 +31,7 @@ public record Baby(Long id, String name, Gender gender, LocalDate dayOfBirth, in
                 .nickName(this.nickName)
                 .dayOfBirth(this.dayOfBirth)
                 .timeOfBirth(this.timeOfBirth)
-                .profileImgUrl(this.profileImgUrl)
+                .profileImgKeyName(this.profileImgKeyName)
                 .isDeleted(true)
                 .build();
     }
@@ -44,7 +44,7 @@ public record Baby(Long id, String name, Gender gender, LocalDate dayOfBirth, in
                 .nickName(babyUpdate.nickName())
                 .dayOfBirth(babyUpdate.dayOfBirth())
                 .timeOfBirth(babyUpdate.timeOfBirth())
-                .profileImgUrl(s3ImgUrl)
+                .profileImgKeyName(s3ImgUrl)
                 .isDeleted(false)
                 .build();
     }
