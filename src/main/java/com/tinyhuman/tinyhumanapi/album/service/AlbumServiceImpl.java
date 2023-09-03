@@ -44,7 +44,7 @@ public class AlbumServiceImpl implements AlbumService {
         this.authService = authService;
     }
 
-    private final String ALBUM_UPLOAD_PATH = "images/babyId/album/";
+    private final String ALBUM_UPLOAD_PATH = "baby/babyId/album/";
 
     @Override
     public AlbumResponse findByIdAndBabyId(Long albumId, Long babyId) {

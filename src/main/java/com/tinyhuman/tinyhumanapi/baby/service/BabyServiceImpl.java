@@ -49,14 +49,14 @@ public class BabyServiceImpl implements BabyService {
         this.authService = authService;
     }
 
-    private String BABY_PROFILE_UPLOAD_PATH = "images/userId/baby/profile/";
+    private String BABY_PROFILE_UPLOAD_PATH = "baby/babyId/profile/";
 
     @Override
     public BabyResponse register(BabyCreate babyCreate) {
 
         User user = authService.getUserOutOfSecurityContextHolder();
 
-        String keyName = S3Util.addUserIdToImagePath(BABY_PROFILE_UPLOAD_PATH, user.id(), babyCreate.fileName());
+        String keyName = S3Util.addBabyIdToImagePath(BABY_PROFILE_UPLOAD_PATH, user.id(), babyCreate.fileName());
         String mimeType = ImageUtil.guessMimeType(babyCreate.fileName());
 
         Baby baby = babyRepository.save(Baby.fromCreate(babyCreate, keyName));

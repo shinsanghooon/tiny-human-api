@@ -60,7 +60,7 @@ public class DiaryServiceImpl implements DiaryService {
         this.authService = authService;
     }
 
-    private final String DIARY_IMAGE_UPLOAD_PATH = "images/babyId/diary/";
+    private final String DIARY_IMAGE_UPLOAD_PATH = "baby/babyId/diary/diaryId/";
 
     @Transactional
     public DiaryResponse create(DiaryCreate diaryCreate) {
@@ -176,7 +176,7 @@ public class DiaryServiceImpl implements DiaryService {
         for (PictureCreate pictureCreate : files) {
 
             String fileName = pictureCreate.fileName();
-            String keyName = S3Util.addBabyIdToImagePath(DIARY_IMAGE_UPLOAD_PATH, babyId, fileName);
+            String keyName = S3Util.addBabyIdAndAlbumIdToImagePath(DIARY_IMAGE_UPLOAD_PATH, babyId, savedDiary.id(), fileName);
             String mimeType = ImageUtil.guessMimeType(fileName);
 
             String preSignedUrl = imageService.getPreSignedUrlForUpload(keyName, mimeType);
