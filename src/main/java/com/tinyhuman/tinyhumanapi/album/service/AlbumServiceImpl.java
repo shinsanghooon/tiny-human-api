@@ -10,9 +10,10 @@ import com.tinyhuman.tinyhumanapi.auth.controller.port.AuthService;
 import com.tinyhuman.tinyhumanapi.common.enums.ContentType;
 import com.tinyhuman.tinyhumanapi.common.exception.ResourceNotFoundException;
 import com.tinyhuman.tinyhumanapi.common.exception.UnauthorizedAccessException;
-import com.tinyhuman.tinyhumanapi.integration.aws.S3Util;
+import com.tinyhuman.tinyhumanapi.common.service.port.ClockHolder;
+import com.tinyhuman.tinyhumanapi.common.utils.FileUtils;
 import com.tinyhuman.tinyhumanapi.integration.service.ImageService;
-import com.tinyhuman.tinyhumanapi.integration.util.ImageUtil;
+import com.tinyhuman.tinyhumanapi.common.utils.ImageUtils;
 import com.tinyhuman.tinyhumanapi.user.domain.User;
 import com.tinyhuman.tinyhumanapi.user.domain.UserBabyRelation;
 import com.tinyhuman.tinyhumanapi.user.infrastructure.UserBabyMappingId;
@@ -36,12 +37,16 @@ public class AlbumServiceImpl implements AlbumService {
 
     private final AuthService authService;
 
+    private final ClockHolder clockHolder;
+
     @Builder
-    public AlbumServiceImpl(AlbumRepository albumRepository, ImageService imageService, UserBabyRelationRepository userBabyRelationRepository, AuthService authService) {
+    public AlbumServiceImpl(AlbumRepository albumRepository, ImageService imageService, UserBabyRelationRepository userBabyRelationRepository,
+                            AuthService authService, ClockHolder clockHolder) {
         this.albumRepository = albumRepository;
         this.imageService = imageService;
         this.userBabyRelationRepository = userBabyRelationRepository;
         this.authService = authService;
+        this.clockHolder = clockHolder;
     }
 
     private final String ALBUM_UPLOAD_PATH = "baby/babyId/album/";
@@ -49,25 +54,16 @@ public class AlbumServiceImpl implements AlbumService {
     @Override
     public AlbumResponse findByIdAndBabyId(Long albumId, Long babyId) {
         Album album = albumRepository.findByIdAndBabyId(albumId, babyId);
-        String preSignedUrl = getPreSignedUrlFromKeyName(album);
+        String preSignedUrl = imageService.getPreSignedUrlForRead(album.keyName());
         return AlbumResponse.fromModel(album, preSignedUrl);
     }
 
     @Override
     public List<AlbumResponse> getAlbumsByBaby(Long babyId) {
         return albumRepository.findByBabyId(babyId).stream().map(album -> {
-            String preSignedUrl = getPreSignedUrlFromKeyName(album);
+            String preSignedUrl = imageService.getPreSignedUrlForRead(album.keyName());
             return AlbumResponse.fromModel(album, preSignedUrl);
         }).toList();
-    }
-
-    private String getPreSignedUrlFromKeyName(Album album) {
-        String keyName = album.keyName();
-        String[] split = keyName.split("/");
-        String fileName = split[split.length - 1];
-        String mimeType = ImageUtil.guessMimeType(fileName);
-
-        return imageService.getPreSignedUrlForUpload(keyName, mimeType);
     }
 
     @Override
@@ -88,11 +84,13 @@ public class AlbumServiceImpl implements AlbumService {
 
         for (AlbumCreate albumCreate : files) {
             String fileName = albumCreate.fileName();
-            String keyName = S3Util.addBabyIdToImagePath(ALBUM_UPLOAD_PATH, babyId, fileName);
-            String mimeType = ImageUtil.guessMimeType(fileName);
+            String mimeType = ImageUtils.guessMimeType(fileName);
+
+            String fileNameWithEpoch = FileUtils.generateFileNameWithEpochTime(fileName, clockHolder);
+            String keyName = FileUtils.addBabyIdToImagePath(ALBUM_UPLOAD_PATH, babyId, fileNameWithEpoch);
 
             String preSignedUrl = imageService.getPreSignedUrlForUpload(keyName, mimeType);
-            ContentType contentType = ImageUtil.getContentType(mimeType);
+            ContentType contentType = ImageUtils.getContentType(mimeType);
 
             Album album = Album.builder()
                     .contentType(contentType)

@@ -1,7 +1,7 @@
 package com.tinyhuman.tinyhumanapi.integration.aws;
 
+import com.tinyhuman.tinyhumanapi.common.utils.FileUtils;
 import com.tinyhuman.tinyhumanapi.integration.service.ImageService;
-import com.tinyhuman.tinyhumanapi.integration.util.ImageUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -24,8 +24,11 @@ import java.time.Duration;
 @RequiredArgsConstructor
 public class S3ImageSendService implements ImageService {
 
-    @Value("${aws.s3.bucketName}")
-    private String bucketName;
+    @Value("${aws.s3.raw-bucketName}")
+    private String rawBucketName;
+
+    @Value("${aws.s3.thumbnail-bucketName}")
+    private String thumbnailBucketName;
 
     private final S3AsyncClient s3AsyncClient;
 
@@ -44,10 +47,10 @@ public class S3ImageSendService implements ImageService {
 
         String fileName = file.getOriginalFilename();
         Long babyId = 1L;
-        String s3FullPath = S3Util.addUserIdToImagePath(s3UploadPath, babyId, fileName);
+        String s3FullPath = FileUtils.addUserIdToImagePath(s3UploadPath, babyId, fileName);
 
         PutObjectRequest putObjectRequest = PutObjectRequest.builder()
-                .bucket(bucketName)
+                .bucket(rawBucketName)
                 .key(s3FullPath)
                 .build();
 
@@ -59,7 +62,7 @@ public class S3ImageSendService implements ImageService {
                             System.out.println("Image uploaded to S3: " + s3FullPath);
                         });
 
-        return S3Util.getAccessUrl(bucketName, s3FullPath);
+        return S3Util.getAccessUrl(rawBucketName, s3FullPath);
     }
 
     @Override
@@ -67,7 +70,7 @@ public class S3ImageSendService implements ImageService {
 
         // keyName is filename including directory path
         PutObjectRequest objectRequest = PutObjectRequest.builder()
-                .bucket(bucketName)
+                .bucket(rawBucketName)
                 .key(keyName)
                 .contentType(mimeType)
                 .build();
@@ -86,7 +89,7 @@ public class S3ImageSendService implements ImageService {
     public String getPreSignedUrlForRead(String keyName) {
 
         GetObjectRequest objectRequest = GetObjectRequest.builder()
-                .bucket(bucketName)
+                .bucket(thumbnailBucketName)
                 .key(keyName)
                 .build();
 
@@ -112,11 +115,4 @@ public class S3ImageSendService implements ImageService {
         return imageBytes;
     }
 
-    public String getPreSignedUrlForReadFromKeyName(String keyName) {
-        String[] split = keyName.split("/");
-        String fileName = split[split.length - 1];
-        String mimeType = ImageUtil.guessMimeType(fileName);
-
-        return getPreSignedUrlForRead(keyName);
-    }
 }

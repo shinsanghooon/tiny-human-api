@@ -8,11 +8,12 @@ import com.tinyhuman.tinyhumanapi.baby.domain.BabyResponse;
 import com.tinyhuman.tinyhumanapi.baby.domain.BabyUpdate;
 import com.tinyhuman.tinyhumanapi.baby.service.port.BabyRepository;
 import com.tinyhuman.tinyhumanapi.common.exception.ResourceNotFoundException;
+import com.tinyhuman.tinyhumanapi.common.service.port.ClockHolder;
+import com.tinyhuman.tinyhumanapi.common.utils.FileUtils;
 import com.tinyhuman.tinyhumanapi.diary.domain.Diary;
 import com.tinyhuman.tinyhumanapi.diary.service.port.DiaryRepository;
-import com.tinyhuman.tinyhumanapi.integration.aws.S3Util;
 import com.tinyhuman.tinyhumanapi.integration.service.ImageService;
-import com.tinyhuman.tinyhumanapi.integration.util.ImageUtil;
+import com.tinyhuman.tinyhumanapi.common.utils.ImageUtils;
 import com.tinyhuman.tinyhumanapi.user.controller.port.UserBabyRelationService;
 import com.tinyhuman.tinyhumanapi.user.domain.User;
 import com.tinyhuman.tinyhumanapi.user.domain.UserBabyRelation;
@@ -38,26 +39,33 @@ public class BabyServiceImpl implements BabyService {
     private final UserBabyRelationService userBabyRelationService;
 
     private final AuthService authService;
+
+    private final ClockHolder clockHolder;
+
     @Builder
     public BabyServiceImpl(BabyRepository babyRepository, ImageService imageService, DiaryRepository diaryRepository,
-                           UserRepository userRepository, UserBabyRelationService userBabyRelationService, AuthService authService) {
+                           UserRepository userRepository, UserBabyRelationService userBabyRelationService, AuthService authService, ClockHolder clockHolder) {
         this.babyRepository = babyRepository;
         this.imageService = imageService;
         this.diaryRepository = diaryRepository;
         this.userRepository = userRepository;
         this.userBabyRelationService = userBabyRelationService;
         this.authService = authService;
+        this.clockHolder = clockHolder;
     }
 
-    private String BABY_PROFILE_UPLOAD_PATH = "baby/babyId/profile/";
+    private final String BABY_PROFILE_UPLOAD_PATH = "baby/babyId/profile/";
 
     @Override
     public BabyResponse register(BabyCreate babyCreate) {
 
         User user = authService.getUserOutOfSecurityContextHolder();
 
-        String keyName = S3Util.addBabyIdToImagePath(BABY_PROFILE_UPLOAD_PATH, user.id(), babyCreate.fileName());
-        String mimeType = ImageUtil.guessMimeType(babyCreate.fileName());
+        String fileName = babyCreate.fileName();
+        String fileNameWithEpoch = FileUtils.generateFileNameWithEpochTime(fileName, clockHolder);
+
+        String mimeType = ImageUtils.guessMimeType(fileName);
+        String keyName = FileUtils.addBabyIdToImagePath(BABY_PROFILE_UPLOAD_PATH, user.id(), fileNameWithEpoch);
 
         Baby baby = babyRepository.save(Baby.fromCreate(babyCreate, keyName));
         userBabyRelationService.establishRelationUserToBaby(babyCreate, user, baby);
@@ -120,8 +128,11 @@ public class BabyServiceImpl implements BabyService {
         Baby baby = findBaby(id);
         User user = authService.getUserOutOfSecurityContextHolder();
 
-        String keyName = S3Util.addUserIdToImagePath(BABY_PROFILE_UPLOAD_PATH, user.id(), fileName);
-        String mimeType = ImageUtil.guessMimeType(fileName);
+        String fileNameWithEpoch = FileUtils.generateFileNameWithEpochTime(fileName, clockHolder);
+
+        String mimeType = ImageUtils.guessMimeType(fileName);
+        String keyName = FileUtils.addUserIdToImagePath(BABY_PROFILE_UPLOAD_PATH, user.id(), fileNameWithEpoch);
+
         String preSignedUrl = imageService.getPreSignedUrlForUpload(keyName, mimeType);
 
         Baby updatedBaby = baby.updateOnlyImage(keyName);

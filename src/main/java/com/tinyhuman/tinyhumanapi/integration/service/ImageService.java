@@ -10,6 +10,4 @@ public interface ImageService {
 
     String getPreSignedUrlForRead(String keyName);
 
-    String getPreSignedUrlForReadFromKeyName(String keyName);
-
 }
