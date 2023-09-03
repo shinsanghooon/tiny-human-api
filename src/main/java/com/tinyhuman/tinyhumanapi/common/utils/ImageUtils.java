@@ -1,4 +1,4 @@
-package com.tinyhuman.tinyhumanapi.integration.util;
+package com.tinyhuman.tinyhumanapi.common.utils;
 
 import com.tinyhuman.tinyhumanapi.common.enums.ContentType;
 import com.tinyhuman.tinyhumanapi.common.exception.NotSupportedContentTypeException;
@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public class ImageUtil {
+public class ImageUtils {
     public static ContentType getContentType(String fileName) {
         ContentType contentType;
         if (fileName.startsWith("image")) {
