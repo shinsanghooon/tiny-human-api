@@ -3,7 +3,9 @@ package com.tinyhuman.tinyhumanapi.album.controller;
 import com.tinyhuman.tinyhumanapi.album.controller.dto.AlbumCreate;
 import com.tinyhuman.tinyhumanapi.album.controller.dto.AlbumDelete;
 import com.tinyhuman.tinyhumanapi.album.controller.dto.AlbumResponse;
+import com.tinyhuman.tinyhumanapi.album.controller.dto.CursorAlbumResponse;
 import com.tinyhuman.tinyhumanapi.album.controller.port.AlbumService;
+import com.tinyhuman.tinyhumanapi.integration.controller.dto.LastEvaluatedKey;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -35,8 +37,8 @@ public class AlbumController {
             @ApiResponse(responseCode = "200", description = "아기에 대한 전체 앨범 조회")})
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/{babyId}/albums")
-    public List<AlbumResponse> getAlbums(@PathVariable("babyId") Long babyId) {
-        return albumService.getAlbumsByBaby(babyId);
+    public CursorAlbumResponse getAllAlbums(@PathVariable("babyId") Long babyId, @RequestBody(required = false) LastEvaluatedKey lastEvaluatedKey) {
+        return albumService.getAlbumsByBaby(babyId, lastEvaluatedKey);
     }
 
     @Operation(summary = "앨범 단건 조회 API", responses = {

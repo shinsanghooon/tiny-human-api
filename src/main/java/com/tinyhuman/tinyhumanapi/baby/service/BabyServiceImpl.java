@@ -12,7 +12,7 @@ import com.tinyhuman.tinyhumanapi.common.service.port.ClockHolder;
 import com.tinyhuman.tinyhumanapi.common.utils.FileUtils;
 import com.tinyhuman.tinyhumanapi.diary.domain.Diary;
 import com.tinyhuman.tinyhumanapi.diary.service.port.DiaryRepository;
-import com.tinyhuman.tinyhumanapi.integration.service.ImageService;
+import com.tinyhuman.tinyhumanapi.integration.service.port.ImageService;
 import com.tinyhuman.tinyhumanapi.common.utils.ImageUtils;
 import com.tinyhuman.tinyhumanapi.user.controller.port.UserBabyRelationService;
 import com.tinyhuman.tinyhumanapi.user.domain.User;
@@ -79,7 +79,7 @@ public class BabyServiceImpl implements BabyService {
     public BabyResponse findById(Long id) {
         Baby baby = findBaby(id);
         String profileImgKeyName = baby.profileImgKeyName();
-        String preSignedUrlForRead = imageService.getPreSignedUrlForRead(profileImgKeyName);
+        String preSignedUrlForRead = imageService.getPreSignedUrlForRead(profileImgKeyName, 1000);
         return BabyResponse.fromModel(baby, preSignedUrlForRead);
     }
 
@@ -91,7 +91,7 @@ public class BabyServiceImpl implements BabyService {
         return myBabies.stream()
                 .map(UserBabyRelation::baby)
                 .map(b -> {
-                    String preSignedUrlForRead = imageService.getPreSignedUrlForRead(b.profileImgKeyName());
+                    String preSignedUrlForRead = imageService.getPreSignedUrlForRead(b.profileImgKeyName(), 1000);
                     return BabyResponse.fromModel(b, preSignedUrlForRead);
                 })
                 .toList();
@@ -117,7 +117,7 @@ public class BabyServiceImpl implements BabyService {
 
         Baby updatedBaby = baby.update(babyUpdate);
         Baby savedBaby = babyRepository.save(updatedBaby);
-        String preSignedUrlForRead = imageService.getPreSignedUrlForRead(savedBaby.profileImgKeyName());
+        String preSignedUrlForRead = imageService.getPreSignedUrlForRead(savedBaby.profileImgKeyName(), 1000);
 
         return BabyResponse.fromModel(savedBaby, preSignedUrlForRead);
     }

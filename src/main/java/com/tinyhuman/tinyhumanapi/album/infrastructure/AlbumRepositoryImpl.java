@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Set;
 
 @Repository
 @RequiredArgsConstructor
@@ -35,5 +36,10 @@ public class AlbumRepositoryImpl implements AlbumRepository {
     @Override
     public List<Album> findByBabyId(Long babyId) {
         return albumJpaRepository.findByBabyId(babyId).stream().map(AlbumEntity::toModel).toList();
+    }
+
+    @Override
+    public List<Album> findByBabyIdAndKeyNameIn(Long babyId, Set<String> keyNameSet) {
+        return albumJpaRepository.findByBabyIdAndKeyNameIn(babyId, keyNameSet).stream().map(AlbumEntity::toModel).toList();
     }
 }

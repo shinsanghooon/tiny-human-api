@@ -1,6 +1,6 @@
 package com.tinyhuman.tinyhumanapi.baby.mock;
 
-import com.tinyhuman.tinyhumanapi.integration.service.ImageService;
+import com.tinyhuman.tinyhumanapi.integration.service.port.ImageService;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,15 +25,9 @@ public class FakeImageService implements ImageService {
     }
 
     @Override
-    public String getPreSignedUrlForRead(String keyName) {
+    public String getPreSignedUrlForRead(String keyName, int size) {
         return keyName;
     }
-
-    @Override
-    public String getPreSignedUrlForReadFromKeyName(String keyName) {
-        return keyName;
-    }
-
 
 
 }

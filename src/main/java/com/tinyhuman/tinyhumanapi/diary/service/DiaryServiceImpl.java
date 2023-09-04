@@ -13,7 +13,7 @@ import com.tinyhuman.tinyhumanapi.diary.domain.*;
 import com.tinyhuman.tinyhumanapi.diary.service.port.DiaryRepository;
 import com.tinyhuman.tinyhumanapi.diary.service.port.PictureRepository;
 import com.tinyhuman.tinyhumanapi.diary.service.port.SentenceRepository;
-import com.tinyhuman.tinyhumanapi.integration.service.ImageService;
+import com.tinyhuman.tinyhumanapi.integration.service.port.ImageService;
 import com.tinyhuman.tinyhumanapi.common.utils.ImageUtils;
 import com.tinyhuman.tinyhumanapi.user.domain.User;
 import com.tinyhuman.tinyhumanapi.user.domain.UserBabyRelation;
@@ -130,7 +130,7 @@ public class DiaryServiceImpl implements DiaryService {
     private Diary addPreSignedUrlToDiary(Diary diary) {
         List<Picture> pictures = diary.pictures();
         List<Picture> picturesWithPreSignedUrl = pictures.stream().map(p -> {
-            String preSignedUrl = imageService.getPreSignedUrlForRead(p.keyName());
+            String preSignedUrl = imageService.getPreSignedUrlForRead(p.keyName(), 1000);
             return p.addPreSignedUrl(preSignedUrl);
         }).toList();
 
