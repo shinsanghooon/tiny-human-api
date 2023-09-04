@@ -1,6 +1,6 @@
 package com.tinyhuman.tinyhumanapi.integration.aws;
 
-public class S3Util {
+public class S3Utils {
     public static String getAccessUrl(String bucketName, String s3FullPath) {
         StringBuffer accessUrl = new StringBuffer();
         return accessUrl.append("https://")
