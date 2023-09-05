@@ -12,6 +12,7 @@ import com.tinyhuman.tinyhumanapi.baby.enums.Gender;
 import com.tinyhuman.tinyhumanapi.baby.mock.FakeImageService;
 import com.tinyhuman.tinyhumanapi.common.enums.ContentType;
 import com.tinyhuman.tinyhumanapi.common.exception.UnauthorizedAccessException;
+import com.tinyhuman.tinyhumanapi.common.mock.TestClockHolder;
 import com.tinyhuman.tinyhumanapi.user.domain.User;
 import com.tinyhuman.tinyhumanapi.user.domain.UserBabyRelation;
 import com.tinyhuman.tinyhumanapi.user.enums.FamilyRelation;
@@ -37,12 +38,15 @@ class AlbumServiceImplTest {
         FakeImageService fakeImageService = new FakeImageService();
         FakeAuthService fakeAuthService = new FakeAuthService();
         FakeAlbumRepository fakeAlbumRepository = new FakeAlbumRepository();
+        TestClockHolder testClockHolder = new TestClockHolder(1678530673958L);
+
 
         this.albumServiceImpl = AlbumServiceImpl.builder()
                 .albumRepository(fakeAlbumRepository)
                 .authService(fakeAuthService)
                 .imageService(fakeImageService)
                 .userBabyRelationRepository(fakeUserBabyRelationRepository)
+                .clockHolder(testClockHolder)
                 .build();
 
         User user = User.builder()
