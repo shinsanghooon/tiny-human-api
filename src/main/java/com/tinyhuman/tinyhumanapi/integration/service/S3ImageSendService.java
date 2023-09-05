@@ -107,7 +107,7 @@ public class S3ImageSendService implements ImageService {
         return preSignedRequest.url().toString();
     }
 
-    private static String convertThumbnailKeyName(String keyName, int size) {
+    private String convertThumbnailKeyName(String keyName, int size) {
         int lastDotIndex = keyName.lastIndexOf(".");
         String extension = keyName.substring(lastDotIndex);
         String fileNameWithoutExtension = keyName.substring(0, lastDotIndex);
@@ -115,7 +115,7 @@ public class S3ImageSendService implements ImageService {
     }
 
 
-    private static byte[] getImageBytes(MultipartFile file) {
+    private byte[] getImageBytes(MultipartFile file) {
         byte[] imageBytes;
 
         try {

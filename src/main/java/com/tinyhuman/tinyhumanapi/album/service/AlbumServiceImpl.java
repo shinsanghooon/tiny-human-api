@@ -1,9 +1,6 @@
 package com.tinyhuman.tinyhumanapi.album.service;
 
-import com.tinyhuman.tinyhumanapi.album.controller.dto.AlbumCreate;
-import com.tinyhuman.tinyhumanapi.album.controller.dto.AlbumDelete;
-import com.tinyhuman.tinyhumanapi.album.controller.dto.AlbumResponse;
-import com.tinyhuman.tinyhumanapi.album.controller.dto.CursorAlbumResponse;
+import com.tinyhuman.tinyhumanapi.album.controller.dto.*;
 import com.tinyhuman.tinyhumanapi.album.controller.port.AlbumService;
 import com.tinyhuman.tinyhumanapi.album.domain.Album;
 import com.tinyhuman.tinyhumanapi.album.service.port.AlbumRepository;
@@ -61,8 +58,7 @@ public class AlbumServiceImpl implements AlbumService {
     @Override
     public AlbumResponse findByIdAndBabyId(Long albumId, Long babyId) {
         Album album = albumRepository.findByIdAndBabyId(albumId, babyId);
-        String preSignedUrl = imageService.getPreSignedUrlForRead(album.keyName(), 1000);
-        return AlbumResponse.fromModel(album, preSignedUrl);
+        return AlbumResponse.fromModel(album);
     }
 
     /**
@@ -114,7 +110,7 @@ public class AlbumServiceImpl implements AlbumService {
     }
 
     @Override
-    public List<AlbumResponse> uploadAlbums(Long babyId, List<AlbumCreate> files) {
+    public List<AlbumUploadResponse> uploadAlbums(Long babyId, List<AlbumCreate> files) {
 
         User user = authService.getUserOutOfSecurityContextHolder();
         UserBabyRelation userBabyRelation = userBabyRelationRepository.findById(UserBabyMappingId.builder()
@@ -132,26 +128,31 @@ public class AlbumServiceImpl implements AlbumService {
         for (AlbumCreate albumCreate : files) {
             String fileName = albumCreate.fileName();
             String mimeType = ImageUtils.guessMimeType(fileName);
+            ContentType contentType = ImageUtils.getContentType(mimeType);
 
             String fileNameWithEpoch = FileUtils.generateFileNameWithEpochTime(fileName, clockHolder);
             String keyName = FileUtils.addBabyIdToImagePath(ALBUM_UPLOAD_PATH, babyId, fileNameWithEpoch);
 
-            String preSignedUrl = imageService.getPreSignedUrlForUpload(keyName, mimeType);
-            ContentType contentType = ImageUtils.getContentType(mimeType);
-
             Album album = Album.builder()
                     .contentType(contentType)
                     .keyName(keyName)
-                    .preSignedUrl(preSignedUrl)
                     .babyId(babyId)
                     .build();
 
             albums.add(album);
         }
 
-        return albumRepository.saveAll(albums).stream()
-                .map(AlbumResponse::fromModel)
+        return  albumRepository.saveAll(albums).stream()
+                .map(this::getAlbumUploadResponse)
                 .toList();
+    }
+
+    private AlbumUploadResponse getAlbumUploadResponse(Album album) {
+        String keyName = album.keyName();
+        String fileName = FileUtils.extractFileNameFromPath(keyName);
+        String mimeType = ImageUtils.guessMimeType(fileName);
+        String preSignedUrl = imageService.getPreSignedUrlForUpload(keyName, mimeType);
+        return AlbumUploadResponse.fromModel(album).with(fileName, preSignedUrl, null);
     }
 
     @Override
