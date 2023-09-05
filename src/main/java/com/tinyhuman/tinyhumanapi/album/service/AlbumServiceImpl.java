@@ -13,7 +13,6 @@ import com.tinyhuman.tinyhumanapi.common.exception.ResourceNotFoundException;
 import com.tinyhuman.tinyhumanapi.common.exception.UnauthorizedAccessException;
 import com.tinyhuman.tinyhumanapi.common.service.port.ClockHolder;
 import com.tinyhuman.tinyhumanapi.common.utils.FileUtils;
-import com.tinyhuman.tinyhumanapi.common.utils.ImageUtils;
 import com.tinyhuman.tinyhumanapi.integration.service.ExifDynamoDBRepository;
 import com.tinyhuman.tinyhumanapi.integration.service.port.ImageService;
 import com.tinyhuman.tinyhumanapi.user.domain.User;
@@ -94,8 +93,8 @@ public class AlbumServiceImpl implements AlbumService {
 
         for (AlbumCreate albumCreate : files) {
             String fileName = albumCreate.fileName();
-            String mimeType = ImageUtils.guessMimeType(fileName);
-            ContentType contentType = ImageUtils.getContentType(mimeType);
+            String mimeType = FileUtils.guessMimeType(fileName);
+            ContentType contentType = FileUtils.getContentType(mimeType);
 
             String fileNameWithEpoch = FileUtils.generateFileNameWithEpochTime(fileName, clockHolder);
             String keyName = FileUtils.addBabyIdToImagePath(ALBUM_UPLOAD_PATH, babyId, fileNameWithEpoch);
@@ -117,7 +116,7 @@ public class AlbumServiceImpl implements AlbumService {
     private AlbumUploadResponse getAlbumUploadResponse(Album album) {
         String keyName = album.keyName();
         String fileName = FileUtils.extractFileNameFromPath(keyName);
-        String mimeType = ImageUtils.guessMimeType(fileName);
+        String mimeType = FileUtils.guessMimeType(fileName);
         String preSignedUrl = imageService.getPreSignedUrlForUpload(keyName, mimeType);
         return AlbumUploadResponse.fromModel(album).with(fileName, preSignedUrl, null);
     }

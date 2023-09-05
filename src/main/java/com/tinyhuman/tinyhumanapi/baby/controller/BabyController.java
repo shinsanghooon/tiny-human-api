@@ -1,9 +1,6 @@
 package com.tinyhuman.tinyhumanapi.baby.controller;
 
-import com.tinyhuman.tinyhumanapi.baby.domain.BabyCreate;
-import com.tinyhuman.tinyhumanapi.baby.domain.BabyImageUpdate;
-import com.tinyhuman.tinyhumanapi.baby.domain.BabyResponse;
-import com.tinyhuman.tinyhumanapi.baby.domain.BabyUpdate;
+import com.tinyhuman.tinyhumanapi.baby.controller.dto.*;
 import com.tinyhuman.tinyhumanapi.baby.service.BabyServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -26,7 +23,7 @@ public class BabyController {
             @ApiResponse(responseCode = "201", description = "아기 등록 성공")})
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public BabyResponse register(@RequestBody @Valid BabyCreate babyCreate) {
+    public BabyPreSignedUrlResponse register(@RequestBody @Valid BabyCreate babyCreate) {
         return babyService.register(babyCreate);
     }
 
@@ -60,7 +57,7 @@ public class BabyController {
             @ApiResponse(responseCode = "200", description = "아기 이미지 수정 성공")})
     @PatchMapping("{id}/image")
     @ResponseStatus(HttpStatus.OK)
-    public BabyResponse updateProfileImage(@PathVariable("id") Long id, @RequestBody @Valid BabyImageUpdate babyImageUpdate) {
+    public BabyPreSignedUrlResponse updateProfileImage(@PathVariable("id") Long id, @RequestBody @Valid BabyImageUpdate babyImageUpdate) {
         return babyService.updateProfileImage(id, babyImageUpdate.fileName());
     }
 

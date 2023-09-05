@@ -1,5 +1,8 @@
-package com.tinyhuman.tinyhumanapi.diary.domain;
+package com.tinyhuman.tinyhumanapi.diary.controller.port.dto;
 
+import com.tinyhuman.tinyhumanapi.diary.domain.Diary;
+import com.tinyhuman.tinyhumanapi.diary.domain.Picture;
+import com.tinyhuman.tinyhumanapi.diary.domain.Sentence;
 import lombok.Builder;
 
 import java.time.LocalDateTime;

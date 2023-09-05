@@ -1,4 +1,4 @@
-package com.tinyhuman.tinyhumanapi.baby.domain;
+package com.tinyhuman.tinyhumanapi.baby.controller.dto;
 
 import com.tinyhuman.tinyhumanapi.baby.enums.Gender;
 import com.tinyhuman.tinyhumanapi.user.enums.FamilyRelation;
@@ -9,7 +9,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 
-public record BabyUpdate(
+public record BabyCreate(
         @NotBlank(message = "이름을 입력해주세요.")
         @Size(max = 20, message = "이름의 최대 길이는 20자 입니다.")
         String name,
@@ -18,7 +18,7 @@ public record BabyUpdate(
         @Enumerated
         Gender gender,
 
-        String keyName,
+        String fileName,
 
         @NotNull
         @DateTimeFormat(pattern = "yyyy-MM-dd")
@@ -38,6 +38,6 @@ public record BabyUpdate(
         FamilyRelation relation) {
 
     @Builder
-    public BabyUpdate {
+    public BabyCreate {
     }
 }

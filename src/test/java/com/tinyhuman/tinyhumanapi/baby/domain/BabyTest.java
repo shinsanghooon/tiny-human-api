@@ -1,5 +1,6 @@
 package com.tinyhuman.tinyhumanapi.baby.domain;
 
+import com.tinyhuman.tinyhumanapi.baby.controller.dto.BabyCreate;
 import com.tinyhuman.tinyhumanapi.baby.enums.Gender;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

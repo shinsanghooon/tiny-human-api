@@ -1,8 +1,8 @@
 package com.tinyhuman.tinyhumanapi.diary.controller.port;
 
 import com.tinyhuman.tinyhumanapi.diary.domain.Diary;
-import com.tinyhuman.tinyhumanapi.diary.domain.DiaryCreate;
-import com.tinyhuman.tinyhumanapi.diary.domain.DiaryResponse;
+import com.tinyhuman.tinyhumanapi.diary.controller.port.dto.DiaryCreate;
+import com.tinyhuman.tinyhumanapi.diary.controller.port.dto.DiaryResponse;
 
 import java.util.List;
 

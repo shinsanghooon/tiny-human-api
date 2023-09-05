@@ -1,5 +1,7 @@
 package com.tinyhuman.tinyhumanapi.diary.domain;
 
+import com.tinyhuman.tinyhumanapi.diary.controller.port.dto.DiaryCreate;
+import com.tinyhuman.tinyhumanapi.diary.controller.port.dto.SentenceCreate;
 import lombok.Builder;
 import java.util.List;
 

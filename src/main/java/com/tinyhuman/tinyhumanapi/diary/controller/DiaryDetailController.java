@@ -2,10 +2,10 @@ package com.tinyhuman.tinyhumanapi.diary.controller;
 
 
 import com.tinyhuman.tinyhumanapi.diary.controller.port.DiaryDetailService;
-import com.tinyhuman.tinyhumanapi.diary.domain.ChangeMainPicture;
-import com.tinyhuman.tinyhumanapi.diary.domain.DiaryResponse;
+import com.tinyhuman.tinyhumanapi.diary.controller.port.dto.ChangeMainPicture;
+import com.tinyhuman.tinyhumanapi.diary.controller.port.dto.DiaryResponse;
 import com.tinyhuman.tinyhumanapi.diary.domain.Picture;
-import com.tinyhuman.tinyhumanapi.diary.domain.SentenceCreate;
+import com.tinyhuman.tinyhumanapi.diary.controller.port.dto.SentenceCreate;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;

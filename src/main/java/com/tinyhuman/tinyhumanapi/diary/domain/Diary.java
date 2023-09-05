@@ -1,6 +1,7 @@
 package com.tinyhuman.tinyhumanapi.diary.domain;
 
 import com.tinyhuman.tinyhumanapi.baby.domain.Baby;
+import com.tinyhuman.tinyhumanapi.diary.controller.port.dto.DiaryCreate;
 import com.tinyhuman.tinyhumanapi.user.domain.User;
 import lombok.Builder;
 

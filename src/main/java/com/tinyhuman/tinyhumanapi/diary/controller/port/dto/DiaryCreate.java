@@ -1,4 +1,4 @@
-package com.tinyhuman.tinyhumanapi.diary.domain;
+package com.tinyhuman.tinyhumanapi.diary.controller.port.dto;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;

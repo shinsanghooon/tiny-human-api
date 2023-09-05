@@ -1,19 +1,20 @@
 package com.tinyhuman.tinyhumanapi.baby.service;
 
 import com.tinyhuman.tinyhumanapi.auth.controller.port.AuthService;
+import com.tinyhuman.tinyhumanapi.baby.controller.dto.BabyCreate;
+import com.tinyhuman.tinyhumanapi.baby.controller.dto.BabyPreSignedUrlResponse;
+import com.tinyhuman.tinyhumanapi.baby.controller.dto.BabyResponse;
+import com.tinyhuman.tinyhumanapi.baby.controller.dto.BabyUpdate;
 import com.tinyhuman.tinyhumanapi.baby.controller.port.BabyService;
 import com.tinyhuman.tinyhumanapi.baby.domain.Baby;
-import com.tinyhuman.tinyhumanapi.baby.domain.BabyCreate;
-import com.tinyhuman.tinyhumanapi.baby.domain.BabyResponse;
-import com.tinyhuman.tinyhumanapi.baby.domain.BabyUpdate;
 import com.tinyhuman.tinyhumanapi.baby.service.port.BabyRepository;
 import com.tinyhuman.tinyhumanapi.common.exception.ResourceNotFoundException;
 import com.tinyhuman.tinyhumanapi.common.service.port.ClockHolder;
 import com.tinyhuman.tinyhumanapi.common.utils.FileUtils;
+import com.tinyhuman.tinyhumanapi.common.utils.FileUtils.FileInfo;
 import com.tinyhuman.tinyhumanapi.diary.domain.Diary;
 import com.tinyhuman.tinyhumanapi.diary.service.port.DiaryRepository;
 import com.tinyhuman.tinyhumanapi.integration.service.port.ImageService;
-import com.tinyhuman.tinyhumanapi.common.utils.ImageUtils;
 import com.tinyhuman.tinyhumanapi.user.controller.port.UserBabyRelationService;
 import com.tinyhuman.tinyhumanapi.user.domain.User;
 import com.tinyhuman.tinyhumanapi.user.domain.UserBabyRelation;
@@ -57,30 +58,25 @@ public class BabyServiceImpl implements BabyService {
     private final String BABY_PROFILE_UPLOAD_PATH = "baby/babyId/profile/";
 
     @Override
-    public BabyResponse register(BabyCreate babyCreate) {
+    public BabyPreSignedUrlResponse register(BabyCreate babyCreate) {
 
         User user = authService.getUserOutOfSecurityContextHolder();
 
-        String fileName = babyCreate.fileName();
-        String fileNameWithEpoch = FileUtils.generateFileNameWithEpochTime(fileName, clockHolder);
+        FileInfo fileInfo = FileUtils.getFileInfo(babyCreate.fileName(), clockHolder);
 
-        String mimeType = ImageUtils.guessMimeType(fileName);
-        String keyName = FileUtils.addBabyIdToImagePath(BABY_PROFILE_UPLOAD_PATH, user.id(), fileNameWithEpoch);
+        String keyName = FileUtils.addBabyIdToImagePath(BABY_PROFILE_UPLOAD_PATH, user.id(), fileInfo.fileNameWithEpochTime());
 
         Baby baby = babyRepository.save(Baby.fromCreate(babyCreate, keyName));
         userBabyRelationService.establishRelationUserToBaby(babyCreate, user, baby);
 
-        String preSignedUrl = imageService.getPreSignedUrlForUpload(keyName, mimeType);
+        String preSignedUrl = imageService.getPreSignedUrlForUpload(keyName, fileInfo.mimeType());
 
-        return BabyResponse.fromModel(baby, preSignedUrl);
+        return BabyPreSignedUrlResponse.fromModel(baby, preSignedUrl);
     }
 
     @Override
     public BabyResponse findById(Long id) {
-        Baby baby = findBaby(id);
-        String profileImgKeyName = baby.profileImgKeyName();
-        String preSignedUrlForRead = imageService.getPreSignedUrlForRead(profileImgKeyName, 1000);
-        return BabyResponse.fromModel(baby, preSignedUrlForRead);
+        return BabyResponse.fromModel(findBaby(id));
     }
 
     @Override
@@ -90,10 +86,7 @@ public class BabyServiceImpl implements BabyService {
 
         return myBabies.stream()
                 .map(UserBabyRelation::baby)
-                .map(b -> {
-                    String preSignedUrlForRead = imageService.getPreSignedUrlForRead(b.profileImgKeyName(), 1000);
-                    return BabyResponse.fromModel(b, preSignedUrlForRead);
-                })
+                .map(BabyResponse::fromModel)
                 .toList();
     }
 
@@ -114,34 +107,28 @@ public class BabyServiceImpl implements BabyService {
     public BabyResponse update(Long id, BabyUpdate babyUpdate) {
 
         Baby baby = findBaby(id);
-
         Baby updatedBaby = baby.update(babyUpdate);
         Baby savedBaby = babyRepository.save(updatedBaby);
-        String preSignedUrlForRead = imageService.getPreSignedUrlForRead(savedBaby.profileImgKeyName(), 1000);
 
-        return BabyResponse.fromModel(savedBaby, preSignedUrlForRead);
+        return BabyResponse.fromModel(savedBaby);
     }
 
     @Override
-    public BabyResponse updateProfileImage(Long id, String fileName) {
+    public BabyPreSignedUrlResponse updateProfileImage(Long id, String fileName) {
 
         Baby baby = findBaby(id);
         User user = authService.getUserOutOfSecurityContextHolder();
 
-        String fileNameWithEpoch = FileUtils.generateFileNameWithEpochTime(fileName, clockHolder);
+        FileInfo fileInfo = FileUtils.getFileInfo(fileName, clockHolder);
+        String keyName = FileUtils.addUserIdToImagePath(BABY_PROFILE_UPLOAD_PATH, user.id(), fileInfo.fileNameWithEpochTime());
 
-        String mimeType = ImageUtils.guessMimeType(fileName);
-        String keyName = FileUtils.addUserIdToImagePath(BABY_PROFILE_UPLOAD_PATH, user.id(), fileNameWithEpoch);
-
-        String preSignedUrl = imageService.getPreSignedUrlForUpload(keyName, mimeType);
+        String preSignedUrl = imageService.getPreSignedUrlForUpload(keyName, fileInfo.mimeType());
 
         Baby updatedBaby = baby.updateOnlyImage(keyName);
         Baby savedBaby = babyRepository.save(updatedBaby);
 
-        return BabyResponse.fromModel(savedBaby, preSignedUrl);
-
+        return BabyPreSignedUrlResponse.fromModel(savedBaby, preSignedUrl);
     }
-
 
     private Baby findBaby(Long id) {
         return babyRepository.findById(id)

@@ -1,5 +1,7 @@
 package com.tinyhuman.tinyhumanapi.baby.domain;
 
+import com.tinyhuman.tinyhumanapi.baby.controller.dto.BabyCreate;
+import com.tinyhuman.tinyhumanapi.baby.controller.dto.BabyUpdate;
 import com.tinyhuman.tinyhumanapi.baby.enums.Gender;
 import lombok.Builder;
 
@@ -11,14 +13,14 @@ public record Baby(Long id, String name, Gender gender, LocalDate dayOfBirth, in
     public Baby {
     }
 
-    public static Baby fromCreate(BabyCreate babyCreate, String s3ImgUrl) {
+    public static Baby fromCreate(BabyCreate babyCreate, String profileImgKeyName) {
         return Baby.builder()
                 .name(babyCreate.name())
                 .gender(babyCreate.gender())
                 .nickName(babyCreate.nickName())
                 .dayOfBirth(babyCreate.dayOfBirth())
                 .timeOfBirth(babyCreate.timeOfBirth())
-                .profileImgKeyName(s3ImgUrl)
+                .profileImgKeyName(profileImgKeyName)
                 .isDeleted(false)
                 .build();
     }

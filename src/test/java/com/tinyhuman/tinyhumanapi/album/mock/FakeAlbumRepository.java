@@ -7,6 +7,7 @@ import com.tinyhuman.tinyhumanapi.common.exception.ResourceNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class FakeAlbumRepository implements AlbumRepository {
@@ -57,5 +58,10 @@ public class FakeAlbumRepository implements AlbumRepository {
         return data.stream()
                 .filter(a -> a.babyId().equals(babyId))
                 .toList();
+    }
+
+    @Override
+    public List<Album> findByBabyIdAndKeyNameIn(Long babyId, Set<String> keyName) {
+        return null;
     }
 }

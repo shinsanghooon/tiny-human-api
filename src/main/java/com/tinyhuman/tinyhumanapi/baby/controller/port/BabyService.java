@@ -1,14 +1,15 @@
 package com.tinyhuman.tinyhumanapi.baby.controller.port;
 
-import com.tinyhuman.tinyhumanapi.baby.domain.BabyCreate;
-import com.tinyhuman.tinyhumanapi.baby.domain.BabyResponse;
-import com.tinyhuman.tinyhumanapi.baby.domain.BabyUpdate;
+import com.tinyhuman.tinyhumanapi.baby.controller.dto.BabyCreate;
+import com.tinyhuman.tinyhumanapi.baby.controller.dto.BabyPreSignedUrlResponse;
+import com.tinyhuman.tinyhumanapi.baby.controller.dto.BabyResponse;
+import com.tinyhuman.tinyhumanapi.baby.controller.dto.BabyUpdate;
 
 import java.util.List;
 
 public interface BabyService {
 
-    BabyResponse register(BabyCreate babyCreate);
+    BabyPreSignedUrlResponse register(BabyCreate babyCreate);
 
     BabyResponse findById(Long id);
 
@@ -18,6 +19,6 @@ public interface BabyService {
 
     BabyResponse update(Long id, BabyUpdate babyUpdate);
 
-    BabyResponse updateProfileImage(Long id, String fileName);
+    BabyPreSignedUrlResponse updateProfileImage(Long id, String fileName);
 
 }

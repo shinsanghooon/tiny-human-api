@@ -2,8 +2,8 @@ package com.tinyhuman.tinyhumanapi.diary.controller;
 
 
 import com.tinyhuman.tinyhumanapi.diary.controller.port.DiaryService;
-import com.tinyhuman.tinyhumanapi.diary.domain.DiaryCreate;
-import com.tinyhuman.tinyhumanapi.diary.domain.DiaryResponse;
+import com.tinyhuman.tinyhumanapi.diary.controller.port.dto.DiaryCreate;
+import com.tinyhuman.tinyhumanapi.diary.controller.port.dto.DiaryResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;

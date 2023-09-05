@@ -1,10 +1,11 @@
 package com.tinyhuman.tinyhumanapi.baby.service;
 
 import com.tinyhuman.tinyhumanapi.auth.mock.FakeAuthService;
+import com.tinyhuman.tinyhumanapi.baby.controller.dto.BabyPreSignedUrlResponse;
 import com.tinyhuman.tinyhumanapi.baby.domain.Baby;
-import com.tinyhuman.tinyhumanapi.baby.domain.BabyCreate;
-import com.tinyhuman.tinyhumanapi.baby.domain.BabyResponse;
-import com.tinyhuman.tinyhumanapi.baby.domain.BabyUpdate;
+import com.tinyhuman.tinyhumanapi.baby.controller.dto.BabyCreate;
+import com.tinyhuman.tinyhumanapi.baby.controller.dto.BabyResponse;
+import com.tinyhuman.tinyhumanapi.baby.controller.dto.BabyUpdate;
 import com.tinyhuman.tinyhumanapi.baby.enums.Gender;
 import com.tinyhuman.tinyhumanapi.baby.mock.FakeBabyRepository;
 import com.tinyhuman.tinyhumanapi.baby.mock.FakeImageService;
@@ -96,7 +97,7 @@ class BabyServiceImplTest {
                     .dayOfBirth(LocalDate.of(2022, 9, 30))
                     .build();
 
-            BabyResponse response = babyServiceImpl.register(babyCreate);
+            BabyPreSignedUrlResponse response = babyServiceImpl.register(babyCreate);
 
             assertThat(response.id()).isNotNull();
             assertThat(response.name()).isEqualTo(babyCreate.name());
@@ -154,7 +155,7 @@ class BabyServiceImplTest {
         void updateBabyWithFile() {
             String newFile = "update.png";
             BabyResponse originalUser = babyServiceImpl.findById(1L);
-            BabyResponse updatedUser = babyServiceImpl.updateProfileImage(1L, newFile);
+            BabyPreSignedUrlResponse updatedUser = babyServiceImpl.updateProfileImage(1L, newFile);
 
             assertThat(updatedUser.id()).isNotNull();
             assertThat(updatedUser.name()).isEqualTo(originalUser.name());

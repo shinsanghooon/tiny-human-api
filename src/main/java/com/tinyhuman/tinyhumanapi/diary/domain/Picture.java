@@ -3,7 +3,7 @@ package com.tinyhuman.tinyhumanapi.diary.domain;
 import com.tinyhuman.tinyhumanapi.common.enums.ContentType;
 import lombok.Builder;
 
-public record Picture(Long id, boolean isMainPicture, ContentType contentType, String keyName, String preSignedUrl, Long diaryId) {
+public record Picture(Long id, boolean isMainPicture, ContentType contentType, String fileName, String keyName, String preSignedUrl, Long diaryId) {
 
     @Builder
     public Picture {
