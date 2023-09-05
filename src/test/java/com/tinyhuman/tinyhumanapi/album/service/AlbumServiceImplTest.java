@@ -3,6 +3,7 @@ package com.tinyhuman.tinyhumanapi.album.service;
 import com.tinyhuman.tinyhumanapi.album.controller.dto.AlbumCreate;
 import com.tinyhuman.tinyhumanapi.album.controller.dto.AlbumDelete;
 import com.tinyhuman.tinyhumanapi.album.controller.dto.AlbumResponse;
+import com.tinyhuman.tinyhumanapi.album.controller.dto.AlbumUploadResponse;
 import com.tinyhuman.tinyhumanapi.album.domain.Album;
 import com.tinyhuman.tinyhumanapi.album.mock.FakeAlbumRepository;
 import com.tinyhuman.tinyhumanapi.auth.mock.FakeAuthService;
@@ -117,10 +118,10 @@ class AlbumServiceImplTest {
         @DisplayName("파일을 입력 받아 사진 및 영상을 등록한다.")
         @Test
         void uploadAlbums() {
-            List<AlbumResponse> albumResponses = albumServiceImpl.uploadAlbums(1L, files);
+            List<AlbumUploadResponse> albumUploadResponses = albumServiceImpl.uploadAlbums(1L, files);
 
-            assertThat(albumResponses.size()).isEqualTo(files.size());
-            assertThat(albumResponses).extracting("babyId").containsOnly(1L);
+            assertThat(albumUploadResponses.size()).isEqualTo(files.size());
+            assertThat(albumUploadResponses).extracting("babyId").containsOnly(1L);
         }
 
         @DisplayName("엄마 아빠가 아니라면, 사진 및 영상을 등록 시 예외를 던진다.")
@@ -196,7 +197,7 @@ class AlbumServiceImplTest {
             assertThat(album.id()).isEqualTo(albumId);
             assertThat(album.babyId()).isEqualTo(babyId);
             assertThat(album.contentType()).isEqualTo(ContentType.PICTURE);
-            assertThat(album.preSignedUrl()).contains("original_3");
+            assertThat(album.keyName()).contains("original_3");
 
         }
 
