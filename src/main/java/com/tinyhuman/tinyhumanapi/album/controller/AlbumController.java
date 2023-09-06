@@ -5,6 +5,8 @@ import com.tinyhuman.tinyhumanapi.album.controller.dto.AlbumDelete;
 import com.tinyhuman.tinyhumanapi.album.controller.dto.AlbumResponse;
 import com.tinyhuman.tinyhumanapi.album.controller.dto.AlbumUploadResponse;
 import com.tinyhuman.tinyhumanapi.album.controller.port.AlbumService;
+import com.tinyhuman.tinyhumanapi.common.utils.CursorRequest;
+import com.tinyhuman.tinyhumanapi.common.utils.PageCursor;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -44,8 +46,8 @@ public class AlbumController {
             @ApiResponse(responseCode = "200", description = "아기에 대한 전체 앨범 조회")})
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/{babyId}/albums")
-    public List<AlbumResponse> getAllAlbums(@PathVariable("babyId") Long babyId) {
-        return albumService.getAlbumsByBaby(babyId);
+    public PageCursor<AlbumResponse> getAllAlbums(@PathVariable("babyId") Long babyId, @RequestBody CursorRequest cursorRequest) {
+        return albumService.getAlbumsByBaby(babyId, cursorRequest);
     }
 
     @Operation(summary = "앨범 삭제 API", responses = {
