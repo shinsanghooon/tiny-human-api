@@ -10,7 +10,7 @@ import com.tinyhuman.tinyhumanapi.baby.enums.Gender;
 import com.tinyhuman.tinyhumanapi.baby.mock.FakeBabyRepository;
 import com.tinyhuman.tinyhumanapi.baby.mock.FakeImageService;
 import com.tinyhuman.tinyhumanapi.common.exception.ResourceNotFoundException;
-import com.tinyhuman.tinyhumanapi.common.mock.TestClockHolder;
+import com.tinyhuman.tinyhumanapi.common.mock.TestUuidHolder;
 import com.tinyhuman.tinyhumanapi.diary.mock.FakeDiaryRepository;
 import com.tinyhuman.tinyhumanapi.user.domain.User;
 import com.tinyhuman.tinyhumanapi.user.domain.UserCreate;
@@ -42,7 +42,7 @@ class BabyServiceImplTest {
         FakeUserBabyRelationRepository fakeUserBabyRelationRepository = new FakeUserBabyRelationRepository();
         UserBabyRelationServiceImpl userBabyRelationService = new UserBabyRelationServiceImpl(fakeUserBabyRelationRepository);
         FakeAuthService fakeAuthService = new FakeAuthService();
-        TestClockHolder testClockHolder = new TestClockHolder(1678530673958L);
+        TestUuidHolder testUuidHolder = new TestUuidHolder("test-uuid");
 
         this.babyServiceImpl = BabyServiceImpl
                 .builder()
@@ -52,7 +52,7 @@ class BabyServiceImplTest {
                 .userRepository(fakeUserRepository)
                 .userBabyRelationService(userBabyRelationService)
                 .authService(fakeAuthService)
-                .clockHolder(testClockHolder)
+                .uuidHolder(testUuidHolder)
                 .build();
 
         UserCreate userCreate1 = UserCreate.builder()
@@ -107,7 +107,7 @@ class BabyServiceImplTest {
             assertThat(response.nickName()).isEqualTo(babyCreate.nickName());
             assertThat(response.timeOfBirth()).isEqualTo(babyCreate.timeOfBirth());
             assertThat(response.dayOfBirth()).isEqualTo(babyCreate.dayOfBirth());
-            assertThat(response.preSignedUrl()).contains("baby/1/profile/" + String.valueOf(1678530673958L) + "_" + babyCreate.fileName());
+            assertThat(response.preSignedUrl()).contains("baby/1/profile/" + "test-uuid" + "_" + babyCreate.fileName());
         }
     }
 

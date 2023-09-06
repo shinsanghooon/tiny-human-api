@@ -9,6 +9,7 @@ import com.tinyhuman.tinyhumanapi.common.enums.ContentType;
 import com.tinyhuman.tinyhumanapi.common.exception.ResourceNotFoundException;
 import com.tinyhuman.tinyhumanapi.common.exception.UnauthorizedAccessException;
 import com.tinyhuman.tinyhumanapi.common.mock.TestClockHolder;
+import com.tinyhuman.tinyhumanapi.common.mock.TestUuidHolder;
 import com.tinyhuman.tinyhumanapi.diary.controller.port.dto.*;
 import com.tinyhuman.tinyhumanapi.diary.domain.Diary;
 import com.tinyhuman.tinyhumanapi.diary.domain.Picture;
@@ -51,6 +52,7 @@ class DiaryServiceImplTest {
         FakeUserBabyRelationRepository fakeUserBabyRelationRepository = new FakeUserBabyRelationRepository();
         FakeAuthService fakeAuthService = new FakeAuthService();
         TestClockHolder testClockHolder = new TestClockHolder(1678530673958L);
+        TestUuidHolder testUuidHolder = new TestUuidHolder("test-uuid");
 
         this.diaryServiceImpl = DiaryServiceImpl
                 .builder()
@@ -62,7 +64,7 @@ class DiaryServiceImplTest {
                 .userRepository(fakeUserRepository)
                 .userBabyRelationRepository(fakeUserBabyRelationRepository)
                 .authService(fakeAuthService)
-                .clockHolder(testClockHolder)
+                .uuidHolder(testUuidHolder)
                 .build();
 
         UserCreate userCreate1 = UserCreate.builder()
@@ -118,7 +120,7 @@ class DiaryServiceImplTest {
                         .isMainPicture(true)
                         .keyName("abc.test")
                         .preSignedUrl("abc.test")
-                        .contentType(ContentType.PICTURE)
+                        .contentType(ContentType.PHOTO)
                         .build(),
 
                 Picture.builder()
@@ -126,7 +128,7 @@ class DiaryServiceImplTest {
                         .isMainPicture(true)
                         .keyName("abc2.test")
                         .preSignedUrl("abc2.test")
-                        .contentType(ContentType.PICTURE)
+                        .contentType(ContentType.PHOTO)
                         .build()
         );
 

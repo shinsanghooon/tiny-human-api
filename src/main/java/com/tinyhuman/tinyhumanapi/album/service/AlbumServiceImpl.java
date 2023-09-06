@@ -69,16 +69,12 @@ public class AlbumServiceImpl implements AlbumService {
      */
     @Override
     public PageCursor<AlbumResponse> getAlbumsByBaby(Long babyId, CursorRequest cursorRequest) {
-        List<AlbumResponse> albumResponses = findByBabyIdWithCursor(babyId, cursorRequest);
+        List<AlbumResponse> albumResponses = albumRepository.findByBabyId(babyId, cursorRequest).stream()
+                .map(AlbumResponse::fromModel)
+                .toList();
 
         long nextKey = getNextKey(albumResponses);
         return new PageCursor<>(cursorRequest.next(nextKey), albumResponses);
-    }
-
-    private List<AlbumResponse> findByBabyIdWithCursor(Long babyId, CursorRequest cursorRequest) {
-        return albumRepository.findByBabyId(babyId, cursorRequest).stream()
-                .map(AlbumResponse::fromModel)
-                .toList();
     }
 
     private static long getNextKey(List<AlbumResponse> albumResponses) {

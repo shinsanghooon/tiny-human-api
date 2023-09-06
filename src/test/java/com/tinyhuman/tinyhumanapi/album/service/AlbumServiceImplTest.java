@@ -12,7 +12,9 @@ import com.tinyhuman.tinyhumanapi.baby.enums.Gender;
 import com.tinyhuman.tinyhumanapi.baby.mock.FakeImageService;
 import com.tinyhuman.tinyhumanapi.common.enums.ContentType;
 import com.tinyhuman.tinyhumanapi.common.exception.UnauthorizedAccessException;
-import com.tinyhuman.tinyhumanapi.common.mock.TestClockHolder;
+import com.tinyhuman.tinyhumanapi.common.mock.TestUuidHolder;
+import com.tinyhuman.tinyhumanapi.common.utils.CursorRequest;
+import com.tinyhuman.tinyhumanapi.common.utils.PageCursor;
 import com.tinyhuman.tinyhumanapi.user.domain.User;
 import com.tinyhuman.tinyhumanapi.user.domain.UserBabyRelation;
 import com.tinyhuman.tinyhumanapi.user.enums.FamilyRelation;
@@ -38,7 +40,7 @@ class AlbumServiceImplTest {
         FakeImageService fakeImageService = new FakeImageService();
         FakeAuthService fakeAuthService = new FakeAuthService();
         FakeAlbumRepository fakeAlbumRepository = new FakeAlbumRepository();
-        TestClockHolder testClockHolder = new TestClockHolder(1678530673958L);
+        TestUuidHolder testUuidHolder = new TestUuidHolder("test-uuid");
 
 
         this.albumServiceImpl = AlbumServiceImpl.builder()
@@ -46,7 +48,7 @@ class AlbumServiceImplTest {
                 .authService(fakeAuthService)
                 .imageService(fakeImageService)
                 .userBabyRelationRepository(fakeUserBabyRelationRepository)
-                .clockHolder(testClockHolder)
+                .uuidHolder(testUuidHolder)
                 .build();
 
         User user = User.builder()
@@ -103,7 +105,7 @@ class AlbumServiceImplTest {
 
     @Nested
     @DisplayName("사진 및 영상을 업로드 한다.")
-    class UploadAlbums{
+    class UploadAlbums {
         List<AlbumCreate> files = new ArrayList<>();
 
         @BeforeEach
@@ -176,15 +178,16 @@ class AlbumServiceImplTest {
 
 
     @Nested
-    @DisplayName("앨범을 조회한다.")
+    @DisplayName("앨범을 상세 조회한다.")
     class GetAlbums {
 
         List<AlbumCreate> files = new ArrayList<>();
         Long babyId = 1L;
+
         @BeforeEach
         @DisplayName("임시 이미지 파일 10개를 미리 저장해둔다.")
         void fileSetup() {
-            for (int i = 0; i < 10; i++) {
+            for (int i = 0; i < 20; i++) {
                 String originalFileName = "original_" + i + ".png";
                 files.add(new AlbumCreate(originalFileName));
             }
@@ -200,22 +203,59 @@ class AlbumServiceImplTest {
 
             assertThat(album.id()).isEqualTo(albumId);
             assertThat(album.babyId()).isEqualTo(babyId);
-            assertThat(album.contentType()).isEqualTo(ContentType.PICTURE);
+            assertThat(album.contentType()).isEqualTo(ContentType.PHOTO);
             assertThat(album.keyName()).contains("original_3");
+
+        }
+    }
+
+    @Nested
+    @DisplayName("앨범 전체를 조회한다. 아기 id와 CursorRequest를 입력 받아 페이징 방식으로 조회한다.")
+    class GetAllAlbums {
+
+        List<AlbumCreate> files = new ArrayList<>();
+        Long babyId = 1L;
+
+        @BeforeEach
+        @DisplayName("임시 이미지 파일 10개를 미리 저장해둔다.")
+        void fileSetup() {
+            for (int i = 0; i < 20; i++) {
+                String originalFileName = "original_" + i + ".png";
+                files.add(new AlbumCreate(originalFileName));
+            }
+
+            albumServiceImpl.uploadAlbums(babyId, files);
+        }
+
+        @Test
+        @DisplayName("최초 조회 시, 입력받은 size만큼 id 내림차순으로 조회한다.")
+        void getAllAlbum() {
+
+            PageCursor<AlbumResponse> albumCursor = albumServiceImpl.getAlbumsByBaby(babyId, new CursorRequest(null, 5));
+            List<AlbumResponse> albums = albumCursor.body();
+
+            assertThat(albums.size()).isEqualTo(5);
+            assertThat(albums).extracting("babyId").containsOnly(babyId);
+            assertThat(albumCursor.nextCursorRequest().hasKey()).isTrue();
+            assertThat(albums.stream().mapToLong(AlbumResponse::id).max().orElse(CursorRequest.NONE_KEY)).isEqualTo(20L);
+            assertThat(albums.stream().mapToLong(AlbumResponse::id).min().orElse(CursorRequest.NONE_KEY)).isEqualTo(16L);
+            assertThat(albumCursor.nextCursorRequest().key()).isEqualTo(16);
 
         }
 
         @Test
-        @DisplayName("아기 id를 입력 받아 앨범 전체를 조회한다.")
-        void getAllAlbum() {
+        @DisplayName("두번째 조회부터, 입력 받은 key값부터 size만큼 id 내림차순으로 조회한다.")
+        void getAllAlbumWithCursor() {
 
-            List<AlbumResponse> albums = albumServiceImpl.getAlbumsByBaby(babyId);
+            PageCursor<AlbumResponse> albumCursor = albumServiceImpl.getAlbumsByBaby(babyId, new CursorRequest(16L, 7));
+            List<AlbumResponse> albums = albumCursor.body();
 
-            assertThat(albums.size()).isEqualTo(10);
+            assertThat(albums.size()).isEqualTo(7);
             assertThat(albums).extracting("babyId").containsOnly(babyId);
+            assertThat(albumCursor.nextCursorRequest().hasKey()).isTrue();
+            assertThat(albums.stream().mapToLong(AlbumResponse::id).max().orElse(CursorRequest.NONE_KEY)).isEqualTo(15L);
+            assertThat(albums.stream().mapToLong(AlbumResponse::id).min().orElse(CursorRequest.NONE_KEY)).isEqualTo(9L);
+            assertThat(albumCursor.nextCursorRequest().key()).isEqualTo(9);
         }
     }
-
-
-
 }
