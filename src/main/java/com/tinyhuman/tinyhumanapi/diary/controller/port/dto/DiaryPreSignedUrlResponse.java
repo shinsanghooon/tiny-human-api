@@ -8,8 +8,8 @@ import lombok.Builder;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public record DiaryPreSignedUrlResponse(Long id, int daysAfterBirth, String writer, int likeCount,
-                                        LocalDateTime createdAt, boolean isDeleted, List<Sentence> sentences, List<Picture> pictures) {
+public record DiaryPreSignedUrlResponse(Long id, int daysAfterBirth, String writer, int likeCount, LocalDateTime createdAt,
+                                        List<Sentence> sentences, List<Picture> pictures) {
 
     @Builder
     public DiaryPreSignedUrlResponse {
@@ -24,7 +24,6 @@ public record DiaryPreSignedUrlResponse(Long id, int daysAfterBirth, String writ
                 .createdAt(diary.created_at())
                 .sentences(diary.sentences())
                 .pictures(diary.pictures())
-                .isDeleted(diary.isDeleted())
                 .build();
     }
 

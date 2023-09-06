@@ -42,7 +42,6 @@ class AlbumServiceImplTest {
         FakeAlbumRepository fakeAlbumRepository = new FakeAlbumRepository();
         TestUuidHolder testUuidHolder = new TestUuidHolder("test-uuid");
 
-
         this.albumServiceImpl = AlbumServiceImpl.builder()
                 .albumRepository(fakeAlbumRepository)
                 .authService(fakeAuthService)

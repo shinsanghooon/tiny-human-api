@@ -8,7 +8,6 @@ import com.tinyhuman.tinyhumanapi.baby.mock.FakeImageService;
 import com.tinyhuman.tinyhumanapi.common.enums.ContentType;
 import com.tinyhuman.tinyhumanapi.common.exception.ResourceNotFoundException;
 import com.tinyhuman.tinyhumanapi.common.exception.UnauthorizedAccessException;
-import com.tinyhuman.tinyhumanapi.common.mock.TestClockHolder;
 import com.tinyhuman.tinyhumanapi.common.mock.TestUuidHolder;
 import com.tinyhuman.tinyhumanapi.diary.controller.port.dto.*;
 import com.tinyhuman.tinyhumanapi.diary.domain.Diary;
@@ -51,7 +50,7 @@ class DiaryServiceImplTest {
         FakePictureRepository fakePictureRepository = new FakePictureRepository();
         FakeUserBabyRelationRepository fakeUserBabyRelationRepository = new FakeUserBabyRelationRepository();
         FakeAuthService fakeAuthService = new FakeAuthService();
-        TestClockHolder testClockHolder = new TestClockHolder(1678530673958L);
+
         TestUuidHolder testUuidHolder = new TestUuidHolder("test-uuid");
 
         this.diaryServiceImpl = DiaryServiceImpl
