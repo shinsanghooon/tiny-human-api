@@ -9,11 +9,10 @@ import com.tinyhuman.tinyhumanapi.common.enums.ContentType;
 import com.tinyhuman.tinyhumanapi.common.exception.ResourceNotFoundException;
 import com.tinyhuman.tinyhumanapi.common.exception.UnauthorizedAccessException;
 import com.tinyhuman.tinyhumanapi.common.mock.TestClockHolder;
-import com.tinyhuman.tinyhumanapi.diary.controller.port.dto.DiaryCreate;
-import com.tinyhuman.tinyhumanapi.diary.controller.port.dto.DiaryResponse;
-import com.tinyhuman.tinyhumanapi.diary.controller.port.dto.PictureCreate;
-import com.tinyhuman.tinyhumanapi.diary.controller.port.dto.SentenceCreate;
-import com.tinyhuman.tinyhumanapi.diary.domain.*;
+import com.tinyhuman.tinyhumanapi.diary.controller.port.dto.*;
+import com.tinyhuman.tinyhumanapi.diary.domain.Diary;
+import com.tinyhuman.tinyhumanapi.diary.domain.Picture;
+import com.tinyhuman.tinyhumanapi.diary.domain.Sentence;
 import com.tinyhuman.tinyhumanapi.diary.mock.FakeDiaryRepository;
 import com.tinyhuman.tinyhumanapi.diary.mock.FakePictureRepository;
 import com.tinyhuman.tinyhumanapi.diary.mock.FakeSentenceRepository;
@@ -172,7 +171,7 @@ class DiaryServiceImplTest {
                     .files(pictureCreates)
                     .build();
 
-            DiaryResponse diaryResponse = diaryServiceImpl.create(diaryCreate);
+            DiaryPreSignedUrlResponse diaryResponse = diaryServiceImpl.create(diaryCreate);
 
             List<Sentence> sentences = diaryResponse.sentences();
 

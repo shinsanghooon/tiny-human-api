@@ -6,6 +6,7 @@ import com.tinyhuman.tinyhumanapi.common.exception.ResourceNotFoundException;
 import com.tinyhuman.tinyhumanapi.diary.controller.port.dto.DiaryCreate;
 import com.tinyhuman.tinyhumanapi.diary.controller.port.dto.DiaryResponse;
 import com.tinyhuman.tinyhumanapi.diary.controller.port.dto.SentenceCreate;
+import com.tinyhuman.tinyhumanapi.diary.controller.port.dto.SentenceResponse;
 import com.tinyhuman.tinyhumanapi.diary.domain.*;
 import com.tinyhuman.tinyhumanapi.diary.mock.FakeDiaryRepository;
 import com.tinyhuman.tinyhumanapi.diary.mock.FakePictureRepository;
@@ -114,11 +115,11 @@ class DiaryDetailServiceImplTest {
             Long updateSentenceId = 1L;
             DiaryResponse diaryResponse = diaryDetailServiceImpl.updateSentence(1L, updateSentenceId, new SentenceCreate("수정된 글 입니다."));
 
-            List<Sentence> sentences = diaryResponse.sentences();
-            Sentence sentence = sentences.stream()
+            List<SentenceResponse> sentences = diaryResponse.sentences();
+            SentenceResponse sentenceResponse = sentences.stream()
                     .filter(s -> s.id().equals(updateSentenceId)).findAny().get();
 
-            assertThat(sentence.sentence()).isEqualTo("수정된 글 입니다.");
+            assertThat(sentenceResponse.sentence()).isEqualTo("수정된 글 입니다.");
         }
 
         @Test

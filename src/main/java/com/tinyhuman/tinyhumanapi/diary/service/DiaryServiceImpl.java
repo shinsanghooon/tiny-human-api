@@ -7,11 +7,10 @@ import com.tinyhuman.tinyhumanapi.common.exception.ResourceNotFoundException;
 import com.tinyhuman.tinyhumanapi.common.exception.UnauthorizedAccessException;
 import com.tinyhuman.tinyhumanapi.common.service.port.ClockHolder;
 import com.tinyhuman.tinyhumanapi.diary.controller.port.DiaryService;
-import com.tinyhuman.tinyhumanapi.diary.controller.port.dto.DiaryCreate;
-import com.tinyhuman.tinyhumanapi.diary.controller.port.dto.DiaryResponse;
-import com.tinyhuman.tinyhumanapi.diary.controller.port.dto.PictureCreate;
-import com.tinyhuman.tinyhumanapi.diary.controller.port.dto.SentenceCreate;
-import com.tinyhuman.tinyhumanapi.diary.domain.*;
+import com.tinyhuman.tinyhumanapi.diary.controller.port.dto.*;
+import com.tinyhuman.tinyhumanapi.diary.domain.Diary;
+import com.tinyhuman.tinyhumanapi.diary.domain.Picture;
+import com.tinyhuman.tinyhumanapi.diary.domain.Sentence;
 import com.tinyhuman.tinyhumanapi.diary.service.port.DiaryRepository;
 import com.tinyhuman.tinyhumanapi.diary.service.port.PictureRepository;
 import com.tinyhuman.tinyhumanapi.diary.service.port.SentenceRepository;
@@ -71,7 +70,7 @@ public class DiaryServiceImpl implements DiaryService {
     private final String DIARY_IMAGE_UPLOAD_PATH = "baby/babyId/diary/diaryId/";
 
     @Transactional
-    public DiaryResponse create(DiaryCreate diaryCreate) {
+    public DiaryPreSignedUrlResponse create(DiaryCreate diaryCreate) {
 
         Baby baby = getBaby(diaryCreate);
         User user = getUser(diaryCreate);
@@ -89,7 +88,7 @@ public class DiaryServiceImpl implements DiaryService {
         }
 
         diaryRepository.save(savedDiary);
-        return DiaryResponse.fromModel(savedDiary);
+        return DiaryPreSignedUrlResponse.fromModel(savedDiary);
     }
 
     private List<Picture> registerPictures(List<PictureCreate> files, Diary savedDiary) {
