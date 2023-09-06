@@ -8,7 +8,11 @@ import com.tinyhuman.tinyhumanapi.baby.mock.FakeImageService;
 import com.tinyhuman.tinyhumanapi.common.enums.ContentType;
 import com.tinyhuman.tinyhumanapi.common.exception.ResourceNotFoundException;
 import com.tinyhuman.tinyhumanapi.common.exception.UnauthorizedAccessException;
-import com.tinyhuman.tinyhumanapi.diary.domain.*;
+import com.tinyhuman.tinyhumanapi.common.mock.TestUuidHolder;
+import com.tinyhuman.tinyhumanapi.diary.controller.port.dto.*;
+import com.tinyhuman.tinyhumanapi.diary.domain.Diary;
+import com.tinyhuman.tinyhumanapi.diary.domain.Picture;
+import com.tinyhuman.tinyhumanapi.diary.domain.Sentence;
 import com.tinyhuman.tinyhumanapi.diary.mock.FakeDiaryRepository;
 import com.tinyhuman.tinyhumanapi.diary.mock.FakePictureRepository;
 import com.tinyhuman.tinyhumanapi.diary.mock.FakeSentenceRepository;
@@ -47,6 +51,8 @@ class DiaryServiceImplTest {
         FakeUserBabyRelationRepository fakeUserBabyRelationRepository = new FakeUserBabyRelationRepository();
         FakeAuthService fakeAuthService = new FakeAuthService();
 
+        TestUuidHolder testUuidHolder = new TestUuidHolder("test-uuid");
+
         this.diaryServiceImpl = DiaryServiceImpl
                 .builder()
                 .babyRepository(fakeBabyRepository)
@@ -57,6 +63,7 @@ class DiaryServiceImplTest {
                 .userRepository(fakeUserRepository)
                 .userBabyRelationRepository(fakeUserBabyRelationRepository)
                 .authService(fakeAuthService)
+                .uuidHolder(testUuidHolder)
                 .build();
 
         UserCreate userCreate1 = UserCreate.builder()
@@ -112,7 +119,7 @@ class DiaryServiceImplTest {
                         .isMainPicture(true)
                         .keyName("abc.test")
                         .preSignedUrl("abc.test")
-                        .contentType(ContentType.PICTURE)
+                        .contentType(ContentType.PHOTO)
                         .build(),
 
                 Picture.builder()
@@ -120,7 +127,7 @@ class DiaryServiceImplTest {
                         .isMainPicture(true)
                         .keyName("abc2.test")
                         .preSignedUrl("abc2.test")
-                        .contentType(ContentType.PICTURE)
+                        .contentType(ContentType.PHOTO)
                         .build()
         );
 
@@ -165,7 +172,7 @@ class DiaryServiceImplTest {
                     .files(pictureCreates)
                     .build();
 
-            DiaryResponse diaryResponse = diaryServiceImpl.create(diaryCreate);
+            DiaryPreSignedUrlResponse diaryResponse = diaryServiceImpl.create(diaryCreate);
 
             List<Sentence> sentences = diaryResponse.sentences();
 

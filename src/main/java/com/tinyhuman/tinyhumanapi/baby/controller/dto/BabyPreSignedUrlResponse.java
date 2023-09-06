@@ -1,24 +1,25 @@
-package com.tinyhuman.tinyhumanapi.baby.domain;
+package com.tinyhuman.tinyhumanapi.baby.controller.dto;
 
+import com.tinyhuman.tinyhumanapi.baby.domain.Baby;
 import com.tinyhuman.tinyhumanapi.baby.enums.Gender;
 import com.tinyhuman.tinyhumanapi.common.exception.ResourceNotFoundException;
 import lombok.Builder;
 
 import java.time.LocalDate;
 
-public record BabyResponse(Long id, String name, Gender gender, LocalDate dayOfBirth, int timeOfBirth, String nickName, String preSignedUrl) {
+public record BabyPreSignedUrlResponse(Long id, String name, Gender gender, LocalDate dayOfBirth, int timeOfBirth, String nickName, String preSignedUrl) {
 
     @Builder
-    public BabyResponse {
+    public BabyPreSignedUrlResponse {
     }
 
-    public static BabyResponse fromModel(Baby baby, String preSignedUrl) {
+    public static BabyPreSignedUrlResponse fromModel(Baby baby, String preSignedUrl) {
 
         if (baby.isDeleted()) {
             throw new ResourceNotFoundException("Baby", baby.id());
         }
 
-        return BabyResponse.builder()
+        return BabyPreSignedUrlResponse.builder()
                 .id(baby.id())
                 .name(baby.name())
                 .gender(baby.gender())

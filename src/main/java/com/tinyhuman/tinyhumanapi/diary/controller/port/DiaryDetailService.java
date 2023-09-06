@@ -1,9 +1,9 @@
 package com.tinyhuman.tinyhumanapi.diary.controller.port;
 
-import com.tinyhuman.tinyhumanapi.diary.domain.DiaryResponse;
+import com.tinyhuman.tinyhumanapi.diary.controller.port.dto.DiaryResponse;
 import com.tinyhuman.tinyhumanapi.diary.domain.Picture;
 import com.tinyhuman.tinyhumanapi.diary.domain.Sentence;
-import com.tinyhuman.tinyhumanapi.diary.domain.SentenceCreate;
+import com.tinyhuman.tinyhumanapi.diary.controller.port.dto.SentenceCreate;
 
 import java.util.List;
 

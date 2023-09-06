@@ -3,17 +3,18 @@ package com.tinyhuman.tinyhumanapi.diary.service;
 import com.tinyhuman.tinyhumanapi.auth.controller.port.AuthService;
 import com.tinyhuman.tinyhumanapi.baby.domain.Baby;
 import com.tinyhuman.tinyhumanapi.baby.service.port.BabyRepository;
-import com.tinyhuman.tinyhumanapi.common.enums.ContentType;
 import com.tinyhuman.tinyhumanapi.common.exception.ResourceNotFoundException;
 import com.tinyhuman.tinyhumanapi.common.exception.UnauthorizedAccessException;
+import com.tinyhuman.tinyhumanapi.common.service.port.UuidHolder;
 import com.tinyhuman.tinyhumanapi.diary.controller.port.DiaryService;
-import com.tinyhuman.tinyhumanapi.diary.domain.*;
+import com.tinyhuman.tinyhumanapi.diary.controller.port.dto.*;
+import com.tinyhuman.tinyhumanapi.diary.domain.Diary;
+import com.tinyhuman.tinyhumanapi.diary.domain.Picture;
+import com.tinyhuman.tinyhumanapi.diary.domain.Sentence;
 import com.tinyhuman.tinyhumanapi.diary.service.port.DiaryRepository;
 import com.tinyhuman.tinyhumanapi.diary.service.port.PictureRepository;
 import com.tinyhuman.tinyhumanapi.diary.service.port.SentenceRepository;
-import com.tinyhuman.tinyhumanapi.integration.aws.S3Util;
-import com.tinyhuman.tinyhumanapi.integration.service.ImageService;
-import com.tinyhuman.tinyhumanapi.integration.util.ImageUtil;
+import com.tinyhuman.tinyhumanapi.integration.service.port.ImageService;
 import com.tinyhuman.tinyhumanapi.user.domain.User;
 import com.tinyhuman.tinyhumanapi.user.domain.UserBabyRelation;
 import com.tinyhuman.tinyhumanapi.user.infrastructure.UserBabyMappingId;
@@ -27,6 +28,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.tinyhuman.tinyhumanapi.common.utils.FileUtils.*;
 
 @Service
 @Transactional
@@ -48,8 +51,12 @@ public class DiaryServiceImpl implements DiaryService {
 
     private final AuthService authService;
 
+    private final UuidHolder uuidHolder;
+
     @Builder
-    public DiaryServiceImpl(DiaryRepository diaryRepository, SentenceRepository sentenceRepository, PictureRepository pictureRepository, BabyRepository babyRepository, UserRepository userRepository, ImageService imageService, UserBabyRelationRepository userBabyRelationRepository, AuthService authService) {
+    public DiaryServiceImpl(DiaryRepository diaryRepository, SentenceRepository sentenceRepository, PictureRepository pictureRepository,
+                            BabyRepository babyRepository, UserRepository userRepository, ImageService imageService,
+                            UserBabyRelationRepository userBabyRelationRepository, AuthService authService, UuidHolder uuidHolder) {
         this.diaryRepository = diaryRepository;
         this.sentenceRepository = sentenceRepository;
         this.pictureRepository = pictureRepository;
@@ -58,12 +65,13 @@ public class DiaryServiceImpl implements DiaryService {
         this.imageService = imageService;
         this.userBabyRelationRepository = userBabyRelationRepository;
         this.authService = authService;
+        this.uuidHolder = uuidHolder;
     }
 
-    private final String DIARY_IMAGE_UPLOAD_PATH = "images/babyId/diary/";
+    private final String DIARY_IMAGE_UPLOAD_PATH = "baby/babyId/diary/diaryId/";
 
     @Transactional
-    public DiaryResponse create(DiaryCreate diaryCreate) {
+    public DiaryPreSignedUrlResponse create(DiaryCreate diaryCreate) {
 
         Baby baby = getBaby(diaryCreate);
         User user = getUser(diaryCreate);
@@ -81,8 +89,7 @@ public class DiaryServiceImpl implements DiaryService {
         }
 
         diaryRepository.save(savedDiary);
-
-        return DiaryResponse.fromModel(savedDiary);
+        return DiaryPreSignedUrlResponse.fromModel(savedDiary);
     }
 
     private List<Picture> registerPictures(List<PictureCreate> files, Diary savedDiary) {
@@ -116,30 +123,7 @@ public class DiaryServiceImpl implements DiaryService {
     public DiaryResponse findById(Long id) {
         Diary diary = diaryRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Diary", id));
-
-        Diary diaryWithPreSignedUrl = addPreSignedUrlToDiary(diary);
-
-        return DiaryResponse.fromModel(diaryWithPreSignedUrl);
-    }
-
-    private Diary addPreSignedUrlToDiary(Diary diary) {
-        List<Picture> pictures = diary.pictures();
-        List<Picture> picturesWithPreSignedUrl = pictures.stream().map(p -> {
-            String preSignedUrl = imageService.getPreSignedUrlForReadFromKeyName(p.keyName());
-            return p.addPreSignedUrl(preSignedUrl);
-        }).toList();
-
-        return Diary.builder()
-                .id(diary.id())
-                .isDeleted(diary.isDeleted())
-                .likeCount(diary.likeCount())
-                .daysAfterBirth(diary.daysAfterBirth())
-                .created_at(diary.created_at())
-                .baby(diary.baby())
-                .sentences(diary.sentences())
-                .pictures(picturesWithPreSignedUrl)
-                .user(diary.user())
-                .build();
+        return DiaryResponse.fromModel(diary);
     }
 
     @Override
@@ -154,16 +138,7 @@ public class DiaryServiceImpl implements DiaryService {
             throw new UnauthorizedAccessException("Baby", babyId);
         }
 
-        List<Diary> babyDiaries = diaryRepository.findByBabyId(babyId);
-
-        List<Diary> diariesWithPreSignedUrl = babyDiaries.stream().map(d -> {
-            if (d.pictures() == null || d.pictures().size() == 0) {
-                return d;
-            }
-            return addPreSignedUrlToDiary(d);
-        }).toList();
-
-        return diariesWithPreSignedUrl.stream()
+        return diaryRepository.findByBabyId(babyId).stream()
                 .map(DiaryResponse::fromModel)
                 .toList();
     }
@@ -174,17 +149,15 @@ public class DiaryServiceImpl implements DiaryService {
 
         boolean isMainPicture = true;
         for (PictureCreate pictureCreate : files) {
-
             String fileName = pictureCreate.fileName();
-            String keyName = S3Util.addBabyIdToImagePath(DIARY_IMAGE_UPLOAD_PATH, babyId, fileName);
-            String mimeType = ImageUtil.guessMimeType(fileName);
-
-            String preSignedUrl = imageService.getPreSignedUrlForUpload(keyName, mimeType);
-            ContentType contentType = ImageUtil.getContentType(mimeType);
+            FileInfo fileInfo = getFileInfo(fileName, uuidHolder.random());
+            String keyName = addBabyIdAndAlbumIdToImagePath(DIARY_IMAGE_UPLOAD_PATH, babyId, savedDiary.id(), fileInfo.fileNameWithEpochTime());
+            String preSignedUrl = imageService.getPreSignedUrlForUpload(keyName, fileInfo.mimeType());
 
             Picture picture = Picture.builder()
                     .isMainPicture(isMainPicture)
-                    .contentType(contentType)
+                    .contentType(fileInfo.contentType())
+                    .fileName(fileName)
                     .keyName(keyName)
                     .preSignedUrl(preSignedUrl)
                     .diaryId(savedDiary.id())

@@ -1,5 +1,6 @@
 package com.tinyhuman.tinyhumanapi.baby.domain;
 
+import com.tinyhuman.tinyhumanapi.baby.controller.dto.BabyPreSignedUrlResponse;
 import com.tinyhuman.tinyhumanapi.baby.enums.Gender;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,7 +24,7 @@ class BabyResponseTest {
                 .profileImgKeyName("https://image.com/1234")
                 .build();
 
-        BabyResponse babyResponse = BabyResponse.fromModel(baby, "presignedUrl");
+        BabyPreSignedUrlResponse babyResponse = BabyPreSignedUrlResponse.fromModel(baby, "presignedUrl");
 
         assertThat(babyResponse.id()).isEqualTo(baby.id());
         assertThat(babyResponse.name()).isEqualTo(baby.name());

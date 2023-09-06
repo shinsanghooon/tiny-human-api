@@ -2,8 +2,8 @@ package com.tinyhuman.tinyhumanapi.diary.controller;
 
 
 import com.tinyhuman.tinyhumanapi.diary.controller.port.DiaryService;
-import com.tinyhuman.tinyhumanapi.diary.domain.DiaryCreate;
-import com.tinyhuman.tinyhumanapi.diary.domain.DiaryResponse;
+import com.tinyhuman.tinyhumanapi.diary.controller.port.dto.DiaryCreate;
+import com.tinyhuman.tinyhumanapi.diary.controller.port.dto.DiaryPreSignedUrlResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -24,7 +24,7 @@ public class DiaryCreateController {
             @ApiResponse(responseCode = "201", description = "일기 생성 성공")})
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public DiaryResponse createDiary(@RequestBody @Valid DiaryCreate diaryCreate) {
+    public DiaryPreSignedUrlResponse createDiary(@RequestBody @Valid DiaryCreate diaryCreate) {
         return diaryService.create(diaryCreate);
     }
 

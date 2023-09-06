@@ -1,4 +1,4 @@
-package com.tinyhuman.tinyhumanapi.baby.domain;
+package com.tinyhuman.tinyhumanapi.baby.controller.dto;
 
 import lombok.Builder;
 

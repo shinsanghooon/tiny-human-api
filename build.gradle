@@ -38,6 +38,7 @@ dependencies {
     // aws sdk
     implementation platform('software.amazon.awssdk:bom:2.20.56')
     implementation 'software.amazon.awssdk:s3'
+    implementation 'software.amazon.awssdk:dynamodb-enhanced'
 
     // exif 정보 추출
     implementation 'com.drewnoakes:metadata-extractor:2.18.0'

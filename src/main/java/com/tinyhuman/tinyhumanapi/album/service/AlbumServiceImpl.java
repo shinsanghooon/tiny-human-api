@@ -3,6 +3,7 @@ package com.tinyhuman.tinyhumanapi.album.service;
 import com.tinyhuman.tinyhumanapi.album.controller.dto.AlbumCreate;
 import com.tinyhuman.tinyhumanapi.album.controller.dto.AlbumDelete;
 import com.tinyhuman.tinyhumanapi.album.controller.dto.AlbumResponse;
+import com.tinyhuman.tinyhumanapi.album.controller.dto.AlbumUploadResponse;
 import com.tinyhuman.tinyhumanapi.album.controller.port.AlbumService;
 import com.tinyhuman.tinyhumanapi.album.domain.Album;
 import com.tinyhuman.tinyhumanapi.album.service.port.AlbumRepository;
@@ -10,9 +11,11 @@ import com.tinyhuman.tinyhumanapi.auth.controller.port.AuthService;
 import com.tinyhuman.tinyhumanapi.common.enums.ContentType;
 import com.tinyhuman.tinyhumanapi.common.exception.ResourceNotFoundException;
 import com.tinyhuman.tinyhumanapi.common.exception.UnauthorizedAccessException;
-import com.tinyhuman.tinyhumanapi.integration.aws.S3Util;
-import com.tinyhuman.tinyhumanapi.integration.service.ImageService;
-import com.tinyhuman.tinyhumanapi.integration.util.ImageUtil;
+import com.tinyhuman.tinyhumanapi.common.service.port.UuidHolder;
+import com.tinyhuman.tinyhumanapi.common.utils.CursorRequest;
+import com.tinyhuman.tinyhumanapi.common.utils.FileUtils;
+import com.tinyhuman.tinyhumanapi.common.utils.PageCursor;
+import com.tinyhuman.tinyhumanapi.integration.service.port.ImageService;
 import com.tinyhuman.tinyhumanapi.user.domain.User;
 import com.tinyhuman.tinyhumanapi.user.domain.UserBabyRelation;
 import com.tinyhuman.tinyhumanapi.user.infrastructure.UserBabyMappingId;
@@ -36,42 +39,54 @@ public class AlbumServiceImpl implements AlbumService {
 
     private final AuthService authService;
 
+    private final UuidHolder uuidHolder;
+
+
     @Builder
-    public AlbumServiceImpl(AlbumRepository albumRepository, ImageService imageService, UserBabyRelationRepository userBabyRelationRepository, AuthService authService) {
+    public AlbumServiceImpl(AlbumRepository albumRepository, ImageService imageService, UserBabyRelationRepository userBabyRelationRepository,
+                            AuthService authService, UuidHolder uuidHolder) {
         this.albumRepository = albumRepository;
         this.imageService = imageService;
         this.userBabyRelationRepository = userBabyRelationRepository;
         this.authService = authService;
+        this.uuidHolder = uuidHolder;
     }
 
-    private final String ALBUM_UPLOAD_PATH = "images/babyId/album/";
+    private final String ALBUM_UPLOAD_PATH = "baby/babyId/album/";
 
     @Override
     public AlbumResponse findByIdAndBabyId(Long albumId, Long babyId) {
         Album album = albumRepository.findByIdAndBabyId(albumId, babyId);
-        String preSignedUrl = getPreSignedUrlFromKeyName(album);
-        return AlbumResponse.fromModel(album, preSignedUrl);
+        return AlbumResponse.fromModel(album);
     }
+
+    /**
+     * 아기에 대한 전체 앨범 조회
+     * 생성 순으로 정렬 할 수 있도록 하기 위해 DynamoDB에 저장된 original_create_at 값을 불러온다.
+     *
+     * @param babyId
+     * @return
+     */
+    @Override
+    public PageCursor<AlbumResponse> getAlbumsByBaby(Long babyId, CursorRequest cursorRequest) {
+        List<AlbumResponse> albumResponses = albumRepository.findByBabyId(babyId, cursorRequest).stream()
+                .map(AlbumResponse::fromModel)
+                .toList();
+
+        long nextKey = getNextKey(albumResponses);
+        return new PageCursor<>(cursorRequest.next(nextKey), albumResponses);
+    }
+
+    private static long getNextKey(List<AlbumResponse> albumResponses) {
+        return albumResponses.stream()
+                .mapToLong(AlbumResponse::id)
+                .min()
+                .orElse(CursorRequest.NONE_KEY);
+    }
+
 
     @Override
-    public List<AlbumResponse> getAlbumsByBaby(Long babyId) {
-        return albumRepository.findByBabyId(babyId).stream().map(album -> {
-            String preSignedUrl = getPreSignedUrlFromKeyName(album);
-            return AlbumResponse.fromModel(album, preSignedUrl);
-        }).toList();
-    }
-
-    private String getPreSignedUrlFromKeyName(Album album) {
-        String keyName = album.keyName();
-        String[] split = keyName.split("/");
-        String fileName = split[split.length - 1];
-        String mimeType = ImageUtil.guessMimeType(fileName);
-
-        return imageService.getPreSignedUrlForUpload(keyName, mimeType);
-    }
-
-    @Override
-    public List<AlbumResponse> uploadAlbums(Long babyId, List<AlbumCreate> files) {
+    public List<AlbumUploadResponse> uploadAlbums(Long babyId, List<AlbumCreate> files) {
 
         User user = authService.getUserOutOfSecurityContextHolder();
         UserBabyRelation userBabyRelation = userBabyRelationRepository.findById(UserBabyMappingId.builder()
@@ -88,16 +103,16 @@ public class AlbumServiceImpl implements AlbumService {
 
         for (AlbumCreate albumCreate : files) {
             String fileName = albumCreate.fileName();
-            String keyName = S3Util.addBabyIdToImagePath(ALBUM_UPLOAD_PATH, babyId, fileName);
-            String mimeType = ImageUtil.guessMimeType(fileName);
+            String mimeType = FileUtils.guessMimeType(fileName);
+            ContentType contentType = FileUtils.getContentType(mimeType);
 
-            String preSignedUrl = imageService.getPreSignedUrlForUpload(keyName, mimeType);
-            ContentType contentType = ImageUtil.getContentType(mimeType);
+
+            String fileNameWithEpoch = FileUtils.generateFileNameWithUUID(fileName, uuidHolder.random());
+            String keyName = FileUtils.addBabyIdToImagePath(ALBUM_UPLOAD_PATH, babyId, fileNameWithEpoch);
 
             Album album = Album.builder()
                     .contentType(contentType)
                     .keyName(keyName)
-                    .preSignedUrl(preSignedUrl)
                     .babyId(babyId)
                     .build();
 
@@ -105,8 +120,16 @@ public class AlbumServiceImpl implements AlbumService {
         }
 
         return albumRepository.saveAll(albums).stream()
-                .map(AlbumResponse::fromModel)
+                .map(this::getAlbumUploadResponse)
                 .toList();
+    }
+
+    private AlbumUploadResponse getAlbumUploadResponse(Album album) {
+        String keyName = album.keyName();
+        String fileName = FileUtils.extractFileNameFromPath(keyName);
+        String mimeType = FileUtils.guessMimeType(fileName);
+        String preSignedUrl = imageService.getPreSignedUrlForUpload(keyName, mimeType);
+        return AlbumUploadResponse.fromModel(album).with(fileName, preSignedUrl, null);
     }
 
     @Override

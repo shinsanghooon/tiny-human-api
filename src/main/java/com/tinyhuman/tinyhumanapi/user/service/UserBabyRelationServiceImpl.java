@@ -1,7 +1,7 @@
 package com.tinyhuman.tinyhumanapi.user.service;
 
 import com.tinyhuman.tinyhumanapi.baby.domain.Baby;
-import com.tinyhuman.tinyhumanapi.baby.domain.BabyCreate;
+import com.tinyhuman.tinyhumanapi.baby.controller.dto.BabyCreate;
 import com.tinyhuman.tinyhumanapi.user.controller.port.UserBabyRelationService;
 import com.tinyhuman.tinyhumanapi.user.domain.User;
 import com.tinyhuman.tinyhumanapi.user.domain.UserBabyRelation;

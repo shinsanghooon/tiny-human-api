@@ -33,11 +33,11 @@ spring:
       max-request-size: 300MB
 aws:
   s3:
-    bucketName: tiny-human-dev
-    path:
-      profile: images/userId/baby/profile/
-      diary: images/babyId/diary/
-      album: images/babyId/album/
+    raw-bucketName: tiny-human-dev
+    thumbnail-bucketName: tiny-human-thumbnail-dev
+  ddb:
+    table:
+      exif: image_exif_info_dev
 jwt:
   issuer: abc@tinyhuman.com
   secret_key: gqe213bfl3quh2

@@ -1,14 +1,16 @@
 package com.tinyhuman.tinyhumanapi.baby.service;
 
 import com.tinyhuman.tinyhumanapi.auth.mock.FakeAuthService;
+import com.tinyhuman.tinyhumanapi.baby.controller.dto.BabyCreate;
+import com.tinyhuman.tinyhumanapi.baby.controller.dto.BabyPreSignedUrlResponse;
+import com.tinyhuman.tinyhumanapi.baby.controller.dto.BabyResponse;
+import com.tinyhuman.tinyhumanapi.baby.controller.dto.BabyUpdate;
 import com.tinyhuman.tinyhumanapi.baby.domain.Baby;
-import com.tinyhuman.tinyhumanapi.baby.domain.BabyCreate;
-import com.tinyhuman.tinyhumanapi.baby.domain.BabyResponse;
-import com.tinyhuman.tinyhumanapi.baby.domain.BabyUpdate;
 import com.tinyhuman.tinyhumanapi.baby.enums.Gender;
 import com.tinyhuman.tinyhumanapi.baby.mock.FakeBabyRepository;
 import com.tinyhuman.tinyhumanapi.baby.mock.FakeImageService;
 import com.tinyhuman.tinyhumanapi.common.exception.ResourceNotFoundException;
+import com.tinyhuman.tinyhumanapi.common.mock.TestUuidHolder;
 import com.tinyhuman.tinyhumanapi.diary.mock.FakeDiaryRepository;
 import com.tinyhuman.tinyhumanapi.user.domain.User;
 import com.tinyhuman.tinyhumanapi.user.domain.UserCreate;
@@ -40,6 +42,7 @@ class BabyServiceImplTest {
         FakeUserBabyRelationRepository fakeUserBabyRelationRepository = new FakeUserBabyRelationRepository();
         UserBabyRelationServiceImpl userBabyRelationService = new UserBabyRelationServiceImpl(fakeUserBabyRelationRepository);
         FakeAuthService fakeAuthService = new FakeAuthService();
+        TestUuidHolder testUuidHolder = new TestUuidHolder("test-uuid");
 
         this.babyServiceImpl = BabyServiceImpl
                 .builder()
@@ -49,6 +52,7 @@ class BabyServiceImplTest {
                 .userRepository(fakeUserRepository)
                 .userBabyRelationService(userBabyRelationService)
                 .authService(fakeAuthService)
+                .uuidHolder(testUuidHolder)
                 .build();
 
         UserCreate userCreate1 = UserCreate.builder()
@@ -83,7 +87,6 @@ class BabyServiceImplTest {
     @DisplayName("아기를 등록할 수 있다.")
     class RegisterBaby {
 
-
         @Test
         @DisplayName("BabyCreate을 이용하여 아기를 등록할 수 있다.")
         void registerBaby() {
@@ -96,7 +99,7 @@ class BabyServiceImplTest {
                     .dayOfBirth(LocalDate.of(2022, 9, 30))
                     .build();
 
-            BabyResponse response = babyServiceImpl.register(babyCreate);
+            BabyPreSignedUrlResponse response = babyServiceImpl.register(babyCreate);
 
             assertThat(response.id()).isNotNull();
             assertThat(response.name()).isEqualTo(babyCreate.name());
@@ -104,7 +107,7 @@ class BabyServiceImplTest {
             assertThat(response.nickName()).isEqualTo(babyCreate.nickName());
             assertThat(response.timeOfBirth()).isEqualTo(babyCreate.timeOfBirth());
             assertThat(response.dayOfBirth()).isEqualTo(babyCreate.dayOfBirth());
-            assertThat(response.preSignedUrl()).contains("images/1/baby/profile/" + babyCreate.fileName());
+            assertThat(response.preSignedUrl()).contains("baby/1/profile/" + "test-uuid" + "_" + babyCreate.fileName());
         }
     }
 
@@ -154,7 +157,7 @@ class BabyServiceImplTest {
         void updateBabyWithFile() {
             String newFile = "update.png";
             BabyResponse originalUser = babyServiceImpl.findById(1L);
-            BabyResponse updatedUser = babyServiceImpl.updateProfileImage(1L, newFile);
+            BabyPreSignedUrlResponse updatedUser = babyServiceImpl.updateProfileImage(1L, newFile);
 
             assertThat(updatedUser.id()).isNotNull();
             assertThat(updatedUser.name()).isEqualTo(originalUser.name());
