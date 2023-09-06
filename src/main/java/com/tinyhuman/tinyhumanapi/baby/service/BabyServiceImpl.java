@@ -9,7 +9,7 @@ import com.tinyhuman.tinyhumanapi.baby.controller.port.BabyService;
 import com.tinyhuman.tinyhumanapi.baby.domain.Baby;
 import com.tinyhuman.tinyhumanapi.baby.service.port.BabyRepository;
 import com.tinyhuman.tinyhumanapi.common.exception.ResourceNotFoundException;
-import com.tinyhuman.tinyhumanapi.common.service.port.ClockHolder;
+import com.tinyhuman.tinyhumanapi.common.service.port.UuidHolder;
 import com.tinyhuman.tinyhumanapi.common.utils.FileUtils;
 import com.tinyhuman.tinyhumanapi.common.utils.FileUtils.FileInfo;
 import com.tinyhuman.tinyhumanapi.diary.domain.Diary;
@@ -41,18 +41,18 @@ public class BabyServiceImpl implements BabyService {
 
     private final AuthService authService;
 
-    private final ClockHolder clockHolder;
+    private final UuidHolder uuidHolder;
 
     @Builder
     public BabyServiceImpl(BabyRepository babyRepository, ImageService imageService, DiaryRepository diaryRepository,
-                           UserRepository userRepository, UserBabyRelationService userBabyRelationService, AuthService authService, ClockHolder clockHolder) {
+                           UserRepository userRepository, UserBabyRelationService userBabyRelationService, AuthService authService, UuidHolder uuidHolder) {
         this.babyRepository = babyRepository;
         this.imageService = imageService;
         this.diaryRepository = diaryRepository;
         this.userRepository = userRepository;
         this.userBabyRelationService = userBabyRelationService;
         this.authService = authService;
-        this.clockHolder = clockHolder;
+        this.uuidHolder = uuidHolder;
     }
 
     private final String BABY_PROFILE_UPLOAD_PATH = "baby/babyId/profile/";
@@ -62,7 +62,7 @@ public class BabyServiceImpl implements BabyService {
 
         User user = authService.getUserOutOfSecurityContextHolder();
 
-        FileInfo fileInfo = FileUtils.getFileInfo(babyCreate.fileName(), clockHolder);
+        FileInfo fileInfo = FileUtils.getFileInfo(babyCreate.fileName(), uuidHolder.random());
 
         String keyName = FileUtils.addBabyIdToImagePath(BABY_PROFILE_UPLOAD_PATH, user.id(), fileInfo.fileNameWithEpochTime());
 
@@ -119,7 +119,7 @@ public class BabyServiceImpl implements BabyService {
         Baby baby = findBaby(id);
         User user = authService.getUserOutOfSecurityContextHolder();
 
-        FileInfo fileInfo = FileUtils.getFileInfo(fileName, clockHolder);
+        FileInfo fileInfo = FileUtils.getFileInfo(fileName, uuidHolder.random());
         String keyName = FileUtils.addUserIdToImagePath(BABY_PROFILE_UPLOAD_PATH, user.id(), fileInfo.fileNameWithEpochTime());
 
         String preSignedUrl = imageService.getPreSignedUrlForUpload(keyName, fileInfo.mimeType());

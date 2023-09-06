@@ -11,9 +11,10 @@ import com.tinyhuman.tinyhumanapi.auth.controller.port.AuthService;
 import com.tinyhuman.tinyhumanapi.common.enums.ContentType;
 import com.tinyhuman.tinyhumanapi.common.exception.ResourceNotFoundException;
 import com.tinyhuman.tinyhumanapi.common.exception.UnauthorizedAccessException;
-import com.tinyhuman.tinyhumanapi.common.service.port.ClockHolder;
+import com.tinyhuman.tinyhumanapi.common.service.port.UuidHolder;
+import com.tinyhuman.tinyhumanapi.common.utils.CursorRequest;
 import com.tinyhuman.tinyhumanapi.common.utils.FileUtils;
-import com.tinyhuman.tinyhumanapi.integration.service.ExifDynamoDBRepository;
+import com.tinyhuman.tinyhumanapi.common.utils.PageCursor;
 import com.tinyhuman.tinyhumanapi.integration.service.port.ImageService;
 import com.tinyhuman.tinyhumanapi.user.domain.User;
 import com.tinyhuman.tinyhumanapi.user.domain.UserBabyRelation;
@@ -38,19 +39,17 @@ public class AlbumServiceImpl implements AlbumService {
 
     private final AuthService authService;
 
-    private final ClockHolder clockHolder;
+    private final UuidHolder uuidHolder;
 
-    private final ExifDynamoDBRepository exifDynamoDBRepository;
 
     @Builder
     public AlbumServiceImpl(AlbumRepository albumRepository, ImageService imageService, UserBabyRelationRepository userBabyRelationRepository,
-                            AuthService authService, ClockHolder clockHolder, ExifDynamoDBRepository exifDynamoDBRepository) {
+                            AuthService authService, UuidHolder uuidHolder) {
         this.albumRepository = albumRepository;
         this.imageService = imageService;
         this.userBabyRelationRepository = userBabyRelationRepository;
         this.authService = authService;
-        this.clockHolder = clockHolder;
-        this.exifDynamoDBRepository = exifDynamoDBRepository;
+        this.uuidHolder = uuidHolder;
     }
 
     private final String ALBUM_UPLOAD_PATH = "baby/babyId/album/";
@@ -69,11 +68,26 @@ public class AlbumServiceImpl implements AlbumService {
      * @return
      */
     @Override
-    public List<AlbumResponse> getAlbumsByBaby(Long babyId) {
-        return albumRepository.findByBabyId(babyId).stream()
+    public PageCursor<AlbumResponse> getAlbumsByBaby(Long babyId, CursorRequest cursorRequest) {
+        List<AlbumResponse> albumResponses = findByBabyIdWithCursor(babyId, cursorRequest);
+
+        long nextKey = getNextKey(albumResponses);
+        return new PageCursor<>(cursorRequest.next(nextKey), albumResponses);
+    }
+
+    private List<AlbumResponse> findByBabyIdWithCursor(Long babyId, CursorRequest cursorRequest) {
+        return albumRepository.findByBabyId(babyId, cursorRequest).stream()
                 .map(AlbumResponse::fromModel)
                 .toList();
     }
+
+    private static long getNextKey(List<AlbumResponse> albumResponses) {
+        return albumResponses.stream()
+                .mapToLong(AlbumResponse::id)
+                .min()
+                .orElse(CursorRequest.NONE_KEY);
+    }
+
 
     @Override
     public List<AlbumUploadResponse> uploadAlbums(Long babyId, List<AlbumCreate> files) {
@@ -96,7 +110,8 @@ public class AlbumServiceImpl implements AlbumService {
             String mimeType = FileUtils.guessMimeType(fileName);
             ContentType contentType = FileUtils.getContentType(mimeType);
 
-            String fileNameWithEpoch = FileUtils.generateFileNameWithEpochTime(fileName, clockHolder);
+
+            String fileNameWithEpoch = FileUtils.generateFileNameWithUUID(fileName, uuidHolder.random());
             String keyName = FileUtils.addBabyIdToImagePath(ALBUM_UPLOAD_PATH, babyId, fileNameWithEpoch);
 
             Album album = Album.builder()
@@ -108,7 +123,7 @@ public class AlbumServiceImpl implements AlbumService {
             albums.add(album);
         }
 
-        return  albumRepository.saveAll(albums).stream()
+        return albumRepository.saveAll(albums).stream()
                 .map(this::getAlbumUploadResponse)
                 .toList();
     }

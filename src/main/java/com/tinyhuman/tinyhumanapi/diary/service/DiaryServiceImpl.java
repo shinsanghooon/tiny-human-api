@@ -5,7 +5,7 @@ import com.tinyhuman.tinyhumanapi.baby.domain.Baby;
 import com.tinyhuman.tinyhumanapi.baby.service.port.BabyRepository;
 import com.tinyhuman.tinyhumanapi.common.exception.ResourceNotFoundException;
 import com.tinyhuman.tinyhumanapi.common.exception.UnauthorizedAccessException;
-import com.tinyhuman.tinyhumanapi.common.service.port.ClockHolder;
+import com.tinyhuman.tinyhumanapi.common.service.port.UuidHolder;
 import com.tinyhuman.tinyhumanapi.diary.controller.port.DiaryService;
 import com.tinyhuman.tinyhumanapi.diary.controller.port.dto.*;
 import com.tinyhuman.tinyhumanapi.diary.domain.Diary;
@@ -51,11 +51,12 @@ public class DiaryServiceImpl implements DiaryService {
 
     private final AuthService authService;
 
-    private final ClockHolder clockHolder;
+    private final UuidHolder uuidHolder;
 
     @Builder
     public DiaryServiceImpl(DiaryRepository diaryRepository, SentenceRepository sentenceRepository, PictureRepository pictureRepository,
-                            BabyRepository babyRepository, UserRepository userRepository, ImageService imageService, UserBabyRelationRepository userBabyRelationRepository, AuthService authService, ClockHolder clockHolder) {
+                            BabyRepository babyRepository, UserRepository userRepository, ImageService imageService,
+                            UserBabyRelationRepository userBabyRelationRepository, AuthService authService, UuidHolder uuidHolder) {
         this.diaryRepository = diaryRepository;
         this.sentenceRepository = sentenceRepository;
         this.pictureRepository = pictureRepository;
@@ -64,7 +65,7 @@ public class DiaryServiceImpl implements DiaryService {
         this.imageService = imageService;
         this.userBabyRelationRepository = userBabyRelationRepository;
         this.authService = authService;
-        this.clockHolder = clockHolder;
+        this.uuidHolder = uuidHolder;
     }
 
     private final String DIARY_IMAGE_UPLOAD_PATH = "baby/babyId/diary/diaryId/";
@@ -149,7 +150,7 @@ public class DiaryServiceImpl implements DiaryService {
         boolean isMainPicture = true;
         for (PictureCreate pictureCreate : files) {
             String fileName = pictureCreate.fileName();
-            FileInfo fileInfo = getFileInfo(fileName, clockHolder);
+            FileInfo fileInfo = getFileInfo(fileName, uuidHolder.random());
             String keyName = addBabyIdAndAlbumIdToImagePath(DIARY_IMAGE_UPLOAD_PATH, babyId, savedDiary.id(), fileInfo.fileNameWithEpochTime());
             String preSignedUrl = imageService.getPreSignedUrlForUpload(keyName, fileInfo.mimeType());
 

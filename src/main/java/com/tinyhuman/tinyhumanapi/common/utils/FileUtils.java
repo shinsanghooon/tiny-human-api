@@ -2,7 +2,6 @@ package com.tinyhuman.tinyhumanapi.common.utils;
 
 import com.tinyhuman.tinyhumanapi.common.enums.ContentType;
 import com.tinyhuman.tinyhumanapi.common.exception.NotSupportedContentTypeException;
-import com.tinyhuman.tinyhumanapi.common.service.port.ClockHolder;
 import lombok.Builder;
 
 import java.io.File;
@@ -32,9 +31,8 @@ public class FileUtils {
                 fileName;
     }
 
-    public static String generateFileNameWithEpochTime(String fileName, ClockHolder clockHolder) {
-        long epochMilli = clockHolder.epochMilli();
-        return epochMilli + "_" + fileName;
+    public static String generateFileNameWithUUID(String fileName, String uuid) {
+        return uuid + "_" + fileName;
     }
 
     public static String extractFileNameFromPath(String keyName) {
@@ -45,7 +43,7 @@ public class FileUtils {
     public static ContentType getContentType(String mimeType) {
         ContentType contentType;
         if (mimeType.startsWith("image")) {
-            contentType = ContentType.PICTURE;
+            contentType = ContentType.PHOTO;
         } else if (mimeType.startsWith("video")) {
             contentType = ContentType.VIDEO;
         } else {
@@ -63,8 +61,8 @@ public class FileUtils {
         }
     }
 
-    public static FileInfo getFileInfo(String fileName, ClockHolder clockHolder) {
-        String newFileName = generateFileNameWithEpochTime(fileName, clockHolder);
+    public static FileInfo getFileInfo(String fileName, String uuid) {
+        String newFileName = generateFileNameWithUUID(fileName, uuid);
         String mimeType = guessMimeType(fileName);
         ContentType contentType = getContentType(mimeType);
         return FileInfo.builder()
