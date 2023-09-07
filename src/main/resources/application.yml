@@ -7,14 +7,6 @@ spring:
       on-profile: local
   flyway:
     enabled: false
-  datasource:
-    url: jdbc:mariadb://localhost:13306/tinyhuman_db?allowPublicKeyRetrieval=true&useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
-    username: root
-    password: password
-    hikari:
-      max-lifetime: 56000
-      connection-timeout: 2000
-    driver-class-name: org.mariadb.jdbc.Driver
   jpa:
     hibernate:
       ddl-auto: create
@@ -37,7 +29,7 @@ aws:
     thumbnail-bucketName: tiny-human-thumbnail-dev
   ddb:
     table:
-      exif: image_exif_info_dev
+
 jwt:
   issuer: abc@tinyhuman.com
   secret_key: gqe213bfl3quh2

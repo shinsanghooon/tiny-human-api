@@ -9,6 +9,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Where;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Getter
 @Table(name = "albums")
@@ -30,15 +32,27 @@ public class AlbumEntity extends BaseEntity {
     @Column(name = "key_name")
     private String keyName;
 
+    @Column(name = "original_created_at")
+    private LocalDateTime originalCreatedAt;
+
+    @Column(name = "gps_lat")
+    private Long gpsLat;
+
+    @Column(name = "gps_lon")
+    private Long gpsLon;
+
     @Column(name="is_deleted")
     private boolean isDeleted = false;
 
     @Builder
-    public AlbumEntity(Long id, Long babyId, ContentType contentType, String keyName, boolean isDeleted) {
+    public AlbumEntity(Long id, Long babyId, ContentType contentType, String keyName, LocalDateTime originalCreatedAt, Long gpsLat, Long gpsLon, boolean isDeleted) {
         this.id = id;
         this.babyId = babyId;
         this.contentType = contentType;
         this.keyName = keyName;
+        this.originalCreatedAt = originalCreatedAt;
+        this.gpsLat = gpsLat;
+        this.gpsLon = gpsLon;
         this.isDeleted = isDeleted;
     }
 
@@ -48,6 +62,9 @@ public class AlbumEntity extends BaseEntity {
                 .babyId(album.babyId())
                 .contentType(album.contentType())
                 .keyName(album.keyName())
+                .originalCreatedAt(album.originalCreatedAt())
+                .gpsLat(album.gpsLat())
+                .gpsLon(album.gpsLon())
                 .isDeleted(album.isDeleted())
                 .build();
     }
@@ -58,6 +75,10 @@ public class AlbumEntity extends BaseEntity {
                 .babyId(this.babyId)
                 .contentType(this.contentType)
                 .keyName(this.keyName)
+                .createdAt(this.getCreatedAt())
+                .originalCreatedAt(this.originalCreatedAt)
+                .gpsLat(this.gpsLat)
+                .gpsLon(this.gpsLon)
                 .isDeleted(this.isDeleted)
                 .build();
     }

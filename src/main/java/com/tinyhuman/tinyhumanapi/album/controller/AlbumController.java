@@ -46,7 +46,7 @@ public class AlbumController {
             @ApiResponse(responseCode = "200", description = "아기에 대한 전체 앨범 조회")})
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/{babyId}/albums")
-    public PageCursor<AlbumResponse> getAllAlbums(@PathVariable("babyId") Long babyId, @RequestBody CursorRequest cursorRequest) {
+    public PageCursor<AlbumResponse> getAllAlbums(@PathVariable("babyId") Long babyId, @RequestParam("order") String order, @RequestBody CursorRequest cursorRequest) {
         return albumService.getAlbumsByBaby(babyId, cursorRequest);
     }
 
