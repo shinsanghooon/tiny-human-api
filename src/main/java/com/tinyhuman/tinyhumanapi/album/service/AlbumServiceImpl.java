@@ -15,6 +15,7 @@ import com.tinyhuman.tinyhumanapi.common.service.port.UuidHolder;
 import com.tinyhuman.tinyhumanapi.common.utils.CursorRequest;
 import com.tinyhuman.tinyhumanapi.common.utils.FileUtils;
 import com.tinyhuman.tinyhumanapi.common.utils.PageCursor;
+import com.tinyhuman.tinyhumanapi.integration.controller.dto.LastEvaluatedKey;
 import com.tinyhuman.tinyhumanapi.integration.service.port.ImageService;
 import com.tinyhuman.tinyhumanapi.user.domain.User;
 import com.tinyhuman.tinyhumanapi.user.domain.UserBabyRelation;
@@ -60,13 +61,6 @@ public class AlbumServiceImpl implements AlbumService {
         return AlbumResponse.fromModel(album);
     }
 
-    /**
-     * 아기에 대한 전체 앨범 조회
-     * 생성 순으로 정렬 할 수 있도록 하기 위해 DynamoDB에 저장된 original_create_at 값을 불러온다.
-     *
-     * @param babyId
-     * @return
-     */
     @Override
     public PageCursor<AlbumResponse> getAlbumsByBaby(Long babyId, CursorRequest cursorRequest) {
         List<AlbumResponse> albumResponses = albumRepository.findByBabyId(babyId, cursorRequest).stream()
@@ -82,6 +76,10 @@ public class AlbumServiceImpl implements AlbumService {
                 .mapToLong(AlbumResponse::id)
                 .min()
                 .orElse(CursorRequest.NONE_KEY);
+    }
+
+    public void getAlbumsByBabyOrderByOriginalDate(Long babyId, LastEvaluatedKey lastEvaluatedKey) {
+
     }
 
 
@@ -113,6 +111,9 @@ public class AlbumServiceImpl implements AlbumService {
             Album album = Album.builder()
                     .contentType(contentType)
                     .keyName(keyName)
+                    .originalCreatedAt(albumCreate.originalCreatedAt())
+                    .gpsLat(albumCreate.gpsLat())
+                    .gpsLon(albumCreate.gptLon())
                     .babyId(babyId)
                     .build();
 
@@ -129,7 +130,7 @@ public class AlbumServiceImpl implements AlbumService {
         String fileName = FileUtils.extractFileNameFromPath(keyName);
         String mimeType = FileUtils.guessMimeType(fileName);
         String preSignedUrl = imageService.getPreSignedUrlForUpload(keyName, mimeType);
-        return AlbumUploadResponse.fromModel(album).with(fileName, preSignedUrl, null);
+        return AlbumUploadResponse.fromModel(album).with(fileName, preSignedUrl);
     }
 
     @Override

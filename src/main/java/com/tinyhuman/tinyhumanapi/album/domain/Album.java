@@ -3,7 +3,9 @@ package com.tinyhuman.tinyhumanapi.album.domain;
 import com.tinyhuman.tinyhumanapi.common.enums.ContentType;
 import lombok.Builder;
 
-public record Album(Long id, Long babyId, ContentType contentType, String keyName, boolean isDeleted) {
+import java.time.LocalDateTime;
+
+public record Album(Long id, Long babyId, ContentType contentType, String keyName, LocalDateTime createdAt, LocalDateTime originalCreatedAt, Long gpsLat, Long gpsLon, boolean isDeleted) {
 
     @Builder
     public Album {
@@ -15,6 +17,10 @@ public record Album(Long id, Long babyId, ContentType contentType, String keyNam
                 .babyId(this.babyId)
                 .contentType(this.contentType)
                 .keyName(this.keyName)
+                .createdAt(this.createdAt)
+                .originalCreatedAt(this.originalCreatedAt)
+                .gpsLat(this.gpsLat)
+                .gpsLon(this.gpsLon)
                 .isDeleted(true)
                 .build();}
 }

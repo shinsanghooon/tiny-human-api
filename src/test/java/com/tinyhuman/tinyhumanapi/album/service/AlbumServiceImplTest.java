@@ -111,7 +111,7 @@ class AlbumServiceImplTest {
         void fileSetup() {
             for (int i = 0; i < 10; i++) {
                 String originalFileName = "original_" + i + ".png";
-                files.add(new AlbumCreate(originalFileName));
+                files.add(AlbumCreate.builder().fileName(originalFileName).build());
             }
         }
 
@@ -150,7 +150,7 @@ class AlbumServiceImplTest {
         void fileSetup() {
             for (int i = 0; i < 5; i++) {
                 String originalFileName = "original_" + i + ".png";
-                files.add(new AlbumCreate(originalFileName));
+                files.add(AlbumCreate.builder().fileName(originalFileName).build());
             }
 
             albumServiceImpl.uploadAlbums(1L, files);
@@ -188,7 +188,7 @@ class AlbumServiceImplTest {
         void fileSetup() {
             for (int i = 0; i < 20; i++) {
                 String originalFileName = "original_" + i + ".png";
-                files.add(new AlbumCreate(originalFileName));
+                files.add(AlbumCreate.builder().fileName(originalFileName).build());
             }
 
             albumServiceImpl.uploadAlbums(babyId, files);
@@ -220,7 +220,7 @@ class AlbumServiceImplTest {
         void fileSetup() {
             for (int i = 0; i < 20; i++) {
                 String originalFileName = "original_" + i + ".png";
-                files.add(new AlbumCreate(originalFileName));
+                files.add(AlbumCreate.builder().fileName(originalFileName).build());
             }
 
             albumServiceImpl.uploadAlbums(babyId, files);
