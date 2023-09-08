@@ -22,15 +22,13 @@ class BabyTest {
                 .dayOfBirth(LocalDate.of(2022, 9, 20))
                 .build();
 
-        String s3ImgUrl = "https://image.com/1234";
-        Baby baby = Baby.fromCreate(babyCreate, s3ImgUrl);
+        Baby baby = Baby.fromCreate(babyCreate);
         
         assertThat(baby.name()).isEqualTo(babyCreate.name());
         assertThat(baby.gender()).isEqualTo(babyCreate.gender());
         assertThat(baby.nickName()).isEqualTo(babyCreate.nickName());
         assertThat(baby.timeOfBirth()).isEqualTo(babyCreate.timeOfBirth());
         assertThat(baby.dayOfBirth()).isEqualTo(babyCreate.dayOfBirth());
-        assertThat(baby.profileImgKeyName()).isEqualTo(s3ImgUrl);
 
     }
 

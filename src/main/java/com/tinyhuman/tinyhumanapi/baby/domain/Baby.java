@@ -13,15 +13,27 @@ public record Baby(Long id, String name, Gender gender, LocalDate dayOfBirth, in
     public Baby {
     }
 
-    public static Baby fromCreate(BabyCreate babyCreate, String profileImgKeyName) {
+    public static Baby fromCreate(BabyCreate babyCreate) {
         return Baby.builder()
                 .name(babyCreate.name())
                 .gender(babyCreate.gender())
                 .nickName(babyCreate.nickName())
                 .dayOfBirth(babyCreate.dayOfBirth())
                 .timeOfBirth(babyCreate.timeOfBirth())
-                .profileImgKeyName(profileImgKeyName)
                 .isDeleted(false)
+                .build();
+    }
+
+    public Baby with(String profileImgKeyName) {
+        return Baby.builder()
+                .id(this.id)
+                .name(this.name)
+                .gender(this.gender)
+                .nickName(this.nickName)
+                .dayOfBirth(this.dayOfBirth)
+                .timeOfBirth(this.timeOfBirth)
+                .profileImgKeyName(profileImgKeyName)
+                .isDeleted(this.isDeleted)
                 .build();
     }
 

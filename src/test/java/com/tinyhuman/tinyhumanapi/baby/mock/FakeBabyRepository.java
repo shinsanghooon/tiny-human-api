@@ -41,6 +41,7 @@ public class FakeBabyRepository implements BabyRepository {
     public Optional<Baby> findById(Long id) {
         return data.stream()
                 .filter(baby -> baby.id().equals(id))
+                .filter(baby -> !baby.isDeleted())
                 .findAny();
     }
 
