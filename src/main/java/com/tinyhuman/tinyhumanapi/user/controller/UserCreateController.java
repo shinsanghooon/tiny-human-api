@@ -8,24 +8,30 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
+import lombok.Builder;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/users")
-@RequiredArgsConstructor
 @Tag(name = "UserCreateController", description = "사용자 생성을 위한 컨트롤러입니다.")
 public class UserCreateController {
 
     private final UserService userService;
 
+    @Builder
+    public UserCreateController(UserService userService) {
+        this.userService = userService;
+    }
+
     @Operation(summary = "회원 가입 API", responses = {
             @ApiResponse(responseCode = "201", description = "회원 가입 성공")})
-    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public UserResponse registerUser(@RequestBody @Valid UserCreate userCreate) {
-        return userService.registerUser(userCreate);
+    public ResponseEntity<UserResponse> registerUser(@RequestBody @Valid UserCreate userCreate) {
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(userService.registerUser(userCreate));
     }
 
     @Operation(summary = "이메일 중복 체크 API", responses = {
