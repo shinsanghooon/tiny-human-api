@@ -16,10 +16,13 @@ import com.tinyhuman.tinyhumanapi.baby.service.port.BabyRepository;
 import com.tinyhuman.tinyhumanapi.common.service.port.UuidHolder;
 import com.tinyhuman.tinyhumanapi.diary.controller.DiaryController;
 import com.tinyhuman.tinyhumanapi.diary.controller.DiaryCreateController;
+import com.tinyhuman.tinyhumanapi.diary.controller.DiaryDetailController;
+import com.tinyhuman.tinyhumanapi.diary.controller.port.DiaryDetailService;
 import com.tinyhuman.tinyhumanapi.diary.controller.port.DiaryService;
 import com.tinyhuman.tinyhumanapi.diary.mock.FakeDiaryRepository;
 import com.tinyhuman.tinyhumanapi.diary.mock.FakePictureRepository;
 import com.tinyhuman.tinyhumanapi.diary.mock.FakeSentenceRepository;
+import com.tinyhuman.tinyhumanapi.diary.service.DiaryDetailServiceImpl;
 import com.tinyhuman.tinyhumanapi.diary.service.DiaryServiceImpl;
 import com.tinyhuman.tinyhumanapi.diary.service.port.DiaryRepository;
 import com.tinyhuman.tinyhumanapi.diary.service.port.PictureRepository;
@@ -64,6 +67,9 @@ public class TestContainer {
     public final DiaryService diaryService;
     public DiaryCreateController diaryCreateController;
     public DiaryController diaryController;
+
+    public DiaryDetailService diaryDetailService;
+    public DiaryDetailController diaryDetailController;
 
     @Builder
     public TestContainer(UuidHolder uuidHolder) {
@@ -139,6 +145,17 @@ public class TestContainer {
         this.diaryController = DiaryController.builder()
                 .diaryService(this.diaryService)
                 .build();
+
+        // for DiaryDetailController
+        this.diaryDetailService = DiaryDetailServiceImpl.builder()
+                .diaryRepository(this.diaryRepository)
+                .pictureRepository(this.pictureRepository)
+                .sentenceRepository(this.sentenceRepository)
+                .build();
+        this.diaryDetailController = DiaryDetailController.builder()
+                .diaryDetailService(this.diaryDetailService)
+                .build();
+
 
     }
 }

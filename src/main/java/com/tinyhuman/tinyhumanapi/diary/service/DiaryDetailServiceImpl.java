@@ -75,6 +75,7 @@ public class DiaryDetailServiceImpl implements DiaryDetailService {
 
     @Override
     public void deletePicture(Long diaryId, Long pictureId) {
+        // TODO
 
     }
 

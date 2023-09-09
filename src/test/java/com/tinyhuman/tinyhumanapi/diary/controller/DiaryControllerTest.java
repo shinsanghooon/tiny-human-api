@@ -111,7 +111,7 @@ class DiaryControllerTest {
 
         @Test
         @DisplayName("존재하지 않는 id를 요청하면 예외를 던진다.")
-        void getDiaryWithInvalid() {
+        void deleteDiaryWithInvalid() {
             assertThatThrownBy(() -> testContainer.diaryController.deleteDiary(9999L))
                     .isInstanceOf(ResourceNotFoundException.class)
                     .hasMessageContaining("Diary");
