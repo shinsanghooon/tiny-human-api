@@ -14,8 +14,15 @@ import com.tinyhuman.tinyhumanapi.baby.mock.FakeImageService;
 import com.tinyhuman.tinyhumanapi.baby.service.BabyServiceImpl;
 import com.tinyhuman.tinyhumanapi.baby.service.port.BabyRepository;
 import com.tinyhuman.tinyhumanapi.common.service.port.UuidHolder;
+import com.tinyhuman.tinyhumanapi.diary.controller.DiaryCreateController;
+import com.tinyhuman.tinyhumanapi.diary.controller.port.DiaryService;
 import com.tinyhuman.tinyhumanapi.diary.mock.FakeDiaryRepository;
+import com.tinyhuman.tinyhumanapi.diary.mock.FakePictureRepository;
+import com.tinyhuman.tinyhumanapi.diary.mock.FakeSentenceRepository;
+import com.tinyhuman.tinyhumanapi.diary.service.DiaryServiceImpl;
 import com.tinyhuman.tinyhumanapi.diary.service.port.DiaryRepository;
+import com.tinyhuman.tinyhumanapi.diary.service.port.PictureRepository;
+import com.tinyhuman.tinyhumanapi.diary.service.port.SentenceRepository;
 import com.tinyhuman.tinyhumanapi.integration.service.port.ImageService;
 import com.tinyhuman.tinyhumanapi.user.controller.UserController;
 import com.tinyhuman.tinyhumanapi.user.controller.UserCreateController;
@@ -50,6 +57,11 @@ public class TestContainer {
     public final AlbumRepository albumRepository;
     public final AlbumService albumService;
     public final AlbumController albumController;
+
+    public final SentenceRepository sentenceRepository;
+    public final PictureRepository pictureRepository;
+    public final DiaryService diaryService;
+    public DiaryCreateController diaryCreateController;
 
     @Builder
     public TestContainer(UuidHolder uuidHolder) {
@@ -101,6 +113,23 @@ public class TestContainer {
                 .build();
         this.albumController = AlbumController.builder()
                 .albumService(this.albumService)
+                .build();
+
+        // for DiaryCreateController
+        this.sentenceRepository = new FakeSentenceRepository();
+        this.pictureRepository = new FakePictureRepository();
+        this.diaryService = DiaryServiceImpl.builder()
+                .authService(this.authService)
+                .babyRepository(this.babyRepository)
+                .diaryRepository(this.diaryRepository)
+                .imageService(this.imageService)
+                .userBabyRelationRepository(this.userBabyRelationRepository)
+                .sentenceRepository(this.sentenceRepository)
+                .pictureRepository(this.pictureRepository)
+                .userRepository(this.userRepository)
+                .build();
+        this.diaryCreateController = DiaryCreateController.builder()
+                .diaryService(this.diaryService)
                 .build();
     }
 }
