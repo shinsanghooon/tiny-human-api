@@ -127,6 +127,7 @@ public class TestContainer {
                 .sentenceRepository(this.sentenceRepository)
                 .pictureRepository(this.pictureRepository)
                 .userRepository(this.userRepository)
+                .uuidHolder(uuidHolder)
                 .build();
         this.diaryCreateController = DiaryCreateController.builder()
                 .diaryService(this.diaryService)

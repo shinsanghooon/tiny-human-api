@@ -26,6 +26,7 @@ public class FakeBabyRepository implements BabyRepository {
                     .timeOfBirth(baby.timeOfBirth())
                     .dayOfBirth(baby.dayOfBirth())
                     .profileImgKeyName(baby.profileImgKeyName())
+                    .userId(baby.userId())
                     .isDeleted(false)
                     .build();
             data.add(newBaby);
@@ -42,7 +43,7 @@ public class FakeBabyRepository implements BabyRepository {
         return data.stream()
                 .filter(baby -> baby.id().equals(id))
                 .filter(baby -> !baby.isDeleted())
-                .findAny();
+                .findFirst();
     }
 
     @Override

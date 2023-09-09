@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.Builder;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -26,10 +27,11 @@ public class DiaryCreateController {
 
     @Operation(summary = "일기 생성 API", responses = {
             @ApiResponse(responseCode = "201", description = "일기 생성 성공")})
-    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public DiaryPreSignedUrlResponse createDiary(@RequestBody @Valid DiaryCreate diaryCreate) {
-        return diaryService.create(diaryCreate);
+    public ResponseEntity<DiaryPreSignedUrlResponse> createDiary(@RequestBody @Valid DiaryCreate diaryCreate) {
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(diaryService.create(diaryCreate));
     }
 
 }
