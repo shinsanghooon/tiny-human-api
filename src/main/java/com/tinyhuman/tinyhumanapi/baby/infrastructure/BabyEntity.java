@@ -79,6 +79,7 @@ public class BabyEntity extends BaseEntity {
                 .gender(baby.gender())
                 .nickName(baby.nickName())
                 .profileImgKeyName(baby.profileImgKeyName())
+                .userId(baby.userId())
                 .isDeleted(baby.isDeleted())
                 .build();
     }
@@ -92,6 +93,7 @@ public class BabyEntity extends BaseEntity {
                 .gender(this.gender)
                 .nickName(this.nickName)
                 .profileImgKeyName(this.profileImgKeyName)
+                .userId(this.userId)
                 .isDeleted(this.isDeleted)
                 .build();
     }

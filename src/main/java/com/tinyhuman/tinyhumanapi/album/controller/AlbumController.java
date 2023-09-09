@@ -31,7 +31,6 @@ public class AlbumController {
 
     @Operation(summary = "앨범 추가 API", responses = {
             @ApiResponse(responseCode = "201", description = "앨범 업로드 성공")})
-    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/{babyId}/albums")
     public ResponseEntity<List<AlbumUploadResponse>> uploadAlbums(@PathVariable("babyId") Long babyId,
                                                                   @RequestBody List<AlbumCreate> files) {
@@ -42,26 +41,31 @@ public class AlbumController {
 
     @Operation(summary = "앨범 단건 조회 API", responses = {
             @ApiResponse(responseCode = "200", description = "앨범 단건 상세 조회")})
-    @ResponseStatus(HttpStatus.OK)
     @GetMapping("/{babyId}/albums/{albumId}")
-    public AlbumResponse getAlbum(@PathVariable("babyId") Long babyId, @PathVariable("albumId") Long albumId) {
-        return albumService.findByIdAndBabyId(albumId, babyId);
+    public ResponseEntity<AlbumResponse> getAlbum(@PathVariable("babyId") Long babyId, @PathVariable("albumId") Long albumId) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(albumService.findByIdAndBabyId(albumId, babyId));
     }
 
     @Operation(summary = "앨범 조회 API", responses = {
             @ApiResponse(responseCode = "200", description = "아기에 대한 전체 앨범 조회")})
-    @ResponseStatus(HttpStatus.OK)
     @GetMapping("/{babyId}/albums")
-    public PageCursor<AlbumResponse> getAllAlbums(@PathVariable("babyId") Long babyId, @RequestParam("order") String order, @RequestBody CursorRequest cursorRequest) {
-        return albumService.getAlbumsByBaby(babyId, cursorRequest);
+    public ResponseEntity<PageCursor<AlbumResponse>> getAllAlbums(@PathVariable("babyId") Long babyId, @RequestParam("order") String order, @RequestBody CursorRequest cursorRequest) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(albumService.getAlbumsByBaby(babyId, cursorRequest));
     }
 
     @Operation(summary = "앨범 삭제 API", responses = {
             @ApiResponse(responseCode = "204", description = "앨범 삭제")})
-    @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{babyId}/albums")
-    public void deleteAlbums(@PathVariable("babyId") Long babyId, @RequestBody AlbumDelete albums) {
+    public ResponseEntity<Void> deleteAlbums(@PathVariable("babyId") Long babyId, @RequestBody AlbumDelete albums) {
         albumService.delete(albums);
+        return ResponseEntity
+                .status(HttpStatus.NO_CONTENT)
+                .build();
+
     }
 
 

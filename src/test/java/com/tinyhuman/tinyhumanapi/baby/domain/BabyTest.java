@@ -22,7 +22,7 @@ class BabyTest {
                 .dayOfBirth(LocalDate.of(2022, 9, 20))
                 .build();
 
-        Baby baby = Baby.fromCreate(babyCreate);
+        Baby baby = Baby.fromCreate(babyCreate, 1L);
         
         assertThat(baby.name()).isEqualTo(babyCreate.name());
         assertThat(baby.gender()).isEqualTo(babyCreate.gender());

@@ -64,7 +64,7 @@ public class BabyServiceImpl implements BabyService {
 
         FileInfo fileInfo = FileUtils.getFileInfo(babyCreate.fileName(), uuidHolder.random());
 
-        Baby baby = babyRepository.save(Baby.fromCreate(babyCreate));
+        Baby baby = babyRepository.save(Baby.fromCreate(babyCreate, user.id()));
 
         String keyName = FileUtils.addBabyIdToImagePath(BABY_PROFILE_UPLOAD_PATH, baby.id(), fileInfo.fileNameWithEpochTime());
 

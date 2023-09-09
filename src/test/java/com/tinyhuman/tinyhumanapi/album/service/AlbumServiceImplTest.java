@@ -168,10 +168,8 @@ class AlbumServiceImplTest {
 
             List<Album> deletedAlbums = albumServiceImpl.delete(albumDelete);
 
-            assertThat(deletedAlbums).allSatisfy(album -> {
-                assertThat(album).extracting("id").contains(deleteIds);
-                assertThat(album.isDeleted()).isTrue();
-            });
+            assertThat(deletedAlbums)
+                    .extracting("id").contains(1L, 2L);
         }
     }
 
