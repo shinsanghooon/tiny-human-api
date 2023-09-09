@@ -14,6 +14,7 @@ import com.tinyhuman.tinyhumanapi.baby.mock.FakeImageService;
 import com.tinyhuman.tinyhumanapi.baby.service.BabyServiceImpl;
 import com.tinyhuman.tinyhumanapi.baby.service.port.BabyRepository;
 import com.tinyhuman.tinyhumanapi.common.service.port.UuidHolder;
+import com.tinyhuman.tinyhumanapi.diary.controller.DiaryController;
 import com.tinyhuman.tinyhumanapi.diary.controller.DiaryCreateController;
 import com.tinyhuman.tinyhumanapi.diary.controller.port.DiaryService;
 import com.tinyhuman.tinyhumanapi.diary.mock.FakeDiaryRepository;
@@ -62,6 +63,7 @@ public class TestContainer {
     public final PictureRepository pictureRepository;
     public final DiaryService diaryService;
     public DiaryCreateController diaryCreateController;
+    public DiaryController diaryController;
 
     @Builder
     public TestContainer(UuidHolder uuidHolder) {
@@ -132,5 +134,11 @@ public class TestContainer {
         this.diaryCreateController = DiaryCreateController.builder()
                 .diaryService(this.diaryService)
                 .build();
+
+        // for DiaryController
+        this.diaryController = DiaryController.builder()
+                .diaryService(this.diaryService)
+                .build();
+
     }
 }
