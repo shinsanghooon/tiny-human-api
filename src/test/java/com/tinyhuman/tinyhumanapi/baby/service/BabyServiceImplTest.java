@@ -107,7 +107,7 @@ class BabyServiceImplTest {
             assertThat(response.nickName()).isEqualTo(babyCreate.nickName());
             assertThat(response.timeOfBirth()).isEqualTo(babyCreate.timeOfBirth());
             assertThat(response.dayOfBirth()).isEqualTo(babyCreate.dayOfBirth());
-            assertThat(response.preSignedUrl()).contains("baby/1/profile/" + "test-uuid" + "_" + babyCreate.fileName());
+            assertThat(response.preSignedUrl()).contains("baby/2/profile/" + "test-uuid" + "_" + babyCreate.fileName());
         }
     }
 

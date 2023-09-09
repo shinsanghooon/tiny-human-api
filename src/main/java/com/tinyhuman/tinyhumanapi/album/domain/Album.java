@@ -5,7 +5,7 @@ import lombok.Builder;
 
 import java.time.LocalDateTime;
 
-public record Album(Long id, Long babyId, ContentType contentType, String keyName, LocalDateTime createdAt, LocalDateTime originalCreatedAt, Long gpsLat, Long gpsLon, boolean isDeleted) {
+public record Album(Long id, Long babyId, ContentType contentType, String keyName, LocalDateTime createdAt, LocalDateTime originalCreatedAt, Double gpsLat, Double gpsLon, boolean isDeleted) {
 
     @Builder
     public Album {

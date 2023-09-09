@@ -29,6 +29,9 @@ public class FakeAlbumRepository implements AlbumRepository {
                     .babyId(album.babyId())
                     .contentType(album.contentType())
                     .keyName(album.keyName())
+                    .originalCreatedAt(album.originalCreatedAt())
+                    .gpsLat(album.gpsLat())
+                    .gpsLon(album.gpsLon())
                     .isDeleted(album.isDeleted())
                     .build();
 

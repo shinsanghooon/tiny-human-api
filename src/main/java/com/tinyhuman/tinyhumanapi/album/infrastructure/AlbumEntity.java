@@ -36,16 +36,16 @@ public class AlbumEntity extends BaseEntity {
     private LocalDateTime originalCreatedAt;
 
     @Column(name = "gps_lat")
-    private Long gpsLat;
+    private Double gpsLat;
 
     @Column(name = "gps_lon")
-    private Long gpsLon;
+    private Double gpsLon;
 
     @Column(name="is_deleted")
     private boolean isDeleted = false;
 
     @Builder
-    public AlbumEntity(Long id, Long babyId, ContentType contentType, String keyName, LocalDateTime originalCreatedAt, Long gpsLat, Long gpsLon, boolean isDeleted) {
+    public AlbumEntity(Long id, Long babyId, ContentType contentType, String keyName, LocalDateTime originalCreatedAt, Double gpsLat, Double gpsLon, boolean isDeleted) {
         this.id = id;
         this.babyId = babyId;
         this.contentType = contentType;

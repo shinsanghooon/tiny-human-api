@@ -1,5 +1,10 @@
 package com.tinyhuman.tinyhumanapi.common.mock;
 
+import com.tinyhuman.tinyhumanapi.album.controller.AlbumController;
+import com.tinyhuman.tinyhumanapi.album.controller.port.AlbumService;
+import com.tinyhuman.tinyhumanapi.album.mock.FakeAlbumRepository;
+import com.tinyhuman.tinyhumanapi.album.service.AlbumServiceImpl;
+import com.tinyhuman.tinyhumanapi.album.service.port.AlbumRepository;
 import com.tinyhuman.tinyhumanapi.auth.controller.port.AuthService;
 import com.tinyhuman.tinyhumanapi.auth.mock.FakeAuthService;
 import com.tinyhuman.tinyhumanapi.baby.controller.BabyController;
@@ -42,6 +47,10 @@ public class TestContainer {
     public final BabyService babyService;
     public final BabyController babyController;
 
+    public final AlbumRepository albumRepository;
+    public final AlbumService albumService;
+    public final AlbumController albumController;
+
     @Builder
     public TestContainer(UuidHolder uuidHolder) {
         // for UserController
@@ -79,6 +88,19 @@ public class TestContainer {
                 .build();
         this.babyController = BabyController.builder()
                 .babyService(this.babyService)
+                .build();
+
+        // for AlbumController
+        this.albumRepository = new FakeAlbumRepository();
+        this.albumService = AlbumServiceImpl.builder()
+                .albumRepository(this.albumRepository)
+                .imageService(this.imageService)
+                .userBabyRelationRepository(this.userBabyRelationRepository)
+                .authService(this.authService)
+                .uuidHolder(uuidHolder)
+                .build();
+        this.albumController = AlbumController.builder()
+                .albumService(this.albumService)
                 .build();
     }
 }

@@ -10,28 +10,34 @@ import com.tinyhuman.tinyhumanapi.common.utils.PageCursor;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.constraints.Size;
-import lombok.RequiredArgsConstructor;
+import lombok.Builder;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("api/v1/babies")
-@RequiredArgsConstructor
 @Tag(name = "AlbumController", description = "앨범에 대한 작업을 위한 컨트롤러입니다.")
 public class AlbumController {
 
     private final AlbumService albumService;
 
+    @Builder
+    public AlbumController(AlbumService albumService) {
+        this.albumService = albumService;
+    }
+
     @Operation(summary = "앨범 추가 API", responses = {
             @ApiResponse(responseCode = "201", description = "앨범 업로드 성공")})
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/{babyId}/albums")
-    public List<AlbumUploadResponse> uploadAlbums(@PathVariable("babyId") Long babyId,
-                                                  @RequestBody @Size(max = 20, message="사진 및 동영상은 최대 업로드 개수는 20개입니다.") List<AlbumCreate> files) {
-        return albumService.uploadAlbums(babyId, files);
+    public ResponseEntity<List<AlbumUploadResponse>> uploadAlbums(@PathVariable("babyId") Long babyId,
+                                                                  @RequestBody List<AlbumCreate> files) {
+        return ResponseEntity.
+                status(HttpStatus.CREATED)
+                .body(albumService.uploadAlbums(babyId, files));
     }
 
     @Operation(summary = "앨범 단건 조회 API", responses = {
