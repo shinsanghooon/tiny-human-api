@@ -14,7 +14,8 @@ public record UserCreate(
         String name,
 
         @NotBlank(message = "메일을 입력해주세요.")
-        @Email(message = "이메일 형식이 잘못되었습니다.")
+        @Email(message = "이메일 형식이 맞지 않습니다",
+                regexp = "^[\\w!#$%&'*+/=?`{|}~^-]+(?:\\.[\\w!#$%&'*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$")
         String email,
 
         @NotBlank(message = "패스워드를 입력해주세요.")

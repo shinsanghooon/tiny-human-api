@@ -86,6 +86,10 @@ public class AlbumServiceImpl implements AlbumService {
     @Override
     public List<AlbumUploadResponse> uploadAlbums(Long babyId, List<AlbumCreate> files) {
 
+        if (isExceededMaxUploadCount(files)) {
+            throw new IllegalArgumentException("사진 및 동영상은 최대 업로드 개수는 20개입니다.");
+        }
+
         User user = authService.getUserOutOfSecurityContextHolder();
         UserBabyRelation userBabyRelation = userBabyRelationRepository.findById(UserBabyMappingId.builder()
                         .babyId(babyId)
@@ -93,7 +97,7 @@ public class AlbumServiceImpl implements AlbumService {
                         .build())
                 .orElseThrow(() -> new ResourceNotFoundException("UserBabyRelation", user.id() + "/" + babyId));
 
-        if (!userBabyRelation.isParent()) {
+        if (isUserOwnsBaby(userBabyRelation)) {
             throw new UnauthorizedAccessException("Album", babyId);
         }
 
@@ -103,7 +107,6 @@ public class AlbumServiceImpl implements AlbumService {
             String fileName = albumCreate.fileName();
             String mimeType = FileUtils.guessMimeType(fileName);
             ContentType contentType = FileUtils.getContentType(mimeType);
-
 
             String fileNameWithEpoch = FileUtils.generateFileNameWithUUID(fileName, uuidHolder.random());
             String keyName = FileUtils.addBabyIdToImagePath(ALBUM_UPLOAD_PATH, babyId, fileNameWithEpoch);
@@ -123,6 +126,14 @@ public class AlbumServiceImpl implements AlbumService {
         return albumRepository.saveAll(albums).stream()
                 .map(this::getAlbumUploadResponse)
                 .toList();
+    }
+
+    private boolean isUserOwnsBaby(UserBabyRelation userBabyRelation) {
+        return !userBabyRelation.isParent();
+    }
+
+    private boolean isExceededMaxUploadCount(List<AlbumCreate> files) {
+        return files.size() > 20;
     }
 
     private AlbumUploadResponse getAlbumUploadResponse(Album album) {

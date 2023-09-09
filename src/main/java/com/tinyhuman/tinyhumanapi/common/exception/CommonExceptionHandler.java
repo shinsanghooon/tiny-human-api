@@ -2,9 +2,11 @@ package com.tinyhuman.tinyhumanapi.common.exception;
 
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.tinyhuman.tinyhumanapi.common.exception.dto.ErrorResponse;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import static com.tinyhuman.tinyhumanapi.common.exception.ErrorCode.INVALID_VALUE_REQUEST;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
@@ -12,6 +14,17 @@ import static org.springframework.http.HttpStatus.FORBIDDEN;
 
 @RestControllerAdvice
 public class CommonExceptionHandler {
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    @ResponseStatus(code = BAD_REQUEST)
+    public ErrorResponse handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex) {
+        return new ErrorResponse(BAD_REQUEST, BAD_REQUEST.value(), ex.getMessage());
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(code = BAD_REQUEST)
+    public ErrorResponse handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
+        return new ErrorResponse(BAD_REQUEST, BAD_REQUEST.value(), ex.getMessage());
+    }
 
     @ExceptionHandler(IllegalStateException.class)
     @ResponseStatus(code = BAD_REQUEST)
@@ -66,5 +79,6 @@ public class CommonExceptionHandler {
     public ErrorResponse handleResourceNotFoundException(NotSupportedContentTypeException ex) {
         return new ErrorResponse(BAD_REQUEST, BAD_REQUEST.value(), ex.getMessage());
     }
+
 
 }

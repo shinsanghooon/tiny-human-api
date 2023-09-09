@@ -13,9 +13,9 @@ public record AlbumCreate(
         @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
         LocalDateTime originalCreatedAt,
 
-        Long gpsLat,
+        Double gpsLat,
 
-        Long gptLon
+        Double gptLon
 
         ) {
 

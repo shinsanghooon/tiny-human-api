@@ -64,14 +64,16 @@ public class BabyServiceImpl implements BabyService {
 
         FileInfo fileInfo = FileUtils.getFileInfo(babyCreate.fileName(), uuidHolder.random());
 
-        String keyName = FileUtils.addBabyIdToImagePath(BABY_PROFILE_UPLOAD_PATH, user.id(), fileInfo.fileNameWithEpochTime());
+        Baby baby = babyRepository.save(Baby.fromCreate(babyCreate, user.id()));
 
-        Baby baby = babyRepository.save(Baby.fromCreate(babyCreate, keyName));
-        userBabyRelationService.establishRelationUserToBaby(babyCreate, user, baby);
+        String keyName = FileUtils.addBabyIdToImagePath(BABY_PROFILE_UPLOAD_PATH, baby.id(), fileInfo.fileNameWithEpochTime());
+
+        Baby babyWithKeyName = babyRepository.save(baby.with(keyName));
+        userBabyRelationService.establishRelationUserToBaby(babyCreate, user, babyWithKeyName);
 
         String preSignedUrl = imageService.getPreSignedUrlForUpload(keyName, fileInfo.mimeType());
 
-        return BabyPreSignedUrlResponse.fromModel(baby, preSignedUrl);
+        return BabyPreSignedUrlResponse.fromModel(babyWithKeyName, preSignedUrl);
     }
 
     @Override

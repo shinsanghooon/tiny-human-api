@@ -1,5 +1,6 @@
 package com.tinyhuman.tinyhumanapi.user.service;
 
+import com.tinyhuman.tinyhumanapi.auth.mock.FakeAuthService;
 import com.tinyhuman.tinyhumanapi.user.domain.User;
 import com.tinyhuman.tinyhumanapi.user.domain.UserCreate;
 import com.tinyhuman.tinyhumanapi.user.domain.UserResponse;
@@ -20,7 +21,8 @@ class UserServiceImplTest {
     void init() {
         FakeUserRepository fakeUserRepository = new FakeUserRepository();
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        this.userServiceImpl = new UserServiceImpl(fakeUserRepository, passwordEncoder);
+        FakeAuthService fakeAuthService = new FakeAuthService();
+        this.userServiceImpl = new UserServiceImpl(fakeUserRepository, passwordEncoder, fakeAuthService);
 
         UserCreate userCreate1 = UserCreate.builder()
                 .name("홈버그")

@@ -196,6 +196,6 @@ public class DiaryServiceImpl implements DiaryService {
 
     private Baby getBaby(DiaryCreate diaryCreate) {
         return babyRepository.findById(diaryCreate.babyId())
-                .orElseThrow(() -> new ResourceNotFoundException("Babies", diaryCreate.babyId()));
+                .orElseThrow(() -> new ResourceNotFoundException("Baby", diaryCreate.babyId()));
     }
 }
