@@ -39,8 +39,11 @@ public class UserCreateController {
     })
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/email/duplicate-check")
-    public void checkEmailDuplicated(
+    public ResponseEntity<Void> checkEmailDuplicated(
             @RequestBody @Valid EmailDuplicateCheck emailDuplicateCheck) {
         userService.checkEmailDuplicated(emailDuplicateCheck.email());
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .build();
     }
 }
