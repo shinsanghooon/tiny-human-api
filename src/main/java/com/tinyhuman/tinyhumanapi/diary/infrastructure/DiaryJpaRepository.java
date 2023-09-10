@@ -1,6 +1,7 @@
 package com.tinyhuman.tinyhumanapi.diary.infrastructure;
 
 import com.tinyhuman.tinyhumanapi.baby.infrastructure.BabyEntity;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDate;
@@ -13,5 +14,7 @@ public interface DiaryJpaRepository extends JpaRepository<DiaryEntity, Long> {
 
     List<DiaryEntity> findByBabyId(Long babyId);
 
-    List<DiaryEntity> findByIdAndUserId(Long diaryId, Long userId);
+    List<DiaryEntity> findByBabyId(Long babyId, Pageable pageable);
+
+    List<DiaryEntity> findByBabyIdAndIdLessThan(Long babyId, Long id, Pageable pageable);
 }

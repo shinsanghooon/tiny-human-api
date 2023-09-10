@@ -1,5 +1,7 @@
 package com.tinyhuman.tinyhumanapi.diary.controller.port;
 
+import com.tinyhuman.tinyhumanapi.common.utils.CursorRequest;
+import com.tinyhuman.tinyhumanapi.common.utils.PageCursor;
 import com.tinyhuman.tinyhumanapi.diary.controller.port.dto.DiaryCreate;
 import com.tinyhuman.tinyhumanapi.diary.controller.port.dto.DiaryPreSignedUrlResponse;
 import com.tinyhuman.tinyhumanapi.diary.controller.port.dto.DiaryResponse;
@@ -17,5 +19,5 @@ public interface DiaryService {
 
     List<DiaryResponse> findByDate(Long babyId, String date);
 
-    List<DiaryResponse> getMyDiariesByBaby(Long userId);
+    PageCursor<DiaryResponse> getMyDiariesByBaby(Long babyId, CursorRequest cursorRequest);
 }

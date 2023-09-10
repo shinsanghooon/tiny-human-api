@@ -1,6 +1,8 @@
 package com.tinyhuman.tinyhumanapi.diary.controller;
 
 
+import com.tinyhuman.tinyhumanapi.common.utils.CursorRequest;
+import com.tinyhuman.tinyhumanapi.common.utils.PageCursor;
 import com.tinyhuman.tinyhumanapi.diary.controller.port.DiaryService;
 import com.tinyhuman.tinyhumanapi.diary.controller.port.dto.DiaryResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -58,8 +60,10 @@ public class DiaryController {
             @ApiResponse(responseCode = "200", description = "일기 조회 성공")})
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/babies/{babyId}")
-    public List<DiaryResponse> getMyDiaries(@PathVariable("babyId") Long babyId) {
-        return diaryService.getMyDiariesByBaby(babyId);
+    public ResponseEntity<PageCursor<DiaryResponse>> getMyDiaries(@PathVariable("babyId") Long babyId, @RequestBody CursorRequest cursorRequest) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(diaryService.getMyDiariesByBaby(babyId, cursorRequest));
     }
 
 

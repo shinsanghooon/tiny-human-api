@@ -1,6 +1,6 @@
 package com.tinyhuman.tinyhumanapi.diary.service.port;
 
-import com.tinyhuman.tinyhumanapi.baby.domain.Baby;
+import com.tinyhuman.tinyhumanapi.common.utils.CursorRequest;
 import com.tinyhuman.tinyhumanapi.diary.domain.Diary;
 
 import java.time.LocalDate;
@@ -15,9 +15,8 @@ public interface DiaryRepository {
 
     List<Diary> findByDate(LocalDate date, Long userId, Long babyId);
 
-    List<Diary> findByBaby(Baby baby);
-
     List<Diary> findByBabyId(Long babyId);
 
+    List<Diary> findByBabyId(Long babyId, CursorRequest cursorRequest);
 
 }

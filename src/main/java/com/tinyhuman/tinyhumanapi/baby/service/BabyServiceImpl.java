@@ -98,7 +98,7 @@ public class BabyServiceImpl implements BabyService {
         Baby deletedBaby = baby.delete();
         babyRepository.save(deletedBaby);
 
-        List<Diary> diaries = diaryRepository.findByBaby(baby);
+        List<Diary> diaries = diaryRepository.findByBabyId(baby.id());
 
         diaries.forEach(diary -> {
             Diary deletedDiary = diary.delete();

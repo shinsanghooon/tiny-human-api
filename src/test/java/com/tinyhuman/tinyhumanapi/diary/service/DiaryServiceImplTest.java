@@ -9,6 +9,8 @@ import com.tinyhuman.tinyhumanapi.common.enums.ContentType;
 import com.tinyhuman.tinyhumanapi.common.exception.ResourceNotFoundException;
 import com.tinyhuman.tinyhumanapi.common.exception.UnauthorizedAccessException;
 import com.tinyhuman.tinyhumanapi.common.mock.TestUuidHolder;
+import com.tinyhuman.tinyhumanapi.common.utils.CursorRequest;
+import com.tinyhuman.tinyhumanapi.common.utils.PageCursor;
 import com.tinyhuman.tinyhumanapi.diary.controller.port.dto.*;
 import com.tinyhuman.tinyhumanapi.diary.domain.Diary;
 import com.tinyhuman.tinyhumanapi.diary.domain.Picture;
@@ -252,15 +254,15 @@ class DiaryServiceImplTest {
         void getDiariesByBaby() {
             Long babyId = 1L;
 
-            List<DiaryResponse> myDiaries = diaryServiceImpl.getMyDiariesByBaby(babyId);
-            assertThat(myDiaries.size()).isEqualTo(2);
+            PageCursor<DiaryResponse> myDiariesByBaby = diaryServiceImpl.getMyDiariesByBaby(babyId, new CursorRequest(null, 5));
+            assertThat(myDiariesByBaby.body().size()).isEqualTo(2);
         }
 
         @Test
         @DisplayName("사용자와 아기 사이의 관계가 없는 경우 예외를 던진다.")
         void getInvalidRelationBetweenUserAndBaby() {
             Long babyId = 999L;
-            assertThatThrownBy(() -> diaryServiceImpl.getMyDiariesByBaby(babyId))
+            assertThatThrownBy(() -> diaryServiceImpl.getMyDiariesByBaby(babyId, new CursorRequest(null, 5)))
                     .isInstanceOf(ResourceNotFoundException.class);
         }
 
@@ -268,7 +270,7 @@ class DiaryServiceImplTest {
         @DisplayName("아기에 대한 일기 조회 권한이 없는 경우 예외를 던진다.")
         void unAuthorizedRelation() {
             Long babyId = 2L;
-            assertThatThrownBy(() -> diaryServiceImpl.getMyDiariesByBaby(babyId))
+            assertThatThrownBy(() -> diaryServiceImpl.getMyDiariesByBaby(babyId, new CursorRequest(null, 5)))
                     .isInstanceOf(UnauthorizedAccessException.class);
         }
 
