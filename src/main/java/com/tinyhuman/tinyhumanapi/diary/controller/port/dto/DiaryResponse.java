@@ -3,11 +3,11 @@ package com.tinyhuman.tinyhumanapi.diary.controller.port.dto;
 import com.tinyhuman.tinyhumanapi.diary.domain.Diary;
 import lombok.Builder;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 public record DiaryResponse(Long id, int daysAfterBirth, String writer, int likeCount,
-                            LocalDateTime createdAt, boolean isDeleted, List<SentenceResponse> sentences,
+                            LocalDate date, boolean isDeleted, List<SentenceResponse> sentences,
                             List<PictureResponse> pictures) {
 
     @Builder
@@ -33,7 +33,7 @@ public record DiaryResponse(Long id, int daysAfterBirth, String writer, int like
                 .daysAfterBirth(diary.daysAfterBirth())
                 .writer(diary.user().name())
                 .likeCount(diary.likeCount())
-                .createdAt(diary.created_at())
+                .date(diary.date())
                 .sentences(sentenceResponses)
                 .pictures(pictureResponses)
                 .isDeleted(diary.isDeleted())

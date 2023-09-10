@@ -6,6 +6,8 @@ import com.tinyhuman.tinyhumanapi.baby.service.port.BabyRepository;
 import com.tinyhuman.tinyhumanapi.common.exception.ResourceNotFoundException;
 import com.tinyhuman.tinyhumanapi.common.exception.UnauthorizedAccessException;
 import com.tinyhuman.tinyhumanapi.common.service.port.UuidHolder;
+import com.tinyhuman.tinyhumanapi.common.utils.CursorRequest;
+import com.tinyhuman.tinyhumanapi.common.utils.PageCursor;
 import com.tinyhuman.tinyhumanapi.diary.controller.port.DiaryService;
 import com.tinyhuman.tinyhumanapi.diary.controller.port.dto.*;
 import com.tinyhuman.tinyhumanapi.diary.domain.Diary;
@@ -24,6 +26,8 @@ import lombok.Builder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -127,7 +131,19 @@ public class DiaryServiceImpl implements DiaryService {
     }
 
     @Override
-    public List<DiaryResponse> getMyDiariesByBaby(Long babyId) {
+    public List<DiaryResponse> findByDate(Long babyId, String date) {
+        User user = authService.getUserOutOfSecurityContextHolder();
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate localDate = LocalDate.parse(date, formatter);
+
+        return diaryRepository.findByDate(localDate, user.id(), babyId).stream()
+                .map(DiaryResponse::fromModel)
+                .toList();
+    }
+
+    @Override
+    public PageCursor<DiaryResponse> getMyDiariesByBaby(Long babyId, CursorRequest cursorRequest) {
         User user = authService.getUserOutOfSecurityContextHolder();
         Long userId = user.id();
 
@@ -138,9 +154,19 @@ public class DiaryServiceImpl implements DiaryService {
             throw new UnauthorizedAccessException("Baby", babyId);
         }
 
-        return diaryRepository.findByBabyId(babyId).stream()
+        List<DiaryResponse> diaryResponses = diaryRepository.findByBabyId(babyId, cursorRequest).stream()
                 .map(DiaryResponse::fromModel)
                 .toList();
+
+        long nextKey = getNextKey(diaryResponses);
+        return new PageCursor<>(cursorRequest.next(nextKey), diaryResponses);
+    }
+
+    private static long getNextKey(List<DiaryResponse> diaryResponses) {
+        return diaryResponses.stream()
+                .mapToLong(DiaryResponse::id)
+                .min()
+                .orElse(CursorRequest.NONE_KEY);
     }
 
     private List<Picture> createPictureList(List<PictureCreate> files, Diary savedDiary) {

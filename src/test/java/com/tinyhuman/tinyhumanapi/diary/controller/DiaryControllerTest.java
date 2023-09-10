@@ -57,6 +57,7 @@ class DiaryControllerTest {
                 .daysAfterBirth(20)
                 .userId(1L)
                 .likeCount(0)
+                .date(LocalDate.of(2022, 9, 28))
                 .sentences(List.of(SentenceCreate.builder().sentence("안녕하세요.").build(),
                         SentenceCreate.builder().sentence("반갑습니다.").build(),
                         SentenceCreate.builder().sentence("감사합니다.").build()))
@@ -89,6 +90,25 @@ class DiaryControllerTest {
             assertThatThrownBy(() -> testContainer.diaryController.getDiary(9999L))
                     .isInstanceOf(ResourceNotFoundException.class)
                     .hasMessageContaining("Diary");
+        }
+
+        @Test
+        @DisplayName("날짜를 이용해 검색할 수 있으며 날짜 별로 1개의 일기만 조회할 수 있다.")
+        void getDiaryWithDate() {
+            ResponseEntity<List<DiaryResponse>> result = testContainer.diaryController.getDiaryByDate(1L, "2022-09-28");
+
+            assertThat(result.getStatusCode()).isEqualTo(HttpStatusCode.valueOf(200));
+            assertThat(result.getBody().size()).isEqualTo(1);
+            assertThat(result.getBody().get(0).date()).isEqualTo(LocalDate.of(2022, 9, 28));
+        }
+
+        @Test
+        @DisplayName("날짜를 이용해 검색할 수 있으며 없는 경우 빈 리스트를 응답한다.")
+        void getDiaryByDateWhenNoDiary() {
+            ResponseEntity<List<DiaryResponse>> result = testContainer.diaryController.getDiaryByDate(1L, "2022-09-30");
+
+            assertThat(result.getStatusCode()).isEqualTo(HttpStatusCode.valueOf(200));
+            assertThat(result.getBody().size()).isEqualTo(0);
         }
 
         @Test

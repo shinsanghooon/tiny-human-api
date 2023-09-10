@@ -1,13 +1,11 @@
 package com.tinyhuman.tinyhumanapi.diary.mock;
 
-import com.tinyhuman.tinyhumanapi.baby.domain.Baby;
+import com.tinyhuman.tinyhumanapi.common.utils.CursorRequest;
 import com.tinyhuman.tinyhumanapi.diary.domain.Diary;
 import com.tinyhuman.tinyhumanapi.diary.service.port.DiaryRepository;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.time.LocalDate;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class FakeDiaryRepository implements DiaryRepository {
@@ -25,6 +23,7 @@ public class FakeDiaryRepository implements DiaryRepository {
                     .user(diary.user())
                     .isDeleted(diary.isDeleted())
                     .likeCount(diary.likeCount())
+                    .date(diary.date())
                     .sentences(diary.sentences())
                     .pictures(diary.pictures())
                     .build();
@@ -47,9 +46,9 @@ public class FakeDiaryRepository implements DiaryRepository {
     }
 
     @Override
-    public List<Diary> findByBaby(Baby baby) {
+    public List<Diary> findByDate(LocalDate date, Long userId, Long babyId) {
         return data.stream()
-                .filter(d -> d.baby().id().equals(baby.id()))
+                .filter(d -> d.date().equals(date))
                 .toList();
     }
 
@@ -61,10 +60,22 @@ public class FakeDiaryRepository implements DiaryRepository {
     }
 
     @Override
-    public List<Diary> findByIdAndUserId(Long diaryId, Long userId) {
+    public List<Diary> findByBabyId(Long babyId, CursorRequest cursorRequest) {
+        if (cursorRequest.hasKey()) {
+            return data.stream()
+                    .filter(diary -> diary.baby().id().equals(babyId))
+                    .filter(diary -> !diary.isDeleted())
+                    .filter(diary -> diary.id() < cursorRequest.key())
+                    .sorted(Comparator.comparing(Diary::id).reversed())
+                    .limit(cursorRequest.size())
+                    .toList();
+        }
+
         return data.stream()
-                .filter(d -> d.id().equals(diaryId))
-                .filter(d -> d.user().id().equals(userId))
+                .filter(diary -> diary.baby().id().equals(babyId))
+                .filter(diary -> !diary.isDeleted())
+                .sorted(Comparator.comparing(Diary::id).reversed())
+                .limit(cursorRequest.size())
                 .toList();
     }
 

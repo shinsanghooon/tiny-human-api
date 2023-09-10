@@ -1,12 +1,15 @@
 package com.tinyhuman.tinyhumanapi.diary.infrastructure;
 
-import com.tinyhuman.tinyhumanapi.baby.domain.Baby;
-import com.tinyhuman.tinyhumanapi.baby.infrastructure.BabyEntity;
+import com.tinyhuman.tinyhumanapi.common.utils.CursorRequest;
 import com.tinyhuman.tinyhumanapi.diary.domain.Diary;
 import com.tinyhuman.tinyhumanapi.diary.service.port.DiaryRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,19 +31,24 @@ public class DiaryRepositoryImpl implements DiaryRepository {
     }
 
     @Override
-    public List<Diary> findByBaby(Baby baby) {
-        return mapToModels(diaryJpaRepository.findByBaby(BabyEntity.fromModel(baby)));
+    public List<Diary> findByDate(LocalDate date, Long userId, Long babyId) {
+        return mapToModels(diaryJpaRepository.findByDateAndUserIdAndBabyId(date, userId, babyId));
     }
 
     @Override
     public List<Diary> findByBabyId(Long babyId) {
         return mapToModels(diaryJpaRepository.findByBabyId(babyId));
-
     }
 
     @Override
-    public List<Diary> findByIdAndUserId(Long diaryId, Long userId) {
-        return mapToModels(diaryJpaRepository.findByIdAndUserId(diaryId, userId));
+    public List<Diary> findByBabyId(Long babyId, CursorRequest cursorRequest) {
+        Sort sort = Sort.by(Sort.Direction.DESC, "id"); // 정렬 정보 설정
+        Pageable pageable = PageRequest.of(0, cursorRequest.size(), sort);
+
+        if (cursorRequest.hasKey()) {
+            return mapToModels(diaryJpaRepository.findByBabyIdAndIdLessThan(babyId, cursorRequest.key(), pageable));
+        }
+        return mapToModels(diaryJpaRepository.findByBabyId(babyId, pageable));
     }
 
     private List<Diary> mapToModels(List<DiaryEntity> diaryEntities) {

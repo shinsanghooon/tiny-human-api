@@ -80,7 +80,6 @@ class AlbumServiceImplTest {
                 .isDeleted(false)
                 .build();
 
-
         UserBabyRelation relation = UserBabyRelation.builder()
                 .user(user)
                 .baby(baby)
@@ -225,7 +224,7 @@ class AlbumServiceImplTest {
         }
 
         @Test
-        @DisplayName("최초 조회 시, 입력받은 size만큼 id 내림차순으로 조회한다.")
+        @DisplayName("첫 페이지 조회 시, 입력받은 size만큼 id 내림차순으로 조회한다.")
         void getAllAlbum() {
 
             PageCursor<AlbumResponse> albumCursor = albumServiceImpl.getAlbumsByBaby(babyId, new CursorRequest(null, 5));
