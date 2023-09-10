@@ -4,9 +4,6 @@ import com.tinyhuman.tinyhumanapi.album.domain.Album;
 import com.tinyhuman.tinyhumanapi.album.service.port.AlbumRepository;
 import com.tinyhuman.tinyhumanapi.common.exception.ResourceNotFoundException;
 import com.tinyhuman.tinyhumanapi.common.utils.CursorRequest;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
@@ -86,9 +83,6 @@ public class FakeAlbumRepository implements AlbumRepository {
 
     @Override
     public List<Album> findByBabyId(Long babyId, CursorRequest cursorRequest) {
-        Sort sort = Sort.by(Sort.Direction.DESC, "id"); // 정렬 정보 설정
-        Pageable pageable = PageRequest.of(0, cursorRequest.size(), sort);
-
         if (cursorRequest.hasKey()) {
             return data.stream()
                     .filter(a -> a.babyId().equals(babyId))

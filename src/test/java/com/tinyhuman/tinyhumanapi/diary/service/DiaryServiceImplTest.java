@@ -101,9 +101,7 @@ class DiaryServiceImplTest {
                 .build();
 
         Diary diary = Diary.fromCreate(diaryCreate, savedBaby, user);
-
         Diary savedDiary = fakeDiaryRepository.save(diary);
-
 
         // Save Sentence
         List<Sentence> sentenceModels = sentenceCreateArrayList.stream()
@@ -223,17 +221,19 @@ class DiaryServiceImplTest {
 
             List<PictureCreate> pictureCreates = List.of(new PictureCreate("picture.png"), new PictureCreate("picture2.png"));
 
-            DiaryCreate diaryCreate = DiaryCreate.builder()
-                    .babyId(1L)
-                    .daysAfterBirth(10)
-                    .likeCount(100)
-                    .date(LocalDate.of(2022, 9, 27))
-                    .userId(1L)
-                    .sentences(sentenceCreateArrayList)
-                    .files(pictureCreates)
-                    .build();
+            IntStream.range(1, 20).forEach(i -> {
+                DiaryCreate diaryCreate = DiaryCreate.builder()
+                        .babyId(1L)
+                        .daysAfterBirth(i)
+                        .likeCount(100 + i)
+                        .date(LocalDate.of(2022, 9, i))
+                        .userId(1L)
+                        .sentences(sentenceCreateArrayList)
+                        .files(pictureCreates)
+                        .build();
 
-            diaryServiceImpl.create(diaryCreate);
+                diaryServiceImpl.create(diaryCreate);
+            });
         }
 
         @Test
@@ -243,19 +243,52 @@ class DiaryServiceImplTest {
             DiaryResponse diary = diaryServiceImpl.findById(diaryId);
 
             assertThat(diary.id()).isEqualTo(diaryId);
-            assertThat(diary.likeCount()).isEqualTo(100);
+            assertThat(diary.likeCount()).isEqualTo(101);
             assertThat(diary.writer()).isEqualTo("홈버그");
             assertThat(diary.sentences().size()).isEqualTo(5);
             assertThat(diary.pictures().size()).isEqualTo(2);
         }
 
         @Test
-        @DisplayName("아기를 입력 받아 일기를 모두 조회한다.")
+        @DisplayName("일기 첫 페이지 조회 시, 입력받은 size만큼 id 내림차순으로 조회한다.")
         void getDiariesByBaby() {
+
             Long babyId = 1L;
 
             PageCursor<DiaryResponse> myDiariesByBaby = diaryServiceImpl.getMyDiariesByBaby(babyId, new CursorRequest(null, 5));
-            assertThat(myDiariesByBaby.body().size()).isEqualTo(2);
+
+            assertThat(myDiariesByBaby.body().size()).isEqualTo(5);
+            assertThat(myDiariesByBaby.nextCursorRequest().hasKey()).isTrue();
+            assertThat(myDiariesByBaby.body().stream().mapToLong(DiaryResponse::id).max().orElse(CursorRequest.NONE_KEY)).isEqualTo(20L);
+            assertThat(myDiariesByBaby.body().stream().mapToLong(DiaryResponse::id).min().orElse(CursorRequest.NONE_KEY)).isEqualTo(16L);
+            assertThat(myDiariesByBaby.nextCursorRequest().key()).isEqualTo(16);
+
+            assertThat(myDiariesByBaby.body())
+                    .extracting("id")
+                            .containsExactly(20L, 19L, 18L, 17L, 16L);
+            assertThat(myDiariesByBaby.body())
+                    .extracting("daysAfterBirth")
+                    .containsExactly(19, 18, 17, 16, 15);
+        }
+
+        @Test
+        @DisplayName("두번째 조회부터, 입력 받은 key값부터 size만큼 id 내림차순으로 조회한다.")
+        void getAllDiaryWithCursor() {
+
+            Long babyId = 1L;
+
+            PageCursor<DiaryResponse> myDiariesByBaby = diaryServiceImpl.getMyDiariesByBaby(babyId, new CursorRequest(16L, 7));
+            List<DiaryResponse> diaries = myDiariesByBaby.body();
+
+            assertThat(diaries.size()).isEqualTo(7);
+            assertThat(myDiariesByBaby.nextCursorRequest().hasKey()).isTrue();
+            assertThat(diaries.stream().mapToLong(DiaryResponse::id).max().orElse(CursorRequest.NONE_KEY)).isEqualTo(15L);
+            assertThat(diaries.stream().mapToLong(DiaryResponse::id).min().orElse(CursorRequest.NONE_KEY)).isEqualTo(9L);
+            assertThat(myDiariesByBaby.nextCursorRequest().key()).isEqualTo(9);
+
+            assertThat(myDiariesByBaby.body())
+                    .extracting("id")
+                    .containsExactly(15L, 14L, 13L, 12L, 11L, 10L, 9L);
         }
 
         @Test
