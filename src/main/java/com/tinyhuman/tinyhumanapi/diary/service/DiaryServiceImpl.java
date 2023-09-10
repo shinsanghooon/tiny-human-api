@@ -24,6 +24,8 @@ import lombok.Builder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -124,6 +126,18 @@ public class DiaryServiceImpl implements DiaryService {
         Diary diary = diaryRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Diary", id));
         return DiaryResponse.fromModel(diary);
+    }
+
+    @Override
+    public List<DiaryResponse> findByDate(Long babyId, String date) {
+        User user = authService.getUserOutOfSecurityContextHolder();
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate localDate = LocalDate.parse(date, formatter);
+
+        return diaryRepository.findByDate(localDate, user.id(), babyId).stream()
+                .map(DiaryResponse::fromModel)
+                .toList();
     }
 
     @Override

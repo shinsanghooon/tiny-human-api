@@ -5,11 +5,11 @@ import com.tinyhuman.tinyhumanapi.diary.controller.port.dto.DiaryCreate;
 import com.tinyhuman.tinyhumanapi.user.domain.User;
 import lombok.Builder;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 public record Diary(Long id, int daysAfterBirth, User user, int likeCount,
-                    LocalDateTime created_at, Baby baby, boolean isDeleted,
+                    LocalDate date, Baby baby, boolean isDeleted,
                     List<Sentence> sentences, List<Picture> pictures) {
 
     @Builder
@@ -20,6 +20,7 @@ public record Diary(Long id, int daysAfterBirth, User user, int likeCount,
         return Diary.builder()
                 .daysAfterBirth(diaryCreate.daysAfterBirth())
                 .user(user)
+                .date(diaryCreate.date())
                 .likeCount(diaryCreate.likeCount())
                 .baby(baby)
                 .build();
@@ -32,6 +33,7 @@ public record Diary(Long id, int daysAfterBirth, User user, int likeCount,
                 .user(this.user)
                 .likeCount(this.likeCount)
                 .baby(this.baby)
+                .date(this.date)
                 .sentences(sentences)
                 .pictures(this.pictures)
                 .build();
@@ -43,6 +45,7 @@ public record Diary(Long id, int daysAfterBirth, User user, int likeCount,
                 .daysAfterBirth(this.daysAfterBirth)
                 .user(this.user)
                 .likeCount(this.likeCount)
+                .date(this.date)
                 .baby(this.baby)
                 .sentences(this.sentences)
                 .pictures(pictures)
@@ -55,7 +58,7 @@ public record Diary(Long id, int daysAfterBirth, User user, int likeCount,
                 .daysAfterBirth(this.daysAfterBirth)
                 .user(this.user)
                 .likeCount(this.likeCount)
-                .created_at(this.created_at)
+                .date(this.date)
                 .baby(this.baby)
                 .isDeleted(true)
                 .build();

@@ -15,5 +15,7 @@ public interface DiaryService {
 
     DiaryResponse findById(Long id);
 
+    List<DiaryResponse> findByDate(Long babyId, String date);
+
     List<DiaryResponse> getMyDiariesByBaby(Long userId);
 }

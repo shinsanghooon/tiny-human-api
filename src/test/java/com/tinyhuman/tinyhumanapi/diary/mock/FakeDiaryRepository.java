@@ -4,6 +4,7 @@ import com.tinyhuman.tinyhumanapi.baby.domain.Baby;
 import com.tinyhuman.tinyhumanapi.diary.domain.Diary;
 import com.tinyhuman.tinyhumanapi.diary.service.port.DiaryRepository;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -25,6 +26,7 @@ public class FakeDiaryRepository implements DiaryRepository {
                     .user(diary.user())
                     .isDeleted(diary.isDeleted())
                     .likeCount(diary.likeCount())
+                    .date(diary.date())
                     .sentences(diary.sentences())
                     .pictures(diary.pictures())
                     .build();
@@ -47,6 +49,13 @@ public class FakeDiaryRepository implements DiaryRepository {
     }
 
     @Override
+    public List<Diary> findByDate(LocalDate date, Long userId, Long babyId) {
+        return data.stream()
+                .filter(d -> d.date().equals(date))
+                .toList();
+    }
+
+    @Override
     public List<Diary> findByBaby(Baby baby) {
         return data.stream()
                 .filter(d -> d.baby().id().equals(baby.id()))
@@ -57,14 +66,6 @@ public class FakeDiaryRepository implements DiaryRepository {
     public List<Diary> findByBabyId(Long babyId) {
         return data.stream()
                 .filter(d -> d.baby().id().equals(babyId))
-                .toList();
-    }
-
-    @Override
-    public List<Diary> findByIdAndUserId(Long diaryId, Long userId) {
-        return data.stream()
-                .filter(d -> d.id().equals(diaryId))
-                .filter(d -> d.user().id().equals(userId))
                 .toList();
     }
 

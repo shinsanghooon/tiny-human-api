@@ -94,6 +94,7 @@ class DiaryServiceImplTest {
                 .babyId(1L)
                 .daysAfterBirth(10)
                 .likeCount(0)
+                .date(LocalDate.of(2022, 9, 26))
                 .userId(1L)
                 .build();
 
@@ -213,7 +214,6 @@ class DiaryServiceImplTest {
 
         @BeforeEach
         void setUpDiary() {
-
             // Diary Id: 2L
             List<SentenceCreate> sentenceCreateArrayList = IntStream.range(0, 5)
                     .mapToObj(i -> SentenceCreate.builder().sentence("안녕하세요[" + i + "]").build())
@@ -225,13 +225,13 @@ class DiaryServiceImplTest {
                     .babyId(1L)
                     .daysAfterBirth(10)
                     .likeCount(100)
+                    .date(LocalDate.of(2022, 9, 27))
                     .userId(1L)
                     .sentences(sentenceCreateArrayList)
                     .files(pictureCreates)
                     .build();
 
             diaryServiceImpl.create(diaryCreate);
-
         }
 
         @Test
@@ -245,7 +245,6 @@ class DiaryServiceImplTest {
             assertThat(diary.writer()).isEqualTo("홈버그");
             assertThat(diary.sentences().size()).isEqualTo(5);
             assertThat(diary.pictures().size()).isEqualTo(2);
-
         }
 
         @Test
@@ -272,8 +271,25 @@ class DiaryServiceImplTest {
             assertThatThrownBy(() -> diaryServiceImpl.getMyDiariesByBaby(babyId))
                     .isInstanceOf(UnauthorizedAccessException.class);
         }
-    }
 
+        @Test
+        @DisplayName("날짜를 이용해서 일기를 조회할 수 있다.")
+        void getDiaryByDate() {
+            List<DiaryResponse> diaries = diaryServiceImpl.findByDate(1L, "2022-09-26");
+
+            assertThat(diaries.size()).isEqualTo(1);
+            assertThat(diaries.get(0).id()).isEqualTo(1L);
+            assertThat(diaries.get(0).date()).isEqualTo("2022-09-26");
+        }
+
+        @Test
+        @DisplayName("해당 날짜의 일기가 없는 경우 빈 리스트를 반환한다.")
+        void getDiaryByDateWhenNoDiary() {
+            List<DiaryResponse> diaries = diaryServiceImpl.findByDate(1L, "2022-09-30");
+
+            assertThat(diaries.size()).isEqualTo(0);
+        }
+    }
 
     @Nested
     @DisplayName("일기를 삭제한다.")

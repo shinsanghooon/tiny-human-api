@@ -5,10 +5,10 @@ import com.tinyhuman.tinyhumanapi.diary.domain.Picture;
 import com.tinyhuman.tinyhumanapi.diary.domain.Sentence;
 import lombok.Builder;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
-public record DiaryPreSignedUrlResponse(Long id, int daysAfterBirth, String writer, int likeCount, LocalDateTime createdAt,
+public record DiaryPreSignedUrlResponse(Long id, int daysAfterBirth, String writer, int likeCount, LocalDate date,
                                         List<Sentence> sentences, List<Picture> pictures) {
 
     @Builder
@@ -21,7 +21,7 @@ public record DiaryPreSignedUrlResponse(Long id, int daysAfterBirth, String writ
                 .daysAfterBirth(diary.daysAfterBirth())
                 .writer(diary.user().name())
                 .likeCount(diary.likeCount())
-                .createdAt(diary.created_at())
+                .date(diary.date())
                 .sentences(diary.sentences())
                 .pictures(diary.pictures())
                 .build();

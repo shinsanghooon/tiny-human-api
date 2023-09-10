@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Where;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +31,9 @@ public class DiaryEntity extends BaseEntity {
     @Column(name="like_count")
     private int likeCount;
 
+    @Column(name = "date")
+    private LocalDate date;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private UserEntity user;
@@ -49,11 +53,12 @@ public class DiaryEntity extends BaseEntity {
 
     @Builder
     public DiaryEntity(Long id, int daysAfterBirth, UserEntity user, int
-            likeCount, boolean isDeleted, BabyEntity baby) {
+            likeCount, LocalDate date, boolean isDeleted, BabyEntity baby) {
         this.id = id;
         this.daysAfterBirth = daysAfterBirth;
         this.user = setUser(user);
         this.likeCount = likeCount;
+        this.date = date;
         this.baby = setBaby(baby);
         this.isDeleted = isDeleted;
     }
@@ -84,6 +89,7 @@ public class DiaryEntity extends BaseEntity {
                 .daysAfterBirth(diary.daysAfterBirth())
                 .user(UserEntity.fromModel(diary.user()))
                 .likeCount(diary.likeCount())
+                .date(diary.date())
                 .baby(BabyEntity.fromModel(diary.baby()))
                 .isDeleted(diary.isDeleted())
                 .build();
@@ -95,7 +101,7 @@ public class DiaryEntity extends BaseEntity {
                 .daysAfterBirth(this.daysAfterBirth)
                 .user(this.user.toModel())
                 .likeCount(this.likeCount)
-                .created_at(this.getCreatedAt())
+                .date(this.date)
                 .isDeleted(this.isDeleted)
                 .baby(this.baby.toModel())
                 .sentences(this.sentences.stream().map(SentenceEntity::toModel).toList())

@@ -7,6 +7,7 @@ import com.tinyhuman.tinyhumanapi.diary.service.port.DiaryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,6 +29,11 @@ public class DiaryRepositoryImpl implements DiaryRepository {
     }
 
     @Override
+    public List<Diary> findByDate(LocalDate date, Long userId, Long babyId) {
+        return mapToModels(diaryJpaRepository.findByDateAndUserIdAndBabyId(date, userId, babyId));
+    }
+
+    @Override
     public List<Diary> findByBaby(Baby baby) {
         return mapToModels(diaryJpaRepository.findByBaby(BabyEntity.fromModel(baby)));
     }
@@ -35,12 +41,6 @@ public class DiaryRepositoryImpl implements DiaryRepository {
     @Override
     public List<Diary> findByBabyId(Long babyId) {
         return mapToModels(diaryJpaRepository.findByBabyId(babyId));
-
-    }
-
-    @Override
-    public List<Diary> findByIdAndUserId(Long diaryId, Long userId) {
-        return mapToModels(diaryJpaRepository.findByIdAndUserId(diaryId, userId));
     }
 
     private List<Diary> mapToModels(List<DiaryEntity> diaryEntities) {

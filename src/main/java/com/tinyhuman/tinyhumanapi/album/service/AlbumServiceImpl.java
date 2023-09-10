@@ -15,7 +15,6 @@ import com.tinyhuman.tinyhumanapi.common.service.port.UuidHolder;
 import com.tinyhuman.tinyhumanapi.common.utils.CursorRequest;
 import com.tinyhuman.tinyhumanapi.common.utils.FileUtils;
 import com.tinyhuman.tinyhumanapi.common.utils.PageCursor;
-import com.tinyhuman.tinyhumanapi.integration.controller.dto.LastEvaluatedKey;
 import com.tinyhuman.tinyhumanapi.integration.service.port.ImageService;
 import com.tinyhuman.tinyhumanapi.user.domain.User;
 import com.tinyhuman.tinyhumanapi.user.domain.UserBabyRelation;
@@ -41,7 +40,6 @@ public class AlbumServiceImpl implements AlbumService {
     private final AuthService authService;
 
     private final UuidHolder uuidHolder;
-
 
     @Builder
     public AlbumServiceImpl(AlbumRepository albumRepository, ImageService imageService, UserBabyRelationRepository userBabyRelationRepository,
@@ -77,11 +75,6 @@ public class AlbumServiceImpl implements AlbumService {
                 .min()
                 .orElse(CursorRequest.NONE_KEY);
     }
-
-    public void getAlbumsByBabyOrderByOriginalDate(Long babyId, LastEvaluatedKey lastEvaluatedKey) {
-
-    }
-
 
     @Override
     public List<AlbumUploadResponse> uploadAlbums(Long babyId, List<AlbumCreate> files) {
@@ -150,6 +143,4 @@ public class AlbumServiceImpl implements AlbumService {
         List<Album> newAlbums = albums.stream().map(Album::deleteAlbum).toList();
         return albumRepository.saveAll(newAlbums);
     }
-
-
 }
