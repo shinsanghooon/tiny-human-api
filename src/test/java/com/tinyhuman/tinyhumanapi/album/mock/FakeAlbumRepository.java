@@ -101,8 +101,4 @@ public class FakeAlbumRepository implements AlbumRepository {
                 .toList();
     }
 
-    @Override
-    public List<Album> findByBabyIdAndKeyNameIn(Long babyId, Set<String> keyName) {
-        return null;
-    }
 }
