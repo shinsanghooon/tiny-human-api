@@ -20,12 +20,6 @@ public class AlbumRepositoryImpl implements AlbumRepository {
 
     private final AlbumJpaRepository albumJpaRepository;
 
-    @Override
-    public Album findByIdAndBabyId(Long id, Long babyId) {
-        return albumJpaRepository.findByIdAndBabyId(id, babyId)
-                .orElseThrow(() -> new ResourceNotFoundException("Album", id))
-                .toModel();
-    }
 
     @Override
     public List<Album> saveAll(List<Album> albums) {
@@ -35,6 +29,14 @@ public class AlbumRepositoryImpl implements AlbumRepository {
         return albumJpaRepository.saveAll(albumEntities).stream()
                 .map(AlbumEntity::toModel)
                 .toList();
+    }
+
+    // TODO: 얘는 왜 여기서 예외를 던지지?
+    @Override
+    public Album findByIdAndBabyId(Long id, Long babyId) {
+        return albumJpaRepository.findByIdAndBabyId(id, babyId)
+                .orElseThrow(() -> new ResourceNotFoundException("Album", id))
+                .toModel();
     }
 
     public List<Album> findAllByIds(List<Long> ids) {
@@ -56,7 +58,6 @@ public class AlbumRepositoryImpl implements AlbumRepository {
         return albumJpaRepository.findByBabyId(babyId, pageable).stream()
                 .map(AlbumEntity::toModel)
                 .toList();
-
     }
 
     @Override
@@ -69,10 +70,4 @@ public class AlbumRepositoryImpl implements AlbumRepository {
                 .toList();
     }
 
-    @Override
-    public List<Album> findByBabyIdAndKeyNameIn(Long babyId, Set<String> keyNameSet) {
-        return albumJpaRepository.findByBabyIdAndKeyNameIn(babyId, keyNameSet).stream()
-                .map(AlbumEntity::toModel)
-                .toList();
-    }
 }
