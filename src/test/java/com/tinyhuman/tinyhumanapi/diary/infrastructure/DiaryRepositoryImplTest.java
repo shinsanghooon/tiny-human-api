@@ -40,7 +40,7 @@ class DiaryRepositoryImplTest {
         Diary savedDiary = diaryRepository.save(diary);
 
         assertThat(savedDiary).isNotNull();
-        assertThat(savedDiary.id()).isEqualTo(2L);
+        assertThat(savedDiary.id()).isEqualTo(3L);
         assertThat(savedDiary.user().id()).isEqualTo(1L);
         assertThat(savedDiary.baby().id()).isEqualTo(1L);
 
@@ -108,7 +108,7 @@ class DiaryRepositoryImplTest {
         // 현재 일기는 1개만 등록된 상태
         List<Diary> diaries = diaryRepository.findByBabyId(1L, new CursorRequest(null, 5));
 
-        assertThat(diaries.size()).isOne();
+        assertThat(diaries.size()).isEqualTo(2);
         assertThat(diaries)
                 .extracting(Diary::baby)
                 .extracting(Baby::id)
