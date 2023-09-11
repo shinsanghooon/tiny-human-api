@@ -34,3 +34,13 @@ INSERT INTO albums (gps_lat, gps_lon, is_deleted, baby_id, created_at, id, origi
 INSERT INTO albums (gps_lat, gps_lon, is_deleted, baby_id, created_at, id, original_created_at, updated_at, content_type, created_by, key_name, updated_by) VALUES (null, null, false, 1, null, 28, null, null, null, null, 'keyName28', null);
 INSERT INTO albums (gps_lat, gps_lon, is_deleted, baby_id, created_at, id, original_created_at, updated_at, content_type, created_by, key_name, updated_by) VALUES (null, null, false, 1, null, 29, null, null, null, null, 'keyName29', null);
 INSERT INTO albums (gps_lat, gps_lon, is_deleted, baby_id, created_at, id, original_created_at, updated_at, content_type, created_by, key_name, updated_by) VALUES (null, null, false, 1, null, 30, null, null, null, null, 'keyName30', null);
+
+INSERT INTO diaries (date, days_after_birth, is_deleted, like_count, baby_id, created_at, id, updated_at, user_id, created_by, updated_by) VALUES ('2023-09-11', 10, false, 0, 1, '2023-09-11 15:31:56.000000', 1, null, 1, null, null);
+
+INSERT INTO sentences (is_deleted, created_at, diary_id, id, updated_at, sentence, created_by, updated_by) VALUES (false, null, 1, 1, null, '안녕하세요.', null, null);
+INSERT INTO sentences (is_deleted, created_at, diary_id, id, updated_at, sentence, created_by, updated_by) VALUES (false, null, 1, 2, null, '반갑습니다.', null, null);
+INSERT INTO sentences (is_deleted, created_at, diary_id, id, updated_at, sentence, created_by, updated_by) VALUES (false, null, 1, 3, null, '고맙습니다.', null, null);
+
+INSERT INTO pictures (is_main_picture, created_at, diary_id, id, updated_at, content_type, created_by, key_name, updated_by) VALUES (true, null, 1, 1, null, 'PHOTO', null, 'baby/album/1/abc.jpg', null);
+INSERT INTO pictures (is_main_picture, created_at, diary_id, id, updated_at, content_type, created_by, key_name, updated_by) VALUES (true, null, 1, 2, null, 'PHOTO', null, 'baby/album/1/abc2.jpg', null);
+INSERT INTO pictures (is_main_picture, created_at, diary_id, id, updated_at, content_type, created_by, key_name, updated_by) VALUES (true, null, 1, 3, null, 'PHOTO', null, 'baby/album/1/abc3.jpg', null);
