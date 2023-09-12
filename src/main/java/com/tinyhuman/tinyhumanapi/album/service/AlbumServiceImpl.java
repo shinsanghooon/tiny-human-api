@@ -1,9 +1,6 @@
 package com.tinyhuman.tinyhumanapi.album.service;
 
-import com.tinyhuman.tinyhumanapi.album.controller.dto.AlbumCreate;
-import com.tinyhuman.tinyhumanapi.album.controller.dto.AlbumDelete;
-import com.tinyhuman.tinyhumanapi.album.controller.dto.AlbumResponse;
-import com.tinyhuman.tinyhumanapi.album.controller.dto.AlbumUploadResponse;
+import com.tinyhuman.tinyhumanapi.album.controller.dto.*;
 import com.tinyhuman.tinyhumanapi.album.controller.port.AlbumService;
 import com.tinyhuman.tinyhumanapi.album.domain.Album;
 import com.tinyhuman.tinyhumanapi.album.service.port.AlbumRepository;
@@ -57,6 +54,26 @@ public class AlbumServiceImpl implements AlbumService {
     public AlbumResponse findByIdAndBabyId(Long albumId, Long babyId) {
         Album album = albumRepository.findByIdAndBabyId(albumId, babyId);
         return AlbumResponse.fromModel(album);
+    }
+
+    @Override
+    public List<Album> updateOriginalDate(Long babyId, AlbumDateUpdate albumDateUpdate) {
+
+        User user = authService.getUserOutOfSecurityContextHolder();
+        UserBabyRelation userBabyRelation = userBabyRelationRepository.findById(UserBabyMappingId.builder()
+                .userId(user.id())
+                .babyId(babyId)
+                .build())
+                .orElseThrow(() -> new ResourceNotFoundException("UserBabyRelation", user.id() + " " + babyId));
+
+        if (!userBabyRelation.isParent()) {
+            throw new UnauthorizedAccessException("Baby", babyId);
+        }
+
+        List<Album> updatedAlbums = albumRepository.findAllByIds(albumDateUpdate.ids()).stream()
+                .map(album -> album.updateOriginalDate(albumDateUpdate.originalCreatedAt()))
+                .toList();
+        return albumRepository.saveAll(updatedAlbums);
     }
 
     @Override

@@ -1,9 +1,6 @@
 package com.tinyhuman.tinyhumanapi.album.controller;
 
-import com.tinyhuman.tinyhumanapi.album.controller.dto.AlbumCreate;
-import com.tinyhuman.tinyhumanapi.album.controller.dto.AlbumDelete;
-import com.tinyhuman.tinyhumanapi.album.controller.dto.AlbumResponse;
-import com.tinyhuman.tinyhumanapi.album.controller.dto.AlbumUploadResponse;
+import com.tinyhuman.tinyhumanapi.album.controller.dto.*;
 import com.tinyhuman.tinyhumanapi.album.controller.port.AlbumService;
 import com.tinyhuman.tinyhumanapi.common.utils.CursorRequest;
 import com.tinyhuman.tinyhumanapi.common.utils.PageCursor;
@@ -65,7 +62,16 @@ public class AlbumController {
         return ResponseEntity
                 .status(HttpStatus.NO_CONTENT)
                 .build();
+    }
 
+    @Operation(summary = "앨범 날짜 수정 API", responses = {
+            @ApiResponse(responseCode = "200", description = "앨범의 exif 날짜 정보 수정")})
+    @PatchMapping("/{babyId}/albums")
+    public ResponseEntity<Void> updateOriginalCreatedAt(@PathVariable("babyId") Long babyId, @RequestBody AlbumDateUpdate albumDateUpdate) {
+        albumService.updateOriginalDate(babyId, albumDateUpdate);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .build();
     }
 
 

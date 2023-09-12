@@ -1,9 +1,6 @@
 package com.tinyhuman.tinyhumanapi.album.controller.port;
 
-import com.tinyhuman.tinyhumanapi.album.controller.dto.AlbumCreate;
-import com.tinyhuman.tinyhumanapi.album.controller.dto.AlbumDelete;
-import com.tinyhuman.tinyhumanapi.album.controller.dto.AlbumResponse;
-import com.tinyhuman.tinyhumanapi.album.controller.dto.AlbumUploadResponse;
+import com.tinyhuman.tinyhumanapi.album.controller.dto.*;
 import com.tinyhuman.tinyhumanapi.album.domain.Album;
 import com.tinyhuman.tinyhumanapi.common.utils.CursorRequest;
 import com.tinyhuman.tinyhumanapi.common.utils.PageCursor;
@@ -19,4 +16,6 @@ public interface AlbumService {
     List<Album> delete(AlbumDelete albums);
 
     AlbumResponse findByIdAndBabyId(Long albumId, Long babyId);
+
+    List<Album> updateOriginalDate(Long babyId, AlbumDateUpdate albumDateUpdate);
 }
