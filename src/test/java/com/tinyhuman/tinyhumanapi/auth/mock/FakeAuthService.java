@@ -7,6 +7,7 @@ import com.tinyhuman.tinyhumanapi.user.domain.User;
 import com.tinyhuman.tinyhumanapi.user.enums.UserStatus;
 
 public class FakeAuthService implements AuthService {
+
     @Override
     public TokenResponse login(LoginRequest loginRequest) {
         return TokenResponse.builder()

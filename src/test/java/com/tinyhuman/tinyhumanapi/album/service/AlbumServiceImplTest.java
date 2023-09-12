@@ -1,9 +1,6 @@
 package com.tinyhuman.tinyhumanapi.album.service;
 
-import com.tinyhuman.tinyhumanapi.album.controller.dto.AlbumCreate;
-import com.tinyhuman.tinyhumanapi.album.controller.dto.AlbumDelete;
-import com.tinyhuman.tinyhumanapi.album.controller.dto.AlbumResponse;
-import com.tinyhuman.tinyhumanapi.album.controller.dto.AlbumUploadResponse;
+import com.tinyhuman.tinyhumanapi.album.controller.dto.*;
 import com.tinyhuman.tinyhumanapi.album.domain.Album;
 import com.tinyhuman.tinyhumanapi.album.mock.FakeAlbumRepository;
 import com.tinyhuman.tinyhumanapi.auth.mock.FakeAuthService;
@@ -24,6 +21,7 @@ import com.tinyhuman.tinyhumanapi.user.mock.FakeUserBabyRelationRepository;
 import org.junit.jupiter.api.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -99,6 +97,26 @@ class AlbumServiceImplTest {
         fakeUserBabyRelationRepository.save(relation);
         fakeUserBabyRelationRepository.save(relation2);
 
+        fakeAlbumRepository.saveAll(List.of(
+                Album.builder()
+                        .babyId(2L)
+                        .contentType(ContentType.PHOTO)
+                        .id(101L)
+                        .isDeleted(false)
+                        .build(),
+                Album.builder()
+                        .babyId(2L)
+                        .contentType(ContentType.PHOTO)
+                        .id(102L)
+                        .isDeleted(false)
+                        .build(),
+                Album.builder()
+                        .babyId(2L)
+                        .contentType(ContentType.PHOTO)
+                        .id(103L)
+                        .isDeleted(false)
+                        .build()
+        ));
     }
 
     @Nested
@@ -141,7 +159,6 @@ class AlbumServiceImplTest {
     @Nested
     @DisplayName("앨범을 삭제한다.")
     class DeleteAlbums {
-
         List<AlbumCreate> files = new ArrayList<>();
 
         @BeforeEach
@@ -158,7 +175,6 @@ class AlbumServiceImplTest {
         @Test
         @DisplayName("삭제할 앨범 id를 입력받아 앨범을 삭제한다.")
         void deleteAlbums() {
-
             List<Long> deleteIds = List.of(1L, 2L);
 
             AlbumDelete albumDelete = AlbumDelete.builder()
@@ -201,14 +217,12 @@ class AlbumServiceImplTest {
             assertThat(album.babyId()).isEqualTo(babyId);
             assertThat(album.contentType()).isEqualTo(ContentType.PHOTO);
             assertThat(album.keyName()).contains("original_3");
-
         }
     }
 
     @Nested
     @DisplayName("앨범 전체를 조회한다. 아기 id와 CursorRequest를 입력 받아 페이징 방식으로 조회한다.")
     class GetAllAlbums {
-
         List<AlbumCreate> files = new ArrayList<>();
         Long babyId = 1L;
 
@@ -219,7 +233,6 @@ class AlbumServiceImplTest {
                 String originalFileName = "original_" + i + ".png";
                 files.add(AlbumCreate.builder().fileName(originalFileName).build());
             }
-
             albumServiceImpl.uploadAlbums(babyId, files);
         }
 
@@ -236,13 +249,11 @@ class AlbumServiceImplTest {
             assertThat(albums.stream().mapToLong(AlbumResponse::id).max().orElse(CursorRequest.NONE_KEY)).isEqualTo(20L);
             assertThat(albums.stream().mapToLong(AlbumResponse::id).min().orElse(CursorRequest.NONE_KEY)).isEqualTo(16L);
             assertThat(albumCursor.nextCursorRequest().key()).isEqualTo(16);
-
         }
 
         @Test
         @DisplayName("두번째 조회부터, 입력 받은 key값부터 size만큼 id 내림차순으로 조회한다.")
         void getAllAlbumWithCursor() {
-
             PageCursor<AlbumResponse> albumCursor = albumServiceImpl.getAlbumsByBaby(babyId, new CursorRequest(16L, 7));
             List<AlbumResponse> albums = albumCursor.body();
 
@@ -252,6 +263,69 @@ class AlbumServiceImplTest {
             assertThat(albums.stream().mapToLong(AlbumResponse::id).max().orElse(CursorRequest.NONE_KEY)).isEqualTo(15L);
             assertThat(albums.stream().mapToLong(AlbumResponse::id).min().orElse(CursorRequest.NONE_KEY)).isEqualTo(9L);
             assertThat(albumCursor.nextCursorRequest().key()).isEqualTo(9);
+        }
+    }
+
+    @Nested
+    @DisplayName("사용자는 사진 찍은 날짜 정보를 업데이트 한다.")
+    class UpdatedAlbum {
+        List<AlbumCreate> files = new ArrayList<>();
+        Long babyId = 1L;
+
+        @BeforeEach
+        @DisplayName("임시 이미지 파일 10개를 미리 저장해둔다.")
+        void fileSetup() {
+            for (int i = 0; i < 20; i++) {
+                String originalFileName = "original_" + i + ".png";
+                files.add(AlbumCreate.builder().fileName(originalFileName).build());
+            }
+            albumServiceImpl.uploadAlbums(1L, files);
+        }
+
+        @Test
+        @DisplayName("앨범 id 리스트와 업데이트 날짜를 입력 받아 데이터를 업데이트 한다.")
+        void update() {
+            List<Long> albums = List.of(1L, 2L, 3L);
+            AlbumDateUpdate albumDateUpdate = AlbumDateUpdate.builder()
+                    .ids(albums)
+                    .originalCreatedAt(LocalDateTime.of(2023, 9, 12, 15, 29, 00))
+                    .build();
+
+            List<Album> updatedAlbums = albumServiceImpl.updateOriginalDate(babyId, albumDateUpdate);
+
+            assertThat(updatedAlbums.size()).isEqualTo(3);
+            assertThat(updatedAlbums).extracting(Album::id).contains(1L, 2L, 3L);
+            assertThat(updatedAlbums).extracting(Album::originalCreatedAt).containsOnly(LocalDateTime.of(2023, 9, 12, 15, 29, 00));
+        }
+
+        @Test
+        @DisplayName("존재하지 않는 앨범 id에 대해 요청을 하면 어떤 데이터도 업데이트 되지 않는다.")
+        void updateInvalid() {
+            List<Long> albums = List.of(109L, 3332L, 3333L);
+            AlbumDateUpdate albumDateUpdate = AlbumDateUpdate.builder()
+                    .ids(albums)
+                    .originalCreatedAt(LocalDateTime.of(2023, 9, 12, 15, 29, 00))
+                    .build();
+
+            List<Album> updatedAlbums = albumServiceImpl.updateOriginalDate(babyId, albumDateUpdate);
+
+            assertThat(updatedAlbums.size()).isEqualTo(0);
+        }
+
+        @Test
+        @DisplayName("부모가 아닌 사람이 업데이트를 하는 경우 예외를 던진다.")
+        void updateWithFamilyWithNoAuthority() {
+            Long babyIdWithNoAuthority = 2L;
+            List<Long> albums = List.of(101L, 102L, 103L);
+
+            AlbumDateUpdate albumDateUpdate = AlbumDateUpdate.builder()
+                    .ids(albums)
+                    .originalCreatedAt(LocalDateTime.of(2023, 9, 12, 15, 29, 00))
+                    .build();
+
+            assertThatThrownBy(() -> albumServiceImpl.updateOriginalDate(babyIdWithNoAuthority, albumDateUpdate))
+                    .isInstanceOf(UnauthorizedAccessException.class)
+                    .hasMessageContaining("접근 권한이 없습니다");
         }
     }
 }

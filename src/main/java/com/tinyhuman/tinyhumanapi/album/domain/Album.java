@@ -22,5 +22,21 @@ public record Album(Long id, Long babyId, ContentType contentType, String keyNam
                 .gpsLat(this.gpsLat)
                 .gpsLon(this.gpsLon)
                 .isDeleted(true)
-                .build();}
+                .build();
+    }
+
+    public Album updateOriginalDate(LocalDateTime updatedDate) {
+        return Album.builder()
+                .id(this.id)
+                .babyId(this.babyId)
+                .contentType(this.contentType)
+                .keyName(this.keyName)
+                .createdAt(this.createdAt)
+                .originalCreatedAt(updatedDate)
+                .gpsLat(this.gpsLat)
+                .gpsLon(this.gpsLon)
+                .isDeleted(this.isDeleted)
+                .build();
+    }
+
 }

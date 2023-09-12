@@ -1,9 +1,6 @@
 package com.tinyhuman.tinyhumanapi.album.controller;
 
-import com.tinyhuman.tinyhumanapi.album.controller.dto.AlbumCreate;
-import com.tinyhuman.tinyhumanapi.album.controller.dto.AlbumDelete;
-import com.tinyhuman.tinyhumanapi.album.controller.dto.AlbumResponse;
-import com.tinyhuman.tinyhumanapi.album.controller.dto.AlbumUploadResponse;
+import com.tinyhuman.tinyhumanapi.album.controller.dto.*;
 import com.tinyhuman.tinyhumanapi.baby.controller.dto.BabyCreate;
 import com.tinyhuman.tinyhumanapi.baby.controller.dto.BabyPreSignedUrlResponse;
 import com.tinyhuman.tinyhumanapi.baby.domain.Baby;
@@ -333,6 +330,63 @@ class AlbumControllerTest {
             assertThatThrownBy(() -> testContainer.albumController.getAlbum(1L, 1L))
                     .isInstanceOf(ResourceNotFoundException.class)
                             .hasMessageContaining("Album");
+        }
+    }
+
+    @Nested
+    @DisplayName("사용자는 앨범을 업데이트 할 수 있다.")
+    class updateAlbum {
+
+        TestContainer testContainer;
+
+        @BeforeEach
+        void setUp() {
+            testContainer = TestContainer.builder()
+                    .uuidHolder(() -> "test-uuid-code")
+                    .build();
+
+            testContainer.userRepository.save(User.builder()
+                    .name("유닛")
+                    .email("unit@unit.com")
+                    .password("unit")
+                    .build()
+            );
+
+            BabyPreSignedUrlResponse baby = testContainer.babyService.register(BabyCreate.builder()
+                    .name("아기")
+                    .gender(Gender.MALE)
+                    .nickName("아기별명")
+                    .relation(FamilyRelation.FATHER)
+                    .timeOfBirth(23)
+                    .dayOfBirth(LocalDate.of(2022, 9, 27))
+                    .fileName("profile.jpg")
+                    .build());
+
+            List<AlbumCreate> files = IntStream.range(1, 20)
+                    .mapToObj(i -> AlbumCreate.builder()
+                            .fileName(i + ".jpg")
+                            .gpsLat(37.413294)
+                            .gptLon(127.0016985)
+                            .build())
+                    .toList();
+
+            testContainer.albumController.uploadAlbums(baby.id(), files);
+        }
+
+        @Test
+        @DisplayName("앨범의 exif 정보를 업데이트 할 수 있다.")
+        void updateAlbumCreatedAt() {
+
+            List<Long> albums = List.of(1L, 2L, 3L);
+            AlbumDateUpdate albumDateUpdate = AlbumDateUpdate.builder()
+                    .ids(albums)
+                    .originalCreatedAt(LocalDateTime.of(2023, 9, 12, 15, 29, 00))
+                    .build();
+
+            ResponseEntity<Void> result = testContainer.albumController.updateOriginalCreatedAt(1L, albumDateUpdate);
+
+            assertThat(result.getStatusCode()).isEqualTo(HttpStatusCode.valueOf(200));
+
         }
     }
 }
