@@ -192,7 +192,7 @@ public class DiaryServiceImpl implements DiaryService {
             FileInfo fileInfo = getFileInfo(fileName, uuidHolder.random());
 
             String mimeType = fileInfo.mimeType();
-            if (!isImage(mimeType)) {
+            if (isNotImage(mimeType)) {
                 log.error("NotSupportedContentTypeException - MimeType:{}", mimeType);
                 throw new NotSupportedContentTypeException(mimeType);
             }
@@ -217,7 +217,7 @@ public class DiaryServiceImpl implements DiaryService {
         return pictures;
     }
 
-    private static boolean isImage(String mimeType) {
+    private static boolean isNotImage(String mimeType) {
         return !mimeType.startsWith("image");
     }
 

@@ -139,7 +139,7 @@ public class BabyServiceImpl implements BabyService {
         return babyRepository.findById(id)
                 .orElseThrow(() -> {
                     log.error("ResourceNotFoundException(Baby) - userId:{},babyId:{}",  user.id(), id);
-                    return new ResourceNotFoundException("Baby", " " + id);
+                    return new ResourceNotFoundException("Baby", id);
                 });
     }
 }

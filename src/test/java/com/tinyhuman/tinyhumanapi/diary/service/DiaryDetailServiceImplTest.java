@@ -130,7 +130,7 @@ class DiaryDetailServiceImplTest {
             assertThatThrownBy(() -> {
                 diaryDetailServiceImpl.updateSentence(1L, updateSentenceId, new SentenceCreate("수정된 글 입니다."));
             }).isInstanceOf(ResourceNotFoundException.class)
-                    .hasMessageContaining("Sentences");
+                    .hasMessageContaining("Sentence");
         }
     }
 
@@ -154,7 +154,7 @@ class DiaryDetailServiceImplTest {
             assertThatThrownBy(() -> {
                 diaryDetailServiceImpl.deleteSentence(1L, deleteSentenceId);
             }).isInstanceOf(ResourceNotFoundException.class)
-                    .hasMessageContaining("Sentences");
+                    .hasMessageContaining("Sentence");
         }
     }
 
