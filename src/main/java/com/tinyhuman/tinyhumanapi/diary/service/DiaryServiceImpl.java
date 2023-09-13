@@ -3,6 +3,7 @@ package com.tinyhuman.tinyhumanapi.diary.service;
 import com.tinyhuman.tinyhumanapi.auth.controller.port.AuthService;
 import com.tinyhuman.tinyhumanapi.baby.domain.Baby;
 import com.tinyhuman.tinyhumanapi.baby.service.port.BabyRepository;
+import com.tinyhuman.tinyhumanapi.common.exception.NotSupportedContentTypeException;
 import com.tinyhuman.tinyhumanapi.common.exception.ResourceNotFoundException;
 import com.tinyhuman.tinyhumanapi.common.exception.UnauthorizedAccessException;
 import com.tinyhuman.tinyhumanapi.common.service.port.UuidHolder;
@@ -189,6 +190,13 @@ public class DiaryServiceImpl implements DiaryService {
         for (PictureCreate pictureCreate : files) {
             String fileName = pictureCreate.fileName();
             FileInfo fileInfo = getFileInfo(fileName, uuidHolder.random());
+
+            String mimeType = fileInfo.mimeType();
+            if (!isImage(mimeType)) {
+                log.error("NotSupportedContentTypeException - MimeType:{}", mimeType);
+                throw new NotSupportedContentTypeException(mimeType);
+            }
+
             String keyName = addBabyIdAndAlbumIdToImagePath(DIARY_IMAGE_UPLOAD_PATH, babyId, savedDiary.id(), fileInfo.fileNameWithEpochTime());
             String preSignedUrl = imageService.getPreSignedUrlForUpload(keyName, fileInfo.mimeType());
 
@@ -207,6 +215,10 @@ public class DiaryServiceImpl implements DiaryService {
         }
 
         return pictures;
+    }
+
+    private static boolean isImage(String mimeType) {
+        return !mimeType.startsWith("image");
     }
 
     private List<Sentence> registerSentenceToDiary(DiaryCreate diaryCreate, Diary savedDiary) {
