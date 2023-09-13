@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="60 seconds">
+    <timestamp key="BY_DATE" datePattern="yyyy-MM-dd"/>
+    <property name="LOG_PATTERN"
+              value="[%d{yyyy-MM-dd HH:mm:ss}:%-4relative] %green([%thread]) %highlight(%-5level) %boldWhite([%C.%M:%yellow(%L)]) - %msg%n"/>
+    <property name="LOG_PATH" value="logs"/>
+    <property name="ERROR_LOG_PATH" value="logs/error"/>
+    <property name="FILE_NAME" value="tiny-human-logger-%d{yyyy-MM-dd}.%i.log"/>
+    <property name="ERROR_FILE_NAME" value="tiny-human-error-logger-%d{yyyy-MM-dd}.%i.log"/>
+    <property name="DB_PATTERN" value="%green(    > %msg%n)"/>
+    <property name="ERROR_LOCATION" value="error"/>
+    <property name="MAX_FILE_SIZE" value="10MB"/>
+    <property name="MAX_HISTORY" value="30"/>
+
+    <springProfile name="local, dev">
+        <!-- CONSOLE -->
+        <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+            <!-- 출력 패턴 -->
+            <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+                <pattern>${LOG_PATTERN}</pattern>
+            </encoder>
+        </appender>
+
+        <!-- ROLLING_FILE_APPENDER -->
+        <appender name="ROLLING_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <file>
+                ${LOG_PATH}/logger.log
+            </file>
+
+            <!-- 출력 패턴 -->
+            <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+                <pattern>${LOG_PATTERN}</pattern>
+            </encoder>
+
+            <!-- ROLLING POLICY-->
+            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                <!-- 파일 이름 패턴 -->
+                <fileNamePattern>${LOG_PATH}/${FILE_NAME}</fileNamePattern>
+                <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                    <!-- 파일 최고 용량 -->
+                    <maxFileSize>${MAX_FILE_SIZE}</maxFileSize>
+                </timeBasedFileNamingAndTriggeringPolicy>
+                <maxHistory>30</maxHistory>
+            </rollingPolicy>
+
+        </appender>
+
+        <!-- ROLLING_FILE_APPENDER FOR ERROR-->
+        <appender name="ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <!-- FILTER FOR ERROR-->
+            <filter class="ch.qos.logback.classic.filter.LevelFilter">
+                <level>error</level>
+                <onMatch>ACCEPT</onMatch>
+                <onMismatch>DENY</onMismatch>
+            </filter>
+
+            <file>
+                ${ERROR_LOG_PATH}/error-logger.log
+            </file>
+
+            <!-- 출력 패턴 -->
+            <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+                <pattern>${LOG_PATTERN}</pattern>
+            </encoder>
+
+            <!-- ROLLING POLICY-->
+            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                <!-- 파일 이름 패턴 -->
+                <fileNamePattern>${ERROR_LOG_PATH}/${ERROR_FILE_NAME}</fileNamePattern>
+                <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                    <!-- 파일 최고 용량 -->
+                    <maxFileSize>${MAX_FILE_SIZE}</maxFileSize>
+                </timeBasedFileNamingAndTriggeringPolicy>
+                <maxHistory>60</maxHistory>
+            </rollingPolicy>
+
+        </appender>
+
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="ROLLING_FILE"/>
+            <appender-ref ref="ERROR"/>
+        </root>
+
+    </springProfile>
+</configuration>

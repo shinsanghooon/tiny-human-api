@@ -3,12 +3,14 @@ package com.tinyhuman.tinyhumanapi.common.utils;
 import com.tinyhuman.tinyhumanapi.common.enums.ContentType;
 import com.tinyhuman.tinyhumanapi.common.exception.NotSupportedContentTypeException;
 import lombok.Builder;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+@Slf4j
 public class FileUtils {
 
     public record FileInfo(String fileNameWithEpochTime, String mimeType, ContentType contentType) {
@@ -47,6 +49,7 @@ public class FileUtils {
         } else if (mimeType.startsWith("video")) {
             contentType = ContentType.VIDEO;
         } else {
+            log.error("Not supported ContentType - ContentType:{}", mimeType);
             throw new NotSupportedContentTypeException(mimeType);
         }
         return contentType;

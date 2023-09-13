@@ -9,6 +9,7 @@ import com.tinyhuman.tinyhumanapi.diary.service.port.DiaryRepository;
 import com.tinyhuman.tinyhumanapi.diary.service.port.PictureRepository;
 import com.tinyhuman.tinyhumanapi.diary.service.port.SentenceRepository;
 import lombok.Builder;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +18,7 @@ import java.util.List;
 
 @Service
 @Transactional
+@Slf4j
 public class DiaryDetailServiceImpl implements DiaryDetailService {
 
     private final DiaryRepository diaryRepository;
@@ -24,6 +26,7 @@ public class DiaryDetailServiceImpl implements DiaryDetailService {
     private final SentenceRepository sentenceRepository;
 
     private final PictureRepository pictureRepository;
+
     @Builder
     public DiaryDetailServiceImpl(DiaryRepository diaryRepository, SentenceRepository sentenceRepository, PictureRepository pictureRepository) {
         this.diaryRepository = diaryRepository;
@@ -35,8 +38,7 @@ public class DiaryDetailServiceImpl implements DiaryDetailService {
     public DiaryResponse updateSentence(Long diaryId, Long sentenceId, SentenceCreate newSentence) {
         Diary diary = getDiary(diaryId);
 
-        Sentence sentence = sentenceRepository.findById(sentenceId)
-                .orElseThrow(() -> new ResourceNotFoundException("Sentences", sentenceId));
+        Sentence sentence = findSentenceById(sentenceId);
 
         Sentence updatedSentence = sentence.update(newSentence);
         sentenceRepository.save(updatedSentence, diary);
@@ -46,12 +48,19 @@ public class DiaryDetailServiceImpl implements DiaryDetailService {
         return DiaryResponse.fromModel(updatedDiary);
     }
 
+    private Sentence findSentenceById(Long sentenceId) {
+        return sentenceRepository.findById(sentenceId)
+                .orElseThrow(() -> {
+                    log.error("ResourceNotFoundException(Sentence) - sentenceId:{}", sentenceId);
+                    return new ResourceNotFoundException("Sentence", sentenceId);
+                });
+    }
+
     @Override
     public Sentence deleteSentence(Long diaryId, Long sentenceId) {
         Diary diary = getDiary(diaryId);
 
-        Sentence sentence = sentenceRepository.findById(sentenceId)
-                .orElseThrow(() -> new ResourceNotFoundException("Sentences", sentenceId));
+        Sentence sentence = findSentenceById(sentenceId);
 
         Sentence deletedSentence = sentence.delete();
         return sentenceRepository.save(deletedSentence, diary);
@@ -62,10 +71,16 @@ public class DiaryDetailServiceImpl implements DiaryDetailService {
     public List<Picture> changeMainPicture(Long diaryId, Long currentMainPictureId, Long newMainPictureId) {
         Diary diary = getDiary(diaryId);
         Picture currentMainPicture = pictureRepository.findById(currentMainPictureId)
-                .orElseThrow(() -> new ResourceNotFoundException("Picture", currentMainPictureId));
+                .orElseThrow(() -> {
+                    log.error("ResourceNotFoundException(Picture) - pictureId:{}", currentMainPictureId);
+                    return new ResourceNotFoundException("Picture", currentMainPictureId);
+                });
 
         Picture newMainPicture = pictureRepository.findById(newMainPictureId)
-                .orElseThrow(() -> new ResourceNotFoundException("Picture", currentMainPictureId));
+                .orElseThrow(() -> {
+                    log.error("ResourceNotFoundException(Picture) - pictureId:{}", newMainPictureId);
+                    return new ResourceNotFoundException("Picture", newMainPictureId);
+                });
 
         Picture mainToNormalPicture = currentMainPicture.assignToNormal();
         Picture normalToMainPicture = newMainPicture.assignToMain();
@@ -79,10 +94,11 @@ public class DiaryDetailServiceImpl implements DiaryDetailService {
 
     }
 
-
     private Diary getDiary(Long diaryId) {
-        Diary diary = diaryRepository.findById(diaryId)
-                .orElseThrow(() -> new ResourceNotFoundException("Diary", diaryId));
-        return diary;
+        return diaryRepository.findById(diaryId)
+                .orElseThrow(() -> {
+                    log.error("ResourceNotFoundException(Diary) - diaryId:{}", diaryId);
+                    return new ResourceNotFoundException("Diary", diaryId);
+                });
     }
 }

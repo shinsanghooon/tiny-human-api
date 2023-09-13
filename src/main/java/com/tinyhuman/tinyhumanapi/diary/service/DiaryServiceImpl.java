@@ -23,6 +23,7 @@ import com.tinyhuman.tinyhumanapi.user.infrastructure.UserBabyMappingId;
 import com.tinyhuman.tinyhumanapi.user.service.port.UserBabyRelationRepository;
 import com.tinyhuman.tinyhumanapi.user.service.port.UserRepository;
 import lombok.Builder;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,6 +38,7 @@ import static com.tinyhuman.tinyhumanapi.common.utils.FileUtils.*;
 
 @Service
 @Transactional
+@Slf4j
 public class DiaryServiceImpl implements DiaryService {
 
     private final DiaryRepository diaryRepository;
@@ -116,8 +118,7 @@ public class DiaryServiceImpl implements DiaryService {
 
     @Override
     public Diary delete(Long id) {
-        Diary diary = diaryRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Diary", id));
+        Diary diary = findDiaryById(id);
 
         Diary deletedDiary = diary.delete();
         return diaryRepository.save(deletedDiary);
@@ -125,10 +126,18 @@ public class DiaryServiceImpl implements DiaryService {
 
     @Override
     public DiaryResponse findById(Long id) {
-        Diary diary = diaryRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Diary", id));
+        Diary diary = findDiaryById(id);
         return DiaryResponse.fromModel(diary);
     }
+
+    private Diary findDiaryById(Long id) {
+        return diaryRepository.findById(id)
+                .orElseThrow(() -> {
+                    log.error("ResourceNotFoundException(Diary) - diaryId:{}", id);
+                    return new ResourceNotFoundException("Diary", id);
+                });
+    }
+
 
     @Override
     public List<DiaryResponse> findByDate(Long babyId, String date) {
@@ -144,13 +153,16 @@ public class DiaryServiceImpl implements DiaryService {
 
     @Override
     public PageCursor<DiaryResponse> getMyDiariesByBaby(Long babyId, CursorRequest cursorRequest) {
-        User user = authService.getUserOutOfSecurityContextHolder();
-        Long userId = user.id();
+        Long userId = authService.getUserOutOfSecurityContextHolder().id();
 
         UserBabyRelation userBabyRelation = userBabyRelationRepository.findById(new UserBabyMappingId(userId, babyId))
-                .orElseThrow(() -> new ResourceNotFoundException("UserBabyRelation", userId + "-" + babyId));
+                .orElseThrow(() -> {
+                    log.error("ResourceNotFoundException(UserBabyRelation) - userId:{},babyId{}",  userId, babyId);
+                    return new ResourceNotFoundException("UserBabyRelation", userId + " " + babyId);
+                });
 
         if (!userBabyRelation.hasReadRole()) {
+            log.error("UnauthorizedAccessException(Baby) - userId:{},babyId{}",  userId, babyId);
             throw new UnauthorizedAccessException("Baby", babyId);
         }
 
@@ -217,11 +229,17 @@ public class DiaryServiceImpl implements DiaryService {
 
     private User getUser(DiaryCreate diaryCreate) {
         return userRepository.findById(diaryCreate.userId())
-                .orElseThrow(() -> new ResourceNotFoundException("User", diaryCreate.userId()));
+                .orElseThrow(() -> {
+                    log.error("ResourceNotFoundException(User) - userId:{}", diaryCreate.userId());
+                    return new ResourceNotFoundException("User", diaryCreate.userId());
+                });
     }
 
     private Baby getBaby(DiaryCreate diaryCreate) {
         return babyRepository.findById(diaryCreate.babyId())
-                .orElseThrow(() -> new ResourceNotFoundException("Baby", diaryCreate.babyId()));
+                .orElseThrow(() -> {
+                    log.error("ResourceNotFoundException(Baby) - babyId:{}", diaryCreate.babyId());
+                    return new ResourceNotFoundException("Baby", diaryCreate.babyId());
+                });
     }
 }

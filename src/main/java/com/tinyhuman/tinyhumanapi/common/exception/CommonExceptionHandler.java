@@ -14,18 +14,34 @@ import static org.springframework.http.HttpStatus.FORBIDDEN;
 
 @RestControllerAdvice
 public class CommonExceptionHandler {
+
+    /**
+     * @Valid 어노테이션이 달린 필드에서 타입 유효성 검증이 실패하는 경우, 예외를 던집니다.
+     * @param ex MethodArgumentTypeMismatchException 예외
+     * @return 에러 메시지가 담긴 응답
+     */
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     @ResponseStatus(code = BAD_REQUEST)
     public ErrorResponse handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex) {
         return new ErrorResponse(BAD_REQUEST, BAD_REQUEST.value(), ex.getMessage());
     }
 
+    /**
+     * @Valid 어노테이션이 달린 필드에서 값 유효성 검증이 실패하는 경우, 예외를 던집니다.
+     * @param ex MethodArgumentNotValidException 예외
+     * @return 에러 메시지가 담긴 응답
+     */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(code = BAD_REQUEST)
     public ErrorResponse handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
         return new ErrorResponse(BAD_REQUEST, BAD_REQUEST.value(), ex.getMessage());
     }
 
+    /**
+     * 유효하지 않은 상태 값을 가지고 있는 경우 예외를 던집니다.
+     * @param ex IllegalStateException 예외
+     * @return 에러 메시지가 담긴 응답
+     */
     @ExceptionHandler(IllegalStateException.class)
     @ResponseStatus(code = BAD_REQUEST)
     public ErrorResponse handleIllegalStatesException(IllegalStateException ex) {
@@ -35,7 +51,7 @@ public class CommonExceptionHandler {
     /**
      * 입력값이 ENUM에 포함되지 않는 경우, 예외를 던집니다.
      *
-     * @return 메시지가 담긴 응답
+     * @return 에러 메시지가 담긴 응답
      */
     @ExceptionHandler(InvalidFormatException.class)
     @ResponseStatus(code = BAD_REQUEST)

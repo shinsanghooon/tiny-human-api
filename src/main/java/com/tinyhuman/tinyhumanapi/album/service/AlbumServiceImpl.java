@@ -18,6 +18,7 @@ import com.tinyhuman.tinyhumanapi.user.domain.UserBabyRelation;
 import com.tinyhuman.tinyhumanapi.user.infrastructure.UserBabyMappingId;
 import com.tinyhuman.tinyhumanapi.user.service.port.UserBabyRelationRepository;
 import lombok.Builder;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +27,7 @@ import java.util.List;
 
 @Service
 @Transactional
+@Slf4j
 public class AlbumServiceImpl implements AlbumService {
 
     private final AlbumRepository albumRepository;
@@ -59,14 +61,18 @@ public class AlbumServiceImpl implements AlbumService {
     @Override
     public List<Album> updateOriginalDate(Long babyId, AlbumDateUpdate albumDateUpdate) {
 
-        User user = authService.getUserOutOfSecurityContextHolder();
+        Long userId = authService.getUserOutOfSecurityContextHolder().id();
         UserBabyRelation userBabyRelation = userBabyRelationRepository.findById(UserBabyMappingId.builder()
-                .userId(user.id())
+                .userId(userId)
                 .babyId(babyId)
                 .build())
-                .orElseThrow(() -> new ResourceNotFoundException("UserBabyRelation", user.id() + " " + babyId));
+                .orElseThrow(() -> {
+                    log.error("ResourceNotFoundException(UserBabyRelation) - userId:{},babyId{}",  userId, babyId);
+                    return new ResourceNotFoundException("UserBabyRelation", userId + " " + babyId);
+                });
 
         if (!userBabyRelation.isParent()) {
+            log.error("UnauthorizedAccessException(Album) - userId:{},babyId{}",  userId, babyId);
             throw new UnauthorizedAccessException("Baby", babyId);
         }
 
@@ -97,6 +103,7 @@ public class AlbumServiceImpl implements AlbumService {
     public List<AlbumUploadResponse> uploadAlbums(Long babyId, List<AlbumCreate> files) {
 
         if (isExceededMaxUploadCount(files)) {
+            log.error("IllegalArgumentException - files count:{}", files.size());
             throw new IllegalArgumentException("사진 및 동영상은 최대 업로드 개수는 20개입니다.");
         }
 
@@ -105,9 +112,13 @@ public class AlbumServiceImpl implements AlbumService {
                         .babyId(babyId)
                         .userId(user.id())
                         .build())
-                .orElseThrow(() -> new ResourceNotFoundException("UserBabyRelation", user.id() + "/" + babyId));
+                .orElseThrow(() -> {
+                    log.error("ResourceNotFoundException(UserBabyRelation) - userId:{},babyId{}",  user.id(), babyId);
+                    return new ResourceNotFoundException("UserBabyRelation", user.id() + " " + babyId);
+                });
 
         if (isUserOwnsBaby(userBabyRelation)) {
+            log.error("UnauthorizedAccessException(Album) - userId:{},babyId{}",  user.id(), babyId);
             throw new UnauthorizedAccessException("Album", babyId);
         }
 
