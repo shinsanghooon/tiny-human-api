@@ -9,7 +9,7 @@ spring:
     enabled: false
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: create-drop
     properties:
       hibernate:
         format_sql: true
@@ -27,9 +27,6 @@ aws:
   s3:
     raw-bucketName: tiny-human-dev
     thumbnail-bucketName: tiny-human-thumbnail-dev
-  ddb:
-    table:
-
 jwt:
   issuer: abc@tinyhuman.com
   secret_key: gqe213bfl3quh2

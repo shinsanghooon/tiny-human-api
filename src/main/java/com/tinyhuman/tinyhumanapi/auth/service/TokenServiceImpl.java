@@ -9,6 +9,7 @@ import com.tinyhuman.tinyhumanapi.common.exception.ResourceNotFoundException;
 import com.tinyhuman.tinyhumanapi.user.domain.User;
 import com.tinyhuman.tinyhumanapi.user.service.port.UserRepository;
 import lombok.Builder;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +17,7 @@ import java.time.Duration;
 
 @Service
 @Transactional
+@Slf4j
 public class TokenServiceImpl implements TokenService {
 
     private final CustomTokenProvider customTokenProvider;
@@ -34,6 +36,7 @@ public class TokenServiceImpl implements TokenService {
     @Override
     public CreateAccessTokenResponse createNewAccessToken(String refreshToken) {
         if (!customTokenProvider.checkValidToken(refreshToken)) {
+            log.error("IllegalArgumentException - Token is invalid");
             throw new IllegalArgumentException("Unexpected Token");
         }
 

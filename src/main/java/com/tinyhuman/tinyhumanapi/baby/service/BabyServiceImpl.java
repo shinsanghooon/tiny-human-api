@@ -20,6 +20,7 @@ import com.tinyhuman.tinyhumanapi.user.domain.User;
 import com.tinyhuman.tinyhumanapi.user.domain.UserBabyRelation;
 import com.tinyhuman.tinyhumanapi.user.service.port.UserRepository;
 import lombok.Builder;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +28,7 @@ import java.util.List;
 
 @Service
 @Transactional
+@Slf4j
 public class BabyServiceImpl implements BabyService {
 
     private final BabyRepository babyRepository;
@@ -133,13 +135,11 @@ public class BabyServiceImpl implements BabyService {
     }
 
     private Baby findBaby(Long id) {
+        User user = authService.getUserOutOfSecurityContextHolder();
         return babyRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Baby", id));
+                .orElseThrow(() -> {
+                    log.error("ResourceNotFoundException(Baby) - userId:{},babyId:{}",  user.id(), id);
+                    return new ResourceNotFoundException("Baby", " " + id);
+                });
     }
-
-    private User findUser(Long userId) {
-        return userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User", userId));
-    }
-
 }

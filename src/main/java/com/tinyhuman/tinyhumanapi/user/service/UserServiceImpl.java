@@ -10,6 +10,7 @@ import com.tinyhuman.tinyhumanapi.user.domain.UserResponse;
 import com.tinyhuman.tinyhumanapi.user.domain.exception.EmailDuplicateException;
 import com.tinyhuman.tinyhumanapi.user.service.port.UserRepository;
 import lombok.Builder;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
+@Slf4j
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
@@ -51,11 +53,15 @@ public class UserServiceImpl implements UserService {
     public UserResponse getUser(Long userId) {
         User securityUser = authService.getUserOutOfSecurityContextHolder();
         if (!securityUser.id().equals(userId)) {
+            log.error("UnauthorizedAccessException(User) - userId:{}",  userId);
             throw new UnauthorizedAccessException("User", userId);
         }
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User", userId));
+                .orElseThrow(() -> {
+                    log.error("ResourceNotFoundException(User) - userId:{}", userId);
+                    return new ResourceNotFoundException("User", userId);
+                });
         return UserResponse.fromModel(user);
     }
 

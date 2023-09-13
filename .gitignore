@@ -38,3 +38,6 @@ out/
 
 aws.yml
 .DS_Store
+
+### local logs ###
+/logs
