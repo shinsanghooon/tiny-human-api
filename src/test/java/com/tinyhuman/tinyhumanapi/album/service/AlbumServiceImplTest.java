@@ -8,6 +8,7 @@ import com.tinyhuman.tinyhumanapi.baby.domain.Baby;
 import com.tinyhuman.tinyhumanapi.baby.enums.Gender;
 import com.tinyhuman.tinyhumanapi.baby.mock.FakeImageService;
 import com.tinyhuman.tinyhumanapi.common.enums.ContentType;
+import com.tinyhuman.tinyhumanapi.common.exception.NotSupportedContentTypeException;
 import com.tinyhuman.tinyhumanapi.common.exception.UnauthorizedAccessException;
 import com.tinyhuman.tinyhumanapi.common.mock.TestUuidHolder;
 import com.tinyhuman.tinyhumanapi.common.utils.CursorRequest;
@@ -152,6 +153,39 @@ class AlbumServiceImplTest {
             assertThatThrownBy(() -> albumServiceImpl.uploadAlbums(2L, files))
                     .isInstanceOf(UnauthorizedAccessException.class)
                     .hasMessageContaining("접근 권한이 없습니다");
+        }
+
+        @DisplayName("사진, 동영상 타입만 존재하면 정상적으로 업로드가 된다.")
+        @Test
+        void onlyImageAndVideoAllowed() {
+            List<String> newFiles = List.of("test.avi", "test.png", "test.jpg");
+            List<AlbumCreate> albumCreates = newFiles.stream()
+                    .map(f -> AlbumCreate.builder().fileName(f).build())
+                    .toList();
+
+            List<AlbumUploadResponse> albumUploadResponses = albumServiceImpl.uploadAlbums(1L, albumCreates);
+            assertThat(albumUploadResponses.size()).isEqualTo(3);
+
+            assertThat(albumUploadResponses)
+                    .extracting(AlbumUploadResponse::filename)
+                    .containsOnly("test-uuid_test.avi", "test-uuid_test.png", "test-uuid_test.jpg");
+
+            assertThat(albumUploadResponses)
+                    .extracting(AlbumUploadResponse::contentType)
+                    .contains(ContentType.PHOTO, ContentType.VIDEO);
+        }
+
+        @DisplayName("사진, 동영상 타입이 아니라면 예외를 던진다.")
+        @Test
+        void onlyImageAndVideoAllowed2() {
+            List<String> newFiles = List.of("test.avi", "test.pdf", "test.jpg");
+            List<AlbumCreate> albumCreates = newFiles.stream()
+                    .map(f -> AlbumCreate.builder().fileName(f).build())
+                    .toList();
+
+            assertThatThrownBy(() -> albumServiceImpl.uploadAlbums(1L, albumCreates))
+                    .isInstanceOf(NotSupportedContentTypeException.class)
+                    .hasMessageContaining("지원하지 않는");
         }
     }
 
