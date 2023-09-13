@@ -2,8 +2,9 @@ package com.tinyhuman.tinyhumanapi.common.enums;
 
 public enum ContentType {
     PHOTO("Photo", "사진"),
-    VIDEO("Video", "영상");
+    VIDEO("Video", "영상"),
 
+    UNKNOWN("Unknown", "알 수 없음");
     private final String englishName;
     private final String koreanName;
 

@@ -6,6 +6,7 @@ import com.tinyhuman.tinyhumanapi.album.domain.Album;
 import com.tinyhuman.tinyhumanapi.album.service.port.AlbumRepository;
 import com.tinyhuman.tinyhumanapi.auth.controller.port.AuthService;
 import com.tinyhuman.tinyhumanapi.common.enums.ContentType;
+import com.tinyhuman.tinyhumanapi.common.exception.NotSupportedContentTypeException;
 import com.tinyhuman.tinyhumanapi.common.exception.ResourceNotFoundException;
 import com.tinyhuman.tinyhumanapi.common.exception.UnauthorizedAccessException;
 import com.tinyhuman.tinyhumanapi.common.service.port.UuidHolder;
@@ -107,6 +108,10 @@ public class AlbumServiceImpl implements AlbumService {
             throw new IllegalArgumentException("사진 및 동영상은 최대 업로드 개수는 20개입니다.");
         }
 
+        if (isNotImageOrVideo(files)) {
+            throw new NotSupportedContentTypeException("지원하지 않는 파일 형식입니다. 다시 한 번 확인해주세요.");
+        }
+
         User user = authService.getUserOutOfSecurityContextHolder();
         UserBabyRelation userBabyRelation = userBabyRelationRepository.findById(UserBabyMappingId.builder()
                         .babyId(babyId)
@@ -147,6 +152,20 @@ public class AlbumServiceImpl implements AlbumService {
         return albumRepository.saveAll(albums).stream()
                 .map(this::getAlbumUploadResponse)
                 .toList();
+    }
+
+    private boolean isNotImageOrVideo(List<AlbumCreate> files) {
+        for (AlbumCreate file : files) {
+            String mimeType = FileUtils.guessMimeType(file.fileName());
+            ContentType contentType = FileUtils.getContentType(mimeType);
+
+            boolean isNotPhotoOrVideo = contentType != ContentType.PHOTO && contentType != ContentType.VIDEO;
+            if (isNotPhotoOrVideo) {
+                log.error("NotSupportedContentTypeException - file:{},contentType:{}", file.fileName(), contentType);
+                return true;
+            }
+        }
+        return false;
     }
 
     private boolean isUserOwnsBaby(UserBabyRelation userBabyRelation) {

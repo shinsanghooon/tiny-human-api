@@ -1,7 +1,6 @@
 package com.tinyhuman.tinyhumanapi.common.utils;
 
 import com.tinyhuman.tinyhumanapi.common.enums.ContentType;
-import com.tinyhuman.tinyhumanapi.common.exception.NotSupportedContentTypeException;
 import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 
@@ -45,14 +44,11 @@ public class FileUtils {
     public static ContentType getContentType(String mimeType) {
         ContentType contentType;
         if (mimeType.startsWith("image")) {
-            contentType = ContentType.PHOTO;
+            return ContentType.PHOTO;
         } else if (mimeType.startsWith("video")) {
-            contentType = ContentType.VIDEO;
-        } else {
-            log.error("Not supported ContentType - ContentType:{}", mimeType);
-            throw new NotSupportedContentTypeException(mimeType);
+            return ContentType.VIDEO;
         }
-        return contentType;
+        return ContentType.UNKNOWN;
     }
 
     public static String guessMimeType(String fileName){
