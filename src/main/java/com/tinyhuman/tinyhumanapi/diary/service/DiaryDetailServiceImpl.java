@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
 
 
@@ -93,6 +94,20 @@ public class DiaryDetailServiceImpl implements DiaryDetailService {
         Diary diary = getDiary(diaryId);
 
         Picture picture = findPictureById(pictureId);
+
+        if (diary.pictures().size() > 1) {
+            if (picture.isMainPicture()) {
+                Picture newMainPicture = diary.pictures().stream()
+                        .filter(p -> !p.id().equals(pictureId))
+                        .min(Comparator.comparingLong(Picture::id))
+                        .orElseThrow(() -> {
+                            log.error("IllegalStateException(Picture) - pictureId:{}", pictureId);
+                            return new IllegalStateException("사진 삭제 작업 중 에러가 발생했습니다.");
+                        })
+                        .assignToMain();
+                pictureRepository.save(newMainPicture, diary);
+            }
+        }
 
         Picture deletedPicture = picture.delete();
         return pictureRepository.save(deletedPicture, diary);
