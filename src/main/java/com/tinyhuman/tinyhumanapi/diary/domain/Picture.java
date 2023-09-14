@@ -36,7 +36,7 @@ public record Picture(Long id, boolean isMainPicture, ContentType contentType, S
     public Picture addPreSignedUrl(String preSignedUrl) {
         return Picture.builder()
                 .id(this.id)
-                .isMainPicture(false)
+                .isMainPicture(this.isMainPicture)
                 .contentType(this.contentType)
                 .keyName(this.keyName)
                 .preSignedUrl(preSignedUrl)
