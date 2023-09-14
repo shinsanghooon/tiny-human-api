@@ -8,10 +8,12 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Where;
 
 @Entity
 @Getter
 @Table(name = "pictures")
+@Where(clause = "is_deleted=false")
 @NoArgsConstructor
 public class PictureEntity extends BaseEntity {
 
@@ -29,16 +31,20 @@ public class PictureEntity extends BaseEntity {
     @Column(name = "key_name")
     private String keyName;
 
+    @Column(name = "is_deleted")
+    private boolean isDeleted;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "diary_id")
     private DiaryEntity diary;
 
     @Builder
-    public PictureEntity(Long id, boolean isMainPicture, ContentType contentType, String keyName, DiaryEntity diary) {
+    public PictureEntity(Long id, boolean isMainPicture, ContentType contentType, String keyName, boolean isDeleted, DiaryEntity diary) {
         this.id = id;
         this.isMainPicture = isMainPicture;
         this.contentType = contentType;
         this.keyName = keyName;
+        this.isDeleted = isDeleted;
         this.diary = setDiary(diary);
     }
 
@@ -58,6 +64,7 @@ public class PictureEntity extends BaseEntity {
                 .contentType(picture.contentType())
                 .isMainPicture(picture.isMainPicture())
                 .keyName(picture.keyName())
+                .isDeleted(picture.isDeleted())
                 .diary(DiaryEntity.fromModel(diary))
                 .build();
     }
@@ -68,6 +75,7 @@ public class PictureEntity extends BaseEntity {
                 .isMainPicture(this.isMainPicture)
                 .contentType(this.contentType)
                 .keyName(this.keyName)
+                .isDeleted(this.isDeleted)
                 .diaryId(this.diary.getId())
                 .build();
     }

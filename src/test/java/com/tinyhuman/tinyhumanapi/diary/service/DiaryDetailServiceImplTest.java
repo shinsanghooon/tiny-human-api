@@ -95,13 +95,19 @@ class DiaryDetailServiceImplTest {
                 .diaryId(1L)
                 .build();
 
-        List<Picture> pictures = List.of(picture1, picture2);
+        Picture picture3 = Picture.builder()
+                .isMainPicture(false)
+                .diaryId(1L)
+                .build();
 
-        fakePictureRepository.saveAll(pictures, diaryWithSentence);
-        Diary diaryWithSentenceAndPicture = diaryWithSentence.addPictures(pictures);
+
+        List<Picture> pictures = List.of(picture1, picture2, picture3);
+
+        List<Picture> savedPictures = fakePictureRepository.saveAll(pictures, diaryWithSentence);
+        Diary diaryWithSentenceAndPicture = diaryWithSentence.addPictures(savedPictures);
 
         fakeDiaryRepository.save(diaryWithSentenceAndPicture);
-        fakePictureRepository.saveAll(pictures, diaryWithSentenceAndPicture);
+        fakePictureRepository.saveAll(savedPictures, diaryWithSentenceAndPicture);
 
     }
 
@@ -177,7 +183,31 @@ class DiaryDetailServiceImplTest {
             assertThat(mainToNormalPicture.isMainPicture()).isFalse();
             assertThat(normalToMainPicture.isMainPicture()).isTrue();
         }
+
+        @Test
+        @DisplayName("사진을 삭제한다.")
+        void deletePicture() {
+            Long deletePictureId = 1L;
+            Picture picture = diaryDetailServiceImpl.deletePicture(1L, deletePictureId);
+
+            assertThat(picture.isDeleted()).isTrue();
+        }
+
+        @Test
+        @DisplayName("메인 사진을 삭제하면 id값이 가장 작은 사진이 메인 사진이 된다.")
+        void deleteMainPicture() {
+            Long deletePictureId = 1L;
+            diaryDetailServiceImpl.deletePicture(1L, deletePictureId);
+
+            Picture picture2 = diaryDetailServiceImpl.findPictureById(2L);
+            Picture picture3 = diaryDetailServiceImpl.findPictureById(3L);
+
+            assertThat(picture2.isMainPicture()).isTrue();
+            assertThat(picture3.isMainPicture()).isFalse();
+        }
     }
+
+
 
 
 }

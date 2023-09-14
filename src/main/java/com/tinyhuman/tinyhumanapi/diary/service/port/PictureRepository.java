@@ -11,5 +11,7 @@ public interface PictureRepository {
 
     List<Picture> saveAll(List<Picture> pictures, Diary savedDiary);
 
+    Picture save(Picture picture, Diary diary);
+
     Optional<Picture> findById(Long id);
 }
