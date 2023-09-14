@@ -42,6 +42,6 @@ INSERT INTO sentences (is_deleted, created_at, diary_id, id, updated_at, sentenc
 INSERT INTO sentences (is_deleted, created_at, diary_id, id, updated_at, sentence, created_by, updated_by) VALUES (false, null, 1, 2, null, '반갑습니다.', null, null);
 INSERT INTO sentences (is_deleted, created_at, diary_id, id, updated_at, sentence, created_by, updated_by) VALUES (false, null, 1, 3, null, '고맙습니다.', null, null);
 
-INSERT INTO pictures (is_main_picture, created_at, diary_id, id, updated_at, content_type, created_by, key_name, updated_by) VALUES (true, null, 1, 1, null, 'PHOTO', null, 'baby/album/1/abc.jpg', null);
-INSERT INTO pictures (is_main_picture, created_at, diary_id, id, updated_at, content_type, created_by, key_name, updated_by) VALUES (true, null, 1, 2, null, 'PHOTO', null, 'baby/album/1/abc2.jpg', null);
-INSERT INTO pictures (is_main_picture, created_at, diary_id, id, updated_at, content_type, created_by, key_name, updated_by) VALUES (true, null, 1, 3, null, 'PHOTO', null, 'baby/album/1/abc3.jpg', null);
+INSERT INTO pictures (is_main_picture, created_at, diary_id, id, updated_at, content_type, created_by, key_name, updated_by, is_deleted) VALUES (true, null, 1, 1, null, 'PHOTO', null, 'baby/album/1/abc.jpg', null, false);
+INSERT INTO pictures (is_main_picture, created_at, diary_id, id, updated_at, content_type, created_by, key_name, updated_by, is_deleted) VALUES (false, null, 1, 2, null, 'PHOTO', null, 'baby/album/1/abc2.jpg', null, false);
+INSERT INTO pictures (is_main_picture, created_at, diary_id, id, updated_at, content_type, created_by, key_name, updated_by, is_deleted) VALUES (false, null, 1, 3, null, 'PHOTO', null, 'baby/album/1/abc3.jpg', null, false);
