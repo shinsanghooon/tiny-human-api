@@ -28,6 +28,11 @@ public class PictureRepositoryImpl implements PictureRepository {
     }
 
     @Override
+    public Picture save(Picture picture, Diary diary) {
+        return pictureJpaRepository.save(PictureEntity.fromModel(picture, diary)).toModel();
+    }
+
+    @Override
     public Optional<Picture> findById(Long id) {
         return pictureJpaRepository.findById(id).map(PictureEntity::toModel);
     }

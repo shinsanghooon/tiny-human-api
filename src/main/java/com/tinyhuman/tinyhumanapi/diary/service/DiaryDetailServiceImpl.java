@@ -89,9 +89,22 @@ public class DiaryDetailServiceImpl implements DiaryDetailService {
     }
 
     @Override
-    public void deletePicture(Long diaryId, Long pictureId) {
-        // TODO
+    public Picture deletePicture(Long diaryId, Long pictureId) {
+        Diary diary = getDiary(diaryId);
 
+        Picture picture = findPictureById(pictureId);
+
+        Picture deletedPicture = picture.delete();
+        return pictureRepository.save(deletedPicture, diary);
+
+    }
+
+    private Picture findPictureById(Long pictureId) {
+        return pictureRepository.findById(pictureId)
+                .orElseThrow(() -> {
+                    log.error("ResourceNotFoundException(Picture) - pictureId:{}", pictureId);
+                    return new ResourceNotFoundException("Picture", pictureId);
+                });
     }
 
     private Diary getDiary(Long diaryId) {

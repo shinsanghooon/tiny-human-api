@@ -58,4 +58,15 @@ public class DiaryDetailController {
                 .status(HttpStatus.OK)
                 .body(diaryDetailService.changeMainPicture(diaryId, changeMainPicture.currentPictureId(), changeMainPicture.newPictureId()));
     }
+
+    @Operation(summary = "일기 사진 삭제 API", responses = {
+            @ApiResponse(responseCode = "204", description = "사진 삭제 성공")})
+    @DeleteMapping("{diaryId}/pictures/{pictureId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public ResponseEntity<Void> deleteDiaryPicture(@PathVariable("diaryId") Long diaryId, @PathVariable("pictureId") Long pictureId) {
+        diaryDetailService.deletePicture(diaryId, pictureId);
+        return ResponseEntity
+                .status(HttpStatus.NO_CONTENT)
+                .build();
+    }
 }

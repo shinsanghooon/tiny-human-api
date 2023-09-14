@@ -15,6 +15,6 @@ public interface DiaryDetailService {
 
     public List<Picture> changeMainPicture(Long diaryId, Long currentMainPictureId, Long newMainPictureId);
 
-    public void deletePicture(Long diaryId, Long pictureId);
+    public Picture deletePicture(Long diaryId, Long pictureId);
 
 }
