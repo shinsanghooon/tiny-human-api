@@ -114,7 +114,7 @@ public class DiaryDetailServiceImpl implements DiaryDetailService {
 
     }
 
-    private Picture findPictureById(Long pictureId) {
+    public Picture findPictureById(Long pictureId) {
         return pictureRepository.findById(pictureId)
                 .orElseThrow(() -> {
                     log.error("ResourceNotFoundException(Picture) - pictureId:{}", pictureId);
