@@ -20,7 +20,7 @@ public class TokenController {
     private final TokenService tokenService;
 
     @Operation(summary = "액세스 토큰 발급 API", responses = {
-            @ApiResponse(responseCode = "201", description = "리프레스 토큰을 이용해 액세스 토큰 재발행 성공")})
+            @ApiResponse(responseCode = "201", description = "리프레시 토큰을 이용해 액세스 토큰 재발행 성공")})
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public CreateAccessTokenResponse createAccessTokenResponse(@RequestBody CreateAccessTokenRequest createAccessTokenRequest) {

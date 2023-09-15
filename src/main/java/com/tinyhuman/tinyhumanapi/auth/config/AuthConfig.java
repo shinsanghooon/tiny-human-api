@@ -42,6 +42,7 @@ public class AuthConfig {
                                 .requestMatchers(HttpMethod.POST, "/api/v1/auth/login").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/api/v1/users").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/api/v1/users/email/duplicate-check").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/v1/token").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .formLogin(AbstractHttpConfigurer::disable)
@@ -53,8 +54,7 @@ public class AuthConfig {
                         sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .csrf(AbstractHttpConfigurer::disable)
                 .httpBasic(Customizer.withDefaults())
-                .addFilterBefore(new TokenAuthenticationFilter(customTokenProvider), UsernamePasswordAuthenticationFilter.class)
-        ;
+                .addFilterBefore(new TokenAuthenticationFilter(customTokenProvider), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
@@ -66,6 +66,5 @@ public class AuthConfig {
         authenticationManagerBuilder.authenticationProvider(authenticationProvider);
         return authenticationManagerBuilder.build();
     }
-
 
 }

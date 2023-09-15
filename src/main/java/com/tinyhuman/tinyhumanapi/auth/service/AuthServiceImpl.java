@@ -22,7 +22,7 @@ import java.time.Duration;
 import java.util.Optional;
 
 @Service
-@Transactional(readOnly = true)
+@Transactional
 @RequiredArgsConstructor
 @Slf4j
 public class AuthServiceImpl implements AuthService {
