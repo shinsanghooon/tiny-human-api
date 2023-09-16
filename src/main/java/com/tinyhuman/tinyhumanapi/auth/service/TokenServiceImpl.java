@@ -4,6 +4,7 @@ import com.tinyhuman.tinyhumanapi.auth.config.jwt.CustomTokenProvider;
 import com.tinyhuman.tinyhumanapi.auth.controller.port.RefreshTokenService;
 import com.tinyhuman.tinyhumanapi.auth.controller.port.TokenService;
 import com.tinyhuman.tinyhumanapi.auth.domain.CreateAccessTokenResponse;
+import com.tinyhuman.tinyhumanapi.auth.domain.RefreshToken;
 import com.tinyhuman.tinyhumanapi.auth.domain.TokenResponse;
 import com.tinyhuman.tinyhumanapi.common.exception.ResourceNotFoundException;
 import com.tinyhuman.tinyhumanapi.user.domain.User;
@@ -36,11 +37,12 @@ public class TokenServiceImpl implements TokenService {
     @Override
     public CreateAccessTokenResponse createNewAccessToken(String refreshToken) {
         if (!customTokenProvider.checkValidToken(refreshToken)) {
-            log.error("IllegalArgumentException - Token is invalid");
-            throw new IllegalArgumentException("Unexpected Token");
+            log.error("IllegalArgumentException - Invalid RefreshToken, You need to login with email and password");
+            throw new IllegalArgumentException("Invalid Token");
         }
 
-        Long userId = refreshTokenService.findByRefreshToken(refreshToken).userId();
+        RefreshToken refreshTokenInfo = refreshTokenService.findByRefreshToken(refreshToken);
+        Long userId = refreshTokenInfo.userId();
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("Users", userId));
 
         TokenResponse tokenResponse = customTokenProvider.generationToken(user, Duration.ofHours(2));

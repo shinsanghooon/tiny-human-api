@@ -1,6 +1,6 @@
 package com.tinyhuman.tinyhumanapi.auth.service;
 
-import com.tinyhuman.tinyhumanapi.auth.config.jwt.CustomTokenProviderImpl;
+import com.tinyhuman.tinyhumanapi.auth.config.jwt.CustomTokenProvider;
 import com.tinyhuman.tinyhumanapi.auth.controller.port.AuthService;
 import com.tinyhuman.tinyhumanapi.auth.domain.LoginRequest;
 import com.tinyhuman.tinyhumanapi.auth.domain.RefreshToken;
@@ -9,7 +9,7 @@ import com.tinyhuman.tinyhumanapi.auth.service.port.RefreshTokenRepository;
 import com.tinyhuman.tinyhumanapi.common.exception.ResourceNotFoundException;
 import com.tinyhuman.tinyhumanapi.user.domain.User;
 import com.tinyhuman.tinyhumanapi.user.service.port.UserRepository;
-import lombok.RequiredArgsConstructor;
+import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -22,18 +22,25 @@ import java.time.Duration;
 import java.util.Optional;
 
 @Service
-@Transactional(readOnly = true)
-@RequiredArgsConstructor
+@Transactional
 @Slf4j
 public class AuthServiceImpl implements AuthService {
 
     private final AuthenticationManager authenticationManager;
 
-    private final CustomTokenProviderImpl customTokenProvider;
+    private final CustomTokenProvider customTokenProvider;
 
     private final UserRepository userRepository;
 
     private final RefreshTokenRepository refreshTokenRepository;
+
+    @Builder
+    public AuthServiceImpl(AuthenticationManager authenticationManager, CustomTokenProvider customTokenProvider, UserRepository userRepository, RefreshTokenRepository refreshTokenRepository) {
+        this.authenticationManager = authenticationManager;
+        this.customTokenProvider = customTokenProvider;
+        this.userRepository = userRepository;
+        this.refreshTokenRepository = refreshTokenRepository;
+    }
 
     public TokenResponse login(LoginRequest loginRequest) {
 

@@ -2,11 +2,9 @@ package com.tinyhuman.tinyhumanapi.auth.config.jwt;
 
 import com.tinyhuman.tinyhumanapi.auth.domain.TokenResponse;
 import com.tinyhuman.tinyhumanapi.user.domain.User;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Header;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -19,6 +17,7 @@ import java.util.Set;
 
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class CustomTokenProviderImpl implements CustomTokenProvider{
 
     private final JwtProperties jwtProperties;
@@ -57,10 +56,19 @@ public class CustomTokenProviderImpl implements CustomTokenProvider{
             Jwts.parser()
                     .setSigningKey(jwtProperties.getSecretKey())
                     .parseClaimsJws(token);
-        } catch (Exception e) {
-            return false;
+            return true;
+        } catch (SignatureException e) {
+            log.error("Invalid JWT signature", e);
+        } catch (MalformedJwtException e) {
+            log.error("Invalid JWT token", e);
+        } catch (ExpiredJwtException e) {
+            log.error("Expired JWT token", e);
+        } catch (UnsupportedJwtException e) {
+            log.error("Unsupported JWT token", e);
+        } catch (IllegalArgumentException e) {
+            log.error("JWT claims string is empty.", e);
         }
-        return true;
+        return false;
     }
 
     public Authentication getAuthentication(String token) {
