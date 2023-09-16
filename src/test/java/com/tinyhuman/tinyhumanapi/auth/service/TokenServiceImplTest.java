@@ -56,6 +56,7 @@ class TokenServiceImplTest {
 
         FakeCustomTokenProvider fakeCustomTokenProvider = new FakeCustomTokenProvider();
         TokenResponse tokenResponse = fakeCustomTokenProvider.generationToken(user, Duration.ofHours(2));
+        System.out.println("tokenResponse = " + tokenResponse.refreshToken());
 
         CreateAccessTokenResponse newAccessToken = tokenServiceImpl.createNewAccessToken(tokenResponse.refreshToken());
 
@@ -67,7 +68,7 @@ class TokenServiceImplTest {
     void createNewAccessTokenWithInvalidRefreshToken() {
         assertThatThrownBy(() -> tokenServiceImpl.createNewAccessToken("random_token"))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("Unexpected Token");
+                .hasMessageContaining("Invalid Token");
     }
 
 }
