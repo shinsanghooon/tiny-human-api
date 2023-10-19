@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.util.PatternMatchUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -20,16 +21,34 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     private final static String HEADER_AUTHORIZATION = "Authorization";
     private final static String TOKEN_PREFIX = "Bearer ";
 
+    private static final String[] whitelist = {
+            "/api/v1/auth/login",
+            "/api/v1/users",
+            "/api/v1/users/email/duplicate-check",
+            "/api/v1/token"
+    };
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String authorizationHeader = request.getHeader(HEADER_AUTHORIZATION);
-        String token = getAccessToken(authorizationHeader);
-        if (customTokenProvider.checkValidToken(token)) {
-            Authentication authentication = customTokenProvider.getAuthentication(token);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-        }
 
+        String requestURI = request.getRequestURI();
+        System.out.println(requestURI);
+
+        if (isLoginCheckPath(requestURI)) {
+            System.out.println("Login Check");
+            String authorizationHeader = request.getHeader(HEADER_AUTHORIZATION);
+            String token = getAccessToken(authorizationHeader);
+            if (customTokenProvider.checkValidToken(token)) {
+                Authentication authentication = customTokenProvider.getAuthentication(token);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
+        }
+        System.out.println("Token check end");
         filterChain.doFilter(request, response);
+    }
+
+    private boolean isLoginCheckPath(String requestURI) {
+        return !PatternMatchUtils.simpleMatch(whitelist, requestURI);
     }
 
     private String getAccessToken(String authorizationHeader) {
