@@ -1,20 +1,28 @@
 package com.tinyhuman.tinyhumanapi.diary.service;
 
+import com.tinyhuman.tinyhumanapi.common.exception.NotSupportedContentTypeException;
 import com.tinyhuman.tinyhumanapi.common.exception.ResourceNotFoundException;
+import com.tinyhuman.tinyhumanapi.common.service.port.UuidHolder;
+import com.tinyhuman.tinyhumanapi.common.utils.FileUtils;
 import com.tinyhuman.tinyhumanapi.diary.controller.port.DiaryDetailService;
+import com.tinyhuman.tinyhumanapi.diary.controller.port.dto.DiaryPreSignedUrlResponse;
 import com.tinyhuman.tinyhumanapi.diary.controller.port.dto.DiaryResponse;
+import com.tinyhuman.tinyhumanapi.diary.controller.port.dto.PictureCreate;
 import com.tinyhuman.tinyhumanapi.diary.controller.port.dto.SentenceCreate;
 import com.tinyhuman.tinyhumanapi.diary.domain.*;
 import com.tinyhuman.tinyhumanapi.diary.service.port.DiaryRepository;
 import com.tinyhuman.tinyhumanapi.diary.service.port.PictureRepository;
 import com.tinyhuman.tinyhumanapi.diary.service.port.SentenceRepository;
+import com.tinyhuman.tinyhumanapi.integration.service.port.ImageService;
 import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
+
+import static com.tinyhuman.tinyhumanapi.common.utils.FileUtils.addBabyIdAndAlbumIdToImagePath;
+import static com.tinyhuman.tinyhumanapi.common.utils.FileUtils.getFileInfo;
 
 
 @Service
@@ -28,11 +36,19 @@ public class DiaryDetailServiceImpl implements DiaryDetailService {
 
     private final PictureRepository pictureRepository;
 
+    private final ImageService imageService;
+
+    private final UuidHolder uuidHolder;
+
+    private final String DIARY_IMAGE_UPLOAD_PATH = "baby/babyId/diary/diaryId/";
+
     @Builder
-    public DiaryDetailServiceImpl(DiaryRepository diaryRepository, SentenceRepository sentenceRepository, PictureRepository pictureRepository) {
+    public DiaryDetailServiceImpl(DiaryRepository diaryRepository, SentenceRepository sentenceRepository, PictureRepository pictureRepository, ImageService imageService, UuidHolder uuidHolder) {
         this.diaryRepository = diaryRepository;
         this.sentenceRepository = sentenceRepository;
         this.pictureRepository = pictureRepository;
+        this.imageService = imageService;
+        this.uuidHolder = uuidHolder;
     }
 
     @Override
@@ -112,6 +128,64 @@ public class DiaryDetailServiceImpl implements DiaryDetailService {
         Picture deletedPicture = picture.delete();
         return pictureRepository.save(deletedPicture, diary);
 
+    }
+
+    @Override
+    public DiaryPreSignedUrlResponse addPictures(Long diaryId, List<PictureCreate> pictureCreates) {
+        Diary diary = getDiary(diaryId);
+        List<Picture> pictures = registerPictures(pictureCreates, diary);
+
+        Map<String, String> preSignedUrlMap = new HashMap<>();
+        for (Picture picture : pictures) {
+            preSignedUrlMap.put(picture.keyName(), picture.preSignedUrl());
+        }
+
+        List<Picture> newPictures = pictureRepository.saveAll(pictures, diary).stream()
+                .map(p -> {
+                    String preSignedUrl = preSignedUrlMap.get(p.keyName());
+                    return p.addPreSignedUrl(preSignedUrl);
+                })
+                .toList();
+
+        Diary diaryWithNewPictures = diary.addPictureToNewPictures(newPictures);
+        diaryRepository.save(diaryWithNewPictures);
+        return DiaryPreSignedUrlResponse.fromModel(diaryWithNewPictures);
+    }
+
+    private List<Picture> registerPictures(List<PictureCreate> pictureCreates, Diary diary) {
+        List<Picture> pictures = new ArrayList<>();
+        Long babyId = diary.baby().id();
+
+        for (PictureCreate pictureCreate : pictureCreates) {
+            String fileName = pictureCreate.fileName();
+            FileUtils.FileInfo fileInfo = getFileInfo(fileName, uuidHolder.random());
+
+            String mimeType = fileInfo.mimeType();
+            if (isNotImage(mimeType)) {
+                log.error("NotSupportedContentTypeException - MimeType:{}", mimeType);
+                throw new NotSupportedContentTypeException(mimeType);
+            }
+
+            String keyName = addBabyIdAndAlbumIdToImagePath(DIARY_IMAGE_UPLOAD_PATH, babyId, diary.id(), fileInfo.fileNameWithEpochTime());
+            String preSignedUrl = imageService.getPreSignedUrlForUpload(keyName, fileInfo.mimeType());
+
+            Picture picture = Picture.builder()
+                    .isMainPicture(false)
+                    .contentType(fileInfo.contentType())
+                    .fileName(fileName)
+                    .keyName(keyName)
+                    .preSignedUrl(preSignedUrl)
+                    .diaryId(diary.id())
+                    .build();
+
+            pictures.add(picture);
+        }
+
+        return pictures;
+    }
+
+    private static boolean isNotImage(String mimeType) {
+        return !mimeType.startsWith("image");
     }
 
     public Picture findPictureById(Long pictureId) {

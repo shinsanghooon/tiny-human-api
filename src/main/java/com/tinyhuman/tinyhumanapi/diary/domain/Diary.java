@@ -7,6 +7,7 @@ import lombok.Builder;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Stream;
 
 public record Diary(Long id, int daysAfterBirth, User user, int likeCount,
                     LocalDate date, Baby baby, boolean isDeleted,
@@ -49,6 +50,29 @@ public record Diary(Long id, int daysAfterBirth, User user, int likeCount,
                 .baby(this.baby)
                 .sentences(this.sentences)
                 .pictures(pictures)
+                .build();
+    }
+
+    public Diary addPictureToNewPictures(List<Picture> newPictures) {
+
+//        this.pictures + newPictures
+        List<Picture> collectPictures = Stream.concat(this.pictures.stream(), newPictures.stream())
+                .toList();
+
+        List<Picture> isMainPictures = collectPictures.stream().filter(Picture::isMainPicture).toList();
+        if (!isMainPictures.isEmpty() & isMainPictures.size() != 1) {
+            collectPictures.get(0).assignToMain();
+        }
+
+        return Diary.builder()
+                .id(this.id)
+                .daysAfterBirth(this.daysAfterBirth)
+                .user(this.user)
+                .likeCount(this.likeCount)
+                .date(this.date)
+                .baby(this.baby)
+                .sentences(this.sentences)
+                .pictures(collectPictures)
                 .build();
     }
 

@@ -2,9 +2,7 @@ package com.tinyhuman.tinyhumanapi.diary.controller;
 
 
 import com.tinyhuman.tinyhumanapi.diary.controller.port.DiaryDetailService;
-import com.tinyhuman.tinyhumanapi.diary.controller.port.dto.ChangeMainPicture;
-import com.tinyhuman.tinyhumanapi.diary.controller.port.dto.DiaryResponse;
-import com.tinyhuman.tinyhumanapi.diary.controller.port.dto.SentenceCreate;
+import com.tinyhuman.tinyhumanapi.diary.controller.port.dto.*;
 import com.tinyhuman.tinyhumanapi.diary.domain.Picture;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -68,5 +66,16 @@ public class DiaryDetailController {
         return ResponseEntity
                 .status(HttpStatus.NO_CONTENT)
                 .build();
+    }
+
+    @Operation(summary = "일기 사진 추가 API", responses = {
+            @ApiResponse(responseCode = "201", description = "사진 삭제 성공")})
+    @PostMapping("{diaryId}/pictures")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<DiaryPreSignedUrlResponse> addDiaryPicture(@PathVariable("diaryId") Long diaryId, @RequestBody List<PictureCreate> files) {
+        DiaryPreSignedUrlResponse diaryPreSignedUrlResponse = diaryDetailService.addPictures(diaryId, files);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(diaryPreSignedUrlResponse);
     }
 }
