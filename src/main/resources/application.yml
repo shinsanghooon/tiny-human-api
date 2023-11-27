@@ -9,10 +9,11 @@ spring:
     enabled: false
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: update
     properties:
       hibernate:
         format_sql: true
+        default_schema: tiny-human
     database-platform: org.hibernate.dialect.MySQL8Dialect
     open-in-view: false
     defer-datasource-initialization: true
