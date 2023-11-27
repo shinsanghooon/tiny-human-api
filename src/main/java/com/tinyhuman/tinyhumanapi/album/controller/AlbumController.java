@@ -48,7 +48,11 @@ public class AlbumController {
     @Operation(summary = "앨범 조회 API", responses = {
             @ApiResponse(responseCode = "200", description = "아기에 대한 전체 앨범 조회")})
     @GetMapping("/{babyId}/albums")
-    public ResponseEntity<PageCursor<AlbumResponse>> getAllAlbums(@PathVariable("babyId") Long babyId, @RequestParam("order") String order, @RequestBody CursorRequest cursorRequest) {
+    public ResponseEntity<PageCursor<AlbumResponse>> getAllAlbums(@PathVariable("babyId") Long babyId, @RequestParam("order") String order,
+                                                          @RequestParam(value = "key", required = false) Long key, @RequestParam("size") int size) {
+
+        System.out.println("key = " + key);
+        CursorRequest cursorRequest = new CursorRequest(key, size);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(albumService.getAlbumsByBaby(babyId, cursorRequest));

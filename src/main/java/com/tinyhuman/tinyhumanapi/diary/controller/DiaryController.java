@@ -60,7 +60,9 @@ public class DiaryController {
             @ApiResponse(responseCode = "200", description = "일기 조회 성공")})
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/babies/{babyId}")
-    public ResponseEntity<PageCursor<DiaryResponse>> getMyDiaries(@PathVariable("babyId") Long babyId, @RequestBody CursorRequest cursorRequest) {
+    public ResponseEntity<PageCursor<DiaryResponse>> getMyDiaries(@PathVariable("babyId") Long babyId,
+                                                                  @RequestParam(value = "key", required = false) Long key, @RequestParam("size") int size) {
+        CursorRequest cursorRequest = new CursorRequest(key, size);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(diaryService.getMyDiariesByBaby(babyId, cursorRequest));

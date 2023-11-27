@@ -9,7 +9,6 @@ import com.tinyhuman.tinyhumanapi.common.enums.ContentType;
 import com.tinyhuman.tinyhumanapi.common.exception.ResourceNotFoundException;
 import com.tinyhuman.tinyhumanapi.common.exception.UnauthorizedAccessException;
 import com.tinyhuman.tinyhumanapi.common.mock.TestContainer;
-import com.tinyhuman.tinyhumanapi.common.utils.CursorRequest;
 import com.tinyhuman.tinyhumanapi.common.utils.PageCursor;
 import com.tinyhuman.tinyhumanapi.user.domain.User;
 import com.tinyhuman.tinyhumanapi.user.domain.UserBabyRelation;
@@ -240,12 +239,13 @@ class AlbumControllerTest {
         @DisplayName("커서 기반 페이징으로 처음 N개의 데이터를 조회할 수 있다.")
         void getAllAlbumWithFirstCursor() {
 
-            CursorRequest cursorRequest = new CursorRequest(null, 5);
+            Long key = null;
+            int size = 5;
 
-            ResponseEntity<PageCursor<AlbumResponse>> result = testContainer.albumController.getAllAlbums(1L, "created_at", cursorRequest);
+            ResponseEntity<PageCursor<AlbumResponse>> result = testContainer.albumController.getAllAlbums(1L, "created_at", key, size);
 
             assertThat(result.getStatusCode()).isEqualTo(HttpStatusCode.valueOf(200));
-            assertThat(result.getBody().body().size()).isEqualTo(cursorRequest.size());
+            assertThat(result.getBody().body().size()).isEqualTo(size);
             assertThat(result.getBody().body())
                     .extracting("id")
                     .containsOnly(19L, 18L, 17L, 16L, 15L);
@@ -257,9 +257,10 @@ class AlbumControllerTest {
         @DisplayName("커서 기반 페이징으로 마지막 데이터를 조회할 수 있다.")
         void getAllAlbumWithLastCursor() {
 
-            CursorRequest cursorRequest = new CursorRequest(5L, 5);
+            Long key = 5L;
+            int size = 5;
 
-            ResponseEntity<PageCursor<AlbumResponse>> result = testContainer.albumController.getAllAlbums(1L, "created_at", cursorRequest);
+            ResponseEntity<PageCursor<AlbumResponse>> result = testContainer.albumController.getAllAlbums(1L, "created_at", key, size);
 
             assertThat(result.getStatusCode()).isEqualTo(HttpStatusCode.valueOf(200));
             assertThat(result.getBody().body().size()).isEqualTo(4); // id: 1L, 2L, 3L, 4L
