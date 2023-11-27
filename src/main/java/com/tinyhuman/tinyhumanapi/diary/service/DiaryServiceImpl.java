@@ -102,17 +102,19 @@ public class DiaryServiceImpl implements DiaryService {
     private List<Picture> registerPictures(List<PictureCreate> files, Diary savedDiary) {
         List<Picture> pictures = createPictureList(files, savedDiary);
 
-        Map<String, String> preSignedUrlMap = new HashMap<>();
+        Map<String, KeyMappingPreSignedUrl> keyMappingPreSignedUrls = new HashMap<>();
         for (Picture picture : pictures) {
-            preSignedUrlMap.put(picture.keyName(), picture.preSignedUrl());
+            keyMappingPreSignedUrls.put(picture.keyName(), new KeyMappingPreSignedUrl(picture.keyName(), picture.preSignedUrl(), picture.fileName()));
         }
 
         List<Picture> savedPictures = pictureRepository.saveAll(pictures, savedDiary);
 
         return savedPictures.stream()
                 .map(p -> {
-                    String preSignedUrl = preSignedUrlMap.get(p.keyName());
-                    return p.addPreSignedUrl(preSignedUrl);
+                    KeyMappingPreSignedUrl keyMappingPreSignedUrl = keyMappingPreSignedUrls.get(p.keyName());
+                    String preSignedUrl = keyMappingPreSignedUrl.preSignedUrl;
+                    String fileName = keyMappingPreSignedUrl.fileName;
+                    return p.addPreSignedUrl(preSignedUrl).addFileName(fileName);
                 })
                 .toList();
     }
@@ -253,5 +255,8 @@ public class DiaryServiceImpl implements DiaryService {
                     log.error("ResourceNotFoundException(Baby) - babyId:{}", diaryCreate.babyId());
                     return new ResourceNotFoundException("Baby", diaryCreate.babyId());
                 });
+    }
+
+    private record KeyMappingPreSignedUrl(String keyName, String preSignedUrl, String fileName) {
     }
 }

@@ -3,13 +3,14 @@ package com.tinyhuman.tinyhumanapi.diary.service;
 import com.tinyhuman.tinyhumanapi.common.exception.NotSupportedContentTypeException;
 import com.tinyhuman.tinyhumanapi.common.exception.ResourceNotFoundException;
 import com.tinyhuman.tinyhumanapi.common.service.port.UuidHolder;
-import com.tinyhuman.tinyhumanapi.common.utils.FileUtils;
 import com.tinyhuman.tinyhumanapi.diary.controller.port.DiaryDetailService;
 import com.tinyhuman.tinyhumanapi.diary.controller.port.dto.DiaryPreSignedUrlResponse;
 import com.tinyhuman.tinyhumanapi.diary.controller.port.dto.DiaryResponse;
 import com.tinyhuman.tinyhumanapi.diary.controller.port.dto.PictureCreate;
 import com.tinyhuman.tinyhumanapi.diary.controller.port.dto.SentenceCreate;
-import com.tinyhuman.tinyhumanapi.diary.domain.*;
+import com.tinyhuman.tinyhumanapi.diary.domain.Diary;
+import com.tinyhuman.tinyhumanapi.diary.domain.Picture;
+import com.tinyhuman.tinyhumanapi.diary.domain.Sentence;
 import com.tinyhuman.tinyhumanapi.diary.service.port.DiaryRepository;
 import com.tinyhuman.tinyhumanapi.diary.service.port.PictureRepository;
 import com.tinyhuman.tinyhumanapi.diary.service.port.SentenceRepository;
@@ -21,8 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
-import static com.tinyhuman.tinyhumanapi.common.utils.FileUtils.addBabyIdAndAlbumIdToImagePath;
-import static com.tinyhuman.tinyhumanapi.common.utils.FileUtils.getFileInfo;
+import static com.tinyhuman.tinyhumanapi.common.utils.FileUtils.*;
 
 
 @Service
@@ -135,15 +135,17 @@ public class DiaryDetailServiceImpl implements DiaryDetailService {
         Diary diary = getDiary(diaryId);
         List<Picture> pictures = registerPictures(pictureCreates, diary);
 
-        Map<String, String> preSignedUrlMap = new HashMap<>();
+        Map<String, KeyMappingPreSignedUrl> keyMappingPreSignedUrls = new HashMap<>();
         for (Picture picture : pictures) {
-            preSignedUrlMap.put(picture.keyName(), picture.preSignedUrl());
+            keyMappingPreSignedUrls.put(picture.keyName(), new KeyMappingPreSignedUrl(picture.keyName(), picture.preSignedUrl(), picture.fileName()));
         }
 
         List<Picture> newPictures = pictureRepository.saveAll(pictures, diary).stream()
                 .map(p -> {
-                    String preSignedUrl = preSignedUrlMap.get(p.keyName());
-                    return p.addPreSignedUrl(preSignedUrl);
+                    KeyMappingPreSignedUrl keyMappingPreSignedUrl = keyMappingPreSignedUrls.get(p.keyName());
+                    String preSignedUrl = keyMappingPreSignedUrl.preSignedUrl;
+                    String fileName = keyMappingPreSignedUrl.fileName;
+                    return p.addPreSignedUrl(preSignedUrl).addFileName(fileName);
                 })
                 .toList();
 
@@ -158,7 +160,7 @@ public class DiaryDetailServiceImpl implements DiaryDetailService {
 
         for (PictureCreate pictureCreate : pictureCreates) {
             String fileName = pictureCreate.fileName();
-            FileUtils.FileInfo fileInfo = getFileInfo(fileName, uuidHolder.random());
+            FileInfo fileInfo = getFileInfo(fileName, uuidHolder.random());
 
             String mimeType = fileInfo.mimeType();
             if (isNotImage(mimeType)) {
@@ -169,6 +171,7 @@ public class DiaryDetailServiceImpl implements DiaryDetailService {
             String keyName = addBabyIdAndAlbumIdToImagePath(DIARY_IMAGE_UPLOAD_PATH, babyId, diary.id(), fileInfo.fileNameWithEpochTime());
             String preSignedUrl = imageService.getPreSignedUrlForUpload(keyName, fileInfo.mimeType());
 
+            System.out.println("fileName = " + fileName);
             Picture picture = Picture.builder()
                     .isMainPicture(false)
                     .contentType(fileInfo.contentType())
@@ -203,4 +206,8 @@ public class DiaryDetailServiceImpl implements DiaryDetailService {
                     return new ResourceNotFoundException("Diary", diaryId);
                 });
     }
+
+    private record KeyMappingPreSignedUrl(String keyName, String preSignedUrl, String fileName) {
+    }
 }
+

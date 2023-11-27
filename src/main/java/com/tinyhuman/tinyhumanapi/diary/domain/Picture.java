@@ -14,6 +14,7 @@ public record Picture(Long id, boolean isMainPicture, ContentType contentType, S
                 .id(this.id)
                 .isMainPicture(true)
                 .contentType(this.contentType)
+                .fileName(this.fileName)
                 .keyName(this.keyName)
                 .preSignedUrl(this.preSignedUrl)
                 .diaryId(this.diaryId)
@@ -27,6 +28,7 @@ public record Picture(Long id, boolean isMainPicture, ContentType contentType, S
                 .isMainPicture(false)
                 .contentType(this.contentType)
                 .keyName(this.keyName)
+                .fileName(this.fileName)
                 .preSignedUrl(this.preSignedUrl)
                 .diaryId(this.diaryId)
                 .isDeleted(this.isDeleted)
@@ -38,8 +40,22 @@ public record Picture(Long id, boolean isMainPicture, ContentType contentType, S
                 .id(this.id)
                 .isMainPicture(this.isMainPicture)
                 .contentType(this.contentType)
+                .fileName(this.fileName)
                 .keyName(this.keyName)
                 .preSignedUrl(preSignedUrl)
+                .diaryId(this.diaryId)
+                .isDeleted(this.isDeleted)
+                .build();
+    }
+
+    public Picture addFileName(String fileName) {
+        return Picture.builder()
+                .id(this.id)
+                .isMainPicture(this.isMainPicture)
+                .contentType(this.contentType)
+                .fileName(fileName)
+                .keyName(this.keyName)
+                .preSignedUrl(this.preSignedUrl)
                 .diaryId(this.diaryId)
                 .isDeleted(this.isDeleted)
                 .build();
@@ -50,6 +66,7 @@ public record Picture(Long id, boolean isMainPicture, ContentType contentType, S
                 .id(this.id)
                 .isMainPicture(this.isMainPicture)
                 .contentType(this.contentType)
+                .fileName(this.fileName)
                 .keyName(this.keyName)
                 .preSignedUrl(this.preSignedUrl)
                 .diaryId(this.diaryId)
