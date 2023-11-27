@@ -17,7 +17,7 @@ public record AlbumUploadResponse(Long id, Long babyId, ContentType contentType,
                 .id(album.id())
                 .babyId(album.babyId())
                 .contentType(album.contentType())
-                .originalCreatedAt(album.originalCreatedAt())
+                .originalCreatedAt(album.originalCreatedAt()==null ? album.createdAt() : album.originalCreatedAt())
                 .createdAt(album.createdAt())
                 .build();
     }
