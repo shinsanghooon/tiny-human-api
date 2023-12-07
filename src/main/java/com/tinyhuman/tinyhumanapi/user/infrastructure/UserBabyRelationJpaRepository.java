@@ -10,4 +10,5 @@ public interface UserBabyRelationJpaRepository extends JpaRepository<UserBabyRel
     List<UserBabyRelationEntity> findByUser(UserEntity user);
 
     Optional<UserBabyRelationEntity> findById(UserBabyMappingId userBabyMappingId);
+
 }

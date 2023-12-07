@@ -61,7 +61,7 @@ public record Baby(Long id, String name, Gender gender, LocalDate dayOfBirth, in
                 .nickName(babyUpdate.nickName())
                 .dayOfBirth(babyUpdate.dayOfBirth())
                 .timeOfBirth(babyUpdate.timeOfBirth())
-                .profileImgKeyName(babyUpdate.keyName())
+                .profileImgKeyName(this.profileImgKeyName)
                 .userId(this.userId)
                 .isDeleted(false)
                 .build();

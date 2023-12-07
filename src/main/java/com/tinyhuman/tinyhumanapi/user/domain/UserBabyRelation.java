@@ -23,4 +23,14 @@ public record UserBabyRelation(User user, Baby baby, FamilyRelation relation, Us
         return relation.equals(FamilyRelation.FATHER) || relation.equals(FamilyRelation.MOTHER);
     }
 
+    public UserBabyRelation delete() {
+        return UserBabyRelation.builder()
+                .user(this.user)
+                .baby(this.baby)
+                .relation(this.relation)
+                .userBabyRole(this.userBabyRole)
+                .isDeleted(true)
+                .build();
+    }
+
 }

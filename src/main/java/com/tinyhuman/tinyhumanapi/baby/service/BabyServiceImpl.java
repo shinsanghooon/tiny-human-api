@@ -96,9 +96,13 @@ public class BabyServiceImpl implements BabyService {
 
     @Override
     public void delete(Long id) {
+        User user = authService.getUserOutOfSecurityContextHolder();
         Baby baby = findBaby(id);
         Baby deletedBaby = baby.delete();
         babyRepository.save(deletedBaby);
+
+        UserBabyRelation deletedUserBabyRelation = userBabyRelationService.findByMappingId(user, baby).delete();
+        userBabyRelationService.update(deletedUserBabyRelation);
 
         List<Diary> diaries = diaryRepository.findByBabyId(baby.id());
 
