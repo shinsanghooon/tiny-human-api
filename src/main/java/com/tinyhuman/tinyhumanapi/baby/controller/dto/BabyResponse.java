@@ -7,7 +7,7 @@ import lombok.Builder;
 
 import java.time.LocalDate;
 
-public record BabyResponse(Long id, String name, Gender gender, LocalDate dayOfBirth, int timeOfBirth, String nickName, String profileImgKeyName) {
+public record BabyResponse(Long id, String name, Gender gender, LocalDate dayOfBirth, int timeOfBirth, String nickName, String profileImgKeyName, String description) {
 
     @Builder
     public BabyResponse {
@@ -27,6 +27,7 @@ public record BabyResponse(Long id, String name, Gender gender, LocalDate dayOfB
                 .timeOfBirth(baby.timeOfBirth())
                 .nickName(baby.nickName())
                 .profileImgKeyName(baby.profileImgKeyName())
+                .description(baby.description())
                 .build();
     }
 }

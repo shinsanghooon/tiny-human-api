@@ -7,7 +7,7 @@ import lombok.Builder;
 
 import java.time.LocalDate;
 
-public record Baby(Long id, String name, Gender gender, LocalDate dayOfBirth, int timeOfBirth, String nickName, String profileImgKeyName, Long userId, boolean isDeleted) {
+public record Baby(Long id, String name, Gender gender, LocalDate dayOfBirth, int timeOfBirth, String nickName, String profileImgKeyName, String description, Long userId, boolean isDeleted) {
 
     @Builder
     public Baby {
@@ -20,6 +20,7 @@ public record Baby(Long id, String name, Gender gender, LocalDate dayOfBirth, in
                 .nickName(babyCreate.nickName())
                 .dayOfBirth(babyCreate.dayOfBirth())
                 .timeOfBirth(babyCreate.timeOfBirth())
+                .description(babyCreate.description())
                 .userId(userId)
                 .isDeleted(false)
                 .build();
@@ -34,6 +35,7 @@ public record Baby(Long id, String name, Gender gender, LocalDate dayOfBirth, in
                 .dayOfBirth(this.dayOfBirth)
                 .timeOfBirth(this.timeOfBirth)
                 .profileImgKeyName(profileImgKeyName)
+                .description(this.description)
                 .userId(this.userId)
                 .isDeleted(this.isDeleted)
                 .build();
@@ -48,6 +50,7 @@ public record Baby(Long id, String name, Gender gender, LocalDate dayOfBirth, in
                 .dayOfBirth(this.dayOfBirth)
                 .timeOfBirth(this.timeOfBirth)
                 .profileImgKeyName(this.profileImgKeyName)
+                .description(this.description)
                 .userId(this.userId)
                 .isDeleted(true)
                 .build();
@@ -62,6 +65,7 @@ public record Baby(Long id, String name, Gender gender, LocalDate dayOfBirth, in
                 .dayOfBirth(babyUpdate.dayOfBirth())
                 .timeOfBirth(babyUpdate.timeOfBirth())
                 .profileImgKeyName(this.profileImgKeyName)
+                .description(babyUpdate.description())
                 .userId(this.userId)
                 .isDeleted(false)
                 .build();
@@ -76,6 +80,7 @@ public record Baby(Long id, String name, Gender gender, LocalDate dayOfBirth, in
                 .dayOfBirth(this.dayOfBirth)
                 .timeOfBirth(this.timeOfBirth)
                 .profileImgKeyName(profileImgKeyName)
+                .description(this.description)
                 .userId(this.userId)
                 .isDeleted(this.isDeleted)
                 .build();

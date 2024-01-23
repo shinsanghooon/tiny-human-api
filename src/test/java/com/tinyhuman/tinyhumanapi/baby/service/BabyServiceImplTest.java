@@ -49,7 +49,6 @@ class BabyServiceImplTest {
                 .babyRepository(fakeBabyRepository)
                 .imageService(fakeImageService)
                 .diaryRepository(fakeDiaryRepository)
-                .userRepository(fakeUserRepository)
                 .userBabyRelationService(userBabyRelationService)
                 .authService(fakeAuthService)
                 .uuidHolder(testUuidHolder)

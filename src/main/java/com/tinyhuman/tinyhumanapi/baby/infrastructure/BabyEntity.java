@@ -45,6 +45,9 @@ public class BabyEntity extends BaseEntity {
     @Column(name = "profile_img_key_name")
     private String profileImgKeyName;
 
+    @Column(name = "description", length = 900)
+    private String description;
+
     @Column(name = "user_id")
     private Long userId;
 
@@ -58,7 +61,7 @@ public class BabyEntity extends BaseEntity {
     private final List<UserBabyRelationEntity> userBabyRelations = new ArrayList<>();
 
     @Builder
-    public BabyEntity(Long id, String name, LocalDate dayOfBirth, int timeOfBirth, Gender gender, String nickName, String profileImgKeyName, Long userId, Boolean isDeleted) {
+    public BabyEntity(Long id, String name, LocalDate dayOfBirth, int timeOfBirth, Gender gender, String nickName, String profileImgKeyName, String description, Long userId, Boolean isDeleted) {
         this.id = id;
         this.name = name;
         this.dayOfBirth = dayOfBirth;
@@ -66,6 +69,7 @@ public class BabyEntity extends BaseEntity {
         this.gender = gender;
         this.nickName = nickName;
         this.profileImgKeyName = profileImgKeyName;
+        this.description = description;
         this.userId = userId;
         this.isDeleted = isDeleted;
     }
@@ -79,6 +83,7 @@ public class BabyEntity extends BaseEntity {
                 .gender(baby.gender())
                 .nickName(baby.nickName())
                 .profileImgKeyName(baby.profileImgKeyName())
+                .description(baby.description())
                 .userId(baby.userId())
                 .isDeleted(baby.isDeleted())
                 .build();
@@ -93,6 +98,7 @@ public class BabyEntity extends BaseEntity {
                 .gender(this.gender)
                 .nickName(this.nickName)
                 .profileImgKeyName(this.profileImgKeyName)
+                .description(this.description)
                 .userId(this.userId)
                 .isDeleted(this.isDeleted)
                 .build();

@@ -18,7 +18,6 @@ import com.tinyhuman.tinyhumanapi.integration.service.port.ImageService;
 import com.tinyhuman.tinyhumanapi.user.controller.port.UserBabyRelationService;
 import com.tinyhuman.tinyhumanapi.user.domain.User;
 import com.tinyhuman.tinyhumanapi.user.domain.UserBabyRelation;
-import com.tinyhuman.tinyhumanapi.user.service.port.UserRepository;
 import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -37,8 +36,6 @@ public class BabyServiceImpl implements BabyService {
 
     private final DiaryRepository diaryRepository;
 
-    private final UserRepository userRepository;
-
     private final UserBabyRelationService userBabyRelationService;
 
     private final AuthService authService;
@@ -46,12 +43,10 @@ public class BabyServiceImpl implements BabyService {
     private final UuidHolder uuidHolder;
 
     @Builder
-    public BabyServiceImpl(BabyRepository babyRepository, ImageService imageService, DiaryRepository diaryRepository,
-                           UserRepository userRepository, UserBabyRelationService userBabyRelationService, AuthService authService, UuidHolder uuidHolder) {
+    public BabyServiceImpl(BabyRepository babyRepository, ImageService imageService, DiaryRepository diaryRepository, UserBabyRelationService userBabyRelationService, AuthService authService, UuidHolder uuidHolder) {
         this.babyRepository = babyRepository;
         this.imageService = imageService;
         this.diaryRepository = diaryRepository;
-        this.userRepository = userRepository;
         this.userBabyRelationService = userBabyRelationService;
         this.authService = authService;
         this.uuidHolder = uuidHolder;
@@ -111,6 +106,7 @@ public class BabyServiceImpl implements BabyService {
             diaryRepository.save(deletedDiary);
         });
     }
+
     @Override
     public BabyResponse update(Long id, BabyUpdate babyUpdate) {
 
@@ -142,7 +138,7 @@ public class BabyServiceImpl implements BabyService {
         User user = authService.getUserOutOfSecurityContextHolder();
         return babyRepository.findById(id)
                 .orElseThrow(() -> {
-                    log.error("ResourceNotFoundException(Baby) - userId:{},babyId:{}",  user.id(), id);
+                    log.error("ResourceNotFoundException(Baby) - userId:{},babyId:{}", user.id(), id);
                     return new ResourceNotFoundException("Baby", id);
                 });
     }

@@ -33,6 +33,8 @@ public record BabyUpdate(
         @Size(max = 20, message = "애칭의 최대 길이는 20자 입니다.")
         String nickName,
 
+        String description,
+
         @NotNull(message = "아기와의 관계를 입력해주세요.")
         @Enumerated
         FamilyRelation relation) {

@@ -7,7 +7,7 @@ import lombok.Builder;
 
 import java.time.LocalDate;
 
-public record BabyPreSignedUrlResponse(Long id, String name, Gender gender, LocalDate dayOfBirth, int timeOfBirth, String nickName, String profileImgKeyName, String preSignedUrl) {
+public record BabyPreSignedUrlResponse(Long id, String name, Gender gender, LocalDate dayOfBirth, int timeOfBirth, String nickName, String profileImgKeyName, String description, String preSignedUrl) {
 
     @Builder
     public BabyPreSignedUrlResponse {
@@ -27,6 +27,7 @@ public record BabyPreSignedUrlResponse(Long id, String name, Gender gender, Loca
                 .timeOfBirth(baby.timeOfBirth())
                 .nickName(baby.nickName())
                 .profileImgKeyName(baby.profileImgKeyName())
+                .description(baby.description())
                 .preSignedUrl(preSignedUrl)
                 .build();
     }

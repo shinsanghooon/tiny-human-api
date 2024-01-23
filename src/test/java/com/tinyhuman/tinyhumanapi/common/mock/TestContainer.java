@@ -103,7 +103,6 @@ public class TestContainer {
                 .authService(this.authService)
                 .imageService(this.imageService)
                 .diaryRepository(this.diaryRepository)
-                .userRepository(this.userRepository)
                 .uuidHolder(uuidHolder)
                 .build();
         this.babyController = BabyController.builder()

@@ -32,10 +32,8 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         String requestURI = request.getRequestURI();
-        System.out.println(requestURI);
 
         if (isLoginCheckPath(requestURI)) {
-            System.out.println("Login Check");
             String authorizationHeader = request.getHeader(HEADER_AUTHORIZATION);
             String token = getAccessToken(authorizationHeader);
             if (customTokenProvider.checkValidToken(token)) {
@@ -43,7 +41,6 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         }
-        System.out.println("Token check end");
         filterChain.doFilter(request, response);
     }
 
