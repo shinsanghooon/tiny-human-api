@@ -1,5 +1,6 @@
 package com.tinyhuman.tinyhumanapi.checklist.controller.port.dto;
 
+import com.tinyhuman.tinyhumanapi.checklist.domain.Checklist;
 import com.tinyhuman.tinyhumanapi.checklist.domain.ChecklistDetail;
 import lombok.Builder;
 

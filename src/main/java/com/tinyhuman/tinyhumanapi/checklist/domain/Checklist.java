@@ -1,6 +1,7 @@
 package com.tinyhuman.tinyhumanapi.checklist.domain;
 
 import com.tinyhuman.tinyhumanapi.checklist.controller.port.dto.ChecklistCreate;
+import com.tinyhuman.tinyhumanapi.checklist.controller.port.dto.ChecklistResponse;
 import com.tinyhuman.tinyhumanapi.user.domain.User;
 import lombok.Builder;
 
@@ -36,6 +37,14 @@ public record Checklist(Long id, String title, User user, List<ChecklistDetail> 
                 .user(this.user)
                 .checklistDetails(this.checklistDetails)
                 .isDeleted(true)
+                .build();
+    }
+
+    public ChecklistResponse toModel() {
+        return ChecklistResponse.builder()
+                .id(this.id)
+                .title(this.title)
+                .checklistDetail(this.checklistDetails())
                 .build();
     }
 }

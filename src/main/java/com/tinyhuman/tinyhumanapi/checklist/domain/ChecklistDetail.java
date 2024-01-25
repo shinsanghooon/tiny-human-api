@@ -13,6 +13,7 @@ public record ChecklistDetail(Long id, String contents, String reason, boolean i
     public static ChecklistDetail fromCreate(ChecklistDetailCreate checklistDetailCreate) {
         return ChecklistDetail.builder()
                 .contents(checklistDetailCreate.content())
+                .reason("")
                 .isChecked(false)
                 .build();
     }
