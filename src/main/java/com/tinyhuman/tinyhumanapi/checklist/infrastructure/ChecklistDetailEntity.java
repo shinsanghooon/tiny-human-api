@@ -65,6 +65,16 @@ public class ChecklistDetailEntity {
                 .build();
     }
 
+    public static ChecklistDetailEntity fromModel(ChecklistDetail checklistDetail) {
+        return ChecklistDetailEntity.builder()
+                .id(checklistDetail.id())
+                .contents(checklistDetail.contents())
+                .reason(checklistDetail.reason())
+                .isChecked(checklistDetail.isChecked())
+                .build();
+    }
+
+
     public ChecklistDetail toModel() {
         return ChecklistDetail.builder()
                 .id(this.id)

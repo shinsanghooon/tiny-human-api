@@ -7,12 +7,18 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
 public class ChecklistDetailRepositoryImpl implements ChecklistDetailRepository {
 
     private final ChecklistDetailJpaRepository checklistDetailJpaRepository;
+
+    @Override
+    public ChecklistDetail save(ChecklistDetail checklistDetail) {
+        return checklistDetailJpaRepository.save(ChecklistDetailEntity.fromModel(checklistDetail)).toModel();
+    }
 
     @Override
     public ChecklistDetail save(ChecklistDetail checklistDetail, Checklist checklist) {
@@ -26,6 +32,11 @@ public class ChecklistDetailRepositoryImpl implements ChecklistDetailRepository 
                 .toList());
 
         return checklistDetailEntities.stream().map(ChecklistDetailEntity::toModel).toList();
+    }
+
+    @Override
+    public Optional<ChecklistDetail> findById(Long id) {
+        return checklistDetailJpaRepository.findById(id).map(ChecklistDetailEntity::toModel);
     }
 
 }

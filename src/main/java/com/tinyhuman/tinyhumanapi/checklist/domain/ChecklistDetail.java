@@ -17,4 +17,13 @@ public record ChecklistDetail(Long id, String contents, String reason, boolean i
                 .isChecked(false)
                 .build();
     }
+
+    public ChecklistDetail updateCheck() {
+        return ChecklistDetail.builder()
+                .id(this.id())
+                .contents(this.contents())
+                .reason(this.reason())
+                .isChecked(!this.isChecked())
+                .build();
+    }
 }
