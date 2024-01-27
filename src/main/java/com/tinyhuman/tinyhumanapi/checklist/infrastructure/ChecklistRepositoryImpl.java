@@ -16,7 +16,8 @@ public class ChecklistRepositoryImpl implements ChecklistRepository {
 
     @Override
     public Checklist save(Checklist checklist) {
-        return checklistJpaRepository.save(ChecklistEntity.fromModel(checklist)).toModel();
+        ChecklistEntity checklistEntity = ChecklistEntity.fromModel(checklist);
+        return checklistJpaRepository.save(checklistEntity).toModel();
     }
 
     @Override
@@ -29,5 +30,10 @@ public class ChecklistRepositoryImpl implements ChecklistRepository {
     @Override
     public Optional<Checklist> findById(Long id) {
         return checklistJpaRepository.findById(id).map(ChecklistEntity::toModel);
+    }
+
+    @Override
+    public Optional<Checklist> findByIdAndUserId(Long id, Long userId) {
+        return checklistJpaRepository.findByIdAndUserId(id, userId).map(ChecklistEntity::toModel);
     }
 }

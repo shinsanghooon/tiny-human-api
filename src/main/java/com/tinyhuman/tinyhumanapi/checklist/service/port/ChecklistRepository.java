@@ -13,4 +13,6 @@ public interface ChecklistRepository {
 
     Optional<Checklist> findById(Long id);
 
+    Optional<Checklist> findByIdAndUserId(Long id, Long userId);
+
 }

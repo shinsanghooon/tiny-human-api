@@ -8,6 +8,7 @@ import com.tinyhuman.tinyhumanapi.checklist.domain.Checklist;
 import com.tinyhuman.tinyhumanapi.checklist.domain.ChecklistDetail;
 import com.tinyhuman.tinyhumanapi.checklist.service.port.ChecklistDetailRepository;
 import com.tinyhuman.tinyhumanapi.checklist.service.port.ChecklistRepository;
+import com.tinyhuman.tinyhumanapi.common.exception.ResourceNotFoundException;
 import com.tinyhuman.tinyhumanapi.user.domain.User;
 import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
@@ -58,6 +59,19 @@ public class ChecklistServiceImpl implements ChecklistService {
     public List<ChecklistResponse> getChecklist() {
         User user = authService.getUserOutOfSecurityContextHolder();
         return checklistRepository.findByUserId(user.id()).stream().map(Checklist::toResponseModel).toList();
+    }
+
+    @Override
+    public void delete(Long id) {
+        User user = authService.getUserOutOfSecurityContextHolder();
+        Checklist checklist = checklistRepository.findByIdAndUserId(id, user.id())
+                .orElseThrow(() -> {
+                    log.error("ResourceNotFoundException(User) - Checklist Id:{}", id);
+                    return new ResourceNotFoundException("Checklist", id);
+                });
+
+        Checklist deletedChecklist = checklist.delete();
+        checklistRepository.save(deletedChecklist);
     }
 
 }

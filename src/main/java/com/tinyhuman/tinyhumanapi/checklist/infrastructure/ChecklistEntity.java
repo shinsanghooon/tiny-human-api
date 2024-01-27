@@ -42,6 +42,7 @@ public class ChecklistEntity extends BaseEntity {
         this.id = id;
         this.title = title;
         this.user = setUser(user);
+        this.isDeleted = isDeleted;
     }
 
     private UserEntity setUser(UserEntity user) {

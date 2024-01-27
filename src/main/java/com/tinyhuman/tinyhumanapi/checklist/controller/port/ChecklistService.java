@@ -10,4 +10,6 @@ public interface ChecklistService {
     ChecklistResponse register(ChecklistCreate checklistCreate);
 
     List<ChecklistResponse> getChecklist();
+
+    void delete(Long id);
 }

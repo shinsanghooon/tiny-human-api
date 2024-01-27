@@ -25,14 +25,14 @@ public class ChecklistDetailEntity {
     @Column(name = "reason")
     private String reason;
 
-    @Column(name="is_checked")
+    @Column(name = "is_checked")
     private boolean isChecked = false;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "checklist_id")
     private ChecklistEntity checklist;
 
-    @Column(name="is_deleted")
+    @Column(name = "is_deleted")
     private boolean isDeleted = false;
 
     @Builder

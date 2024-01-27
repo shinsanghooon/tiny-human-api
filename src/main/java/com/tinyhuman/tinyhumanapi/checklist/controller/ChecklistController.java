@@ -49,5 +49,12 @@ public class ChecklistController {
                 .status(HttpStatus.OK).build();
     }
 
+    @DeleteMapping("{checklist_id}")
+    public ResponseEntity<Void> deleteChecklist(@PathVariable("checklist_id") Long checklistId) {
+        checklistService.delete(checklistId);
+        return ResponseEntity
+                .status(HttpStatus.NO_CONTENT).build();
+    }
+
 
 }
