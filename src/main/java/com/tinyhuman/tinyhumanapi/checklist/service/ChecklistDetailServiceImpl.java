@@ -11,6 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -22,7 +24,7 @@ public class ChecklistDetailServiceImpl implements ChecklistDetailService {
     private final ChecklistRepository checklistRepository;
 
     @Override
-    public ChecklistDetail checkUpdate(Long checklistId, Long checklistDetailId) {
+    public ChecklistDetail toggleCheckDetail(Long checklistId, Long checklistDetailId) {
 
         ChecklistDetail checklistDetail = checklistDetailRepository.findById(checklistDetailId)
                 .orElseThrow(() -> {
@@ -36,7 +38,23 @@ public class ChecklistDetailServiceImpl implements ChecklistDetailService {
                     return new ResourceNotFoundException("Checklist", checklistId);
                 });
 
-        ChecklistDetail updatedCheck = checklistDetail.updateCheck();
+        ChecklistDetail updatedCheck = checklistDetail.toggleUpdate();
         return checklistDetailRepository.save(updatedCheck, checklist);
+    }
+
+    @Override
+    public void toggleAllCheckDetail(Long checklistId) {
+        Checklist checklist = checklistRepository.findById(checklistId)
+                .orElseThrow(() -> {
+                    log.error("ResourceNotFoundException(User) - Checklist Id:{}", checklistId);
+                    return new ResourceNotFoundException("Checklist", checklistId);
+                });
+
+        List<ChecklistDetail> updatedChecklistDetails = checklist.checklistDetails().stream()
+                .map(ChecklistDetail::toggleUpdate).toList();
+
+        System.out.println("updatedChecklistDetails = " + updatedChecklistDetails);
+
+        checklistDetailRepository.saveAll(updatedChecklistDetails, checklist);
     }
 }

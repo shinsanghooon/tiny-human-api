@@ -4,5 +4,7 @@ import com.tinyhuman.tinyhumanapi.checklist.domain.ChecklistDetail;
 
 public interface ChecklistDetailService {
 
-    ChecklistDetail checkUpdate(Long checklistId, Long id);
+    ChecklistDetail toggleCheckDetail(Long checklistId, Long id);
+
+    void toggleAllCheckDetail(Long checklistId);
 }

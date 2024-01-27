@@ -42,9 +42,16 @@ public class ChecklistController {
                 .body(checklistService.getChecklist());
     }
 
-    @PostMapping("{checklist_id}/detail/{checklist_detail_id}")
-    public ResponseEntity<Void> checkUpdate(@PathVariable("checklist_id") Long checklistId, @PathVariable("checklist_detail_id") Long checklist_detail_id) {
-        checklistDetailService.checkUpdate(checklistId, checklist_detail_id);
+    @PatchMapping("{checklist_id}/detail/{checklist_detail_id}/toggle")
+    public ResponseEntity<Void> toggleCheckDetail(@PathVariable("checklist_id") Long checklistId, @PathVariable("checklist_detail_id") Long checklist_detail_id) {
+        checklistDetailService.toggleCheckDetail(checklistId, checklist_detail_id);
+        return ResponseEntity
+                .status(HttpStatus.OK).build();
+    }
+
+    @PatchMapping("{checklist_id}/toggle-all")
+    public ResponseEntity<Void> toggleAllCheckDetail(@PathVariable("checklist_id") Long checklistId) {
+        checklistDetailService.toggleAllCheckDetail(checklistId);
         return ResponseEntity
                 .status(HttpStatus.OK).build();
     }

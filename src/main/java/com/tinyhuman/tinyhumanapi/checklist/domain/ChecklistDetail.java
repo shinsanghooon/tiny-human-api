@@ -19,7 +19,7 @@ public record ChecklistDetail(Long id, String contents, String reason, boolean i
                 .build();
     }
 
-    public ChecklistDetail updateCheck() {
+    public ChecklistDetail toggleUpdate() {
         return ChecklistDetail.builder()
                 .id(this.id)
                 .contents(this.contents)
