@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/checklist")
 @Tag(name = "ChecklistController", description = "체크리스트를 처리하기 위한 컨트롤러입니다.")
@@ -31,6 +33,13 @@ public class ChecklistController {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(checklistService.register(checklistCreate));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<ChecklistResponse>> getAllChecklist() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(checklistService.getChecklist());
     }
 
     @PostMapping("/{checklist_id}/detail/{detail_id}")

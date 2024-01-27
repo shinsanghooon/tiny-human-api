@@ -45,7 +45,7 @@ public record Checklist(Long id, String title, User user, List<ChecklistDetail> 
         return ChecklistResponse.builder()
                 .id(this.id)
                 .title(this.title)
-                .checklistDetail(this.checklistDetails())
+                .checklistDetail(this.checklistDetails().stream().map(ChecklistDetail::toResponseModel).toList())
                 .build();
     }
 }
