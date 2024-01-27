@@ -18,7 +18,7 @@ public class ChecklistDetailServiceImpl implements ChecklistDetailService {
     private final ChecklistDetailRepository checklistDetailRepository;
 
     @Override
-    public ChecklistDetail checkUpdate(Long id) {
+    public ChecklistDetail checkUpdate(Long checklistId, Long id) {
 
         ChecklistDetail checklistDetail = checklistDetailRepository.findById(id)
                 .orElseThrow(() -> {

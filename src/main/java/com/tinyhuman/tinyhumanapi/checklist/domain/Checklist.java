@@ -26,6 +26,7 @@ public record Checklist(Long id, String title, User user, List<ChecklistDetail> 
         return Checklist.builder()
                 .id(this.id)
                 .title(this.title)
+                .user(this.user)
                 .checklistDetails(checklistDetails)
                 .build();
     }
@@ -40,7 +41,7 @@ public record Checklist(Long id, String title, User user, List<ChecklistDetail> 
                 .build();
     }
 
-    public ChecklistResponse toModel() {
+    public ChecklistResponse toResponseModel() {
         return ChecklistResponse.builder()
                 .id(this.id)
                 .title(this.title)

@@ -27,11 +27,20 @@ public class ChecklistDetailRepositoryImpl implements ChecklistDetailRepository 
 
     @Override
     public List<ChecklistDetail> saveAll(List<ChecklistDetail> checklistDetails, Checklist checklist) {
-        List<ChecklistDetailEntity> checklistDetailEntities = checklistDetailJpaRepository.saveAll(checklistDetails.stream()
-                .map(checklistDetail -> ChecklistDetailEntity.fromModel(checklistDetail, checklist))
-                .toList());
 
-        return checklistDetailEntities.stream().map(ChecklistDetailEntity::toModel).toList();
+        List<ChecklistDetailEntity> checklistDetailEntities = checklistDetailJpaRepository.saveAll(
+                checklistDetails.stream()
+                        .map(checklistDetail -> ChecklistDetailEntity.fromModel(checklistDetail, checklist))
+                        .toList());
+
+        return checklistDetailEntities.stream()
+                .map(c -> ChecklistDetail.builder()
+                        .id(c.getId())
+                        .contents(c.getContents())
+                        .reason((c.getReason()))
+                        .checklistId(c.getChecklist().getId())
+                        .build()
+                ).toList();
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.tinyhuman.tinyhumanapi.checklist.controller;
 
+import com.tinyhuman.tinyhumanapi.checklist.controller.port.ChecklistDetailService;
 import com.tinyhuman.tinyhumanapi.checklist.controller.port.ChecklistService;
 import com.tinyhuman.tinyhumanapi.checklist.controller.port.dto.ChecklistCreate;
 import com.tinyhuman.tinyhumanapi.checklist.controller.port.dto.ChecklistResponse;
@@ -8,10 +9,7 @@ import jakarta.validation.Valid;
 import lombok.Builder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/checklist")
@@ -20,9 +18,12 @@ public class ChecklistController {
 
     private final ChecklistService checklistService;
 
+    private final ChecklistDetailService checklistDetailService;
+
     @Builder
-    public ChecklistController(ChecklistService checklistService) {
+    public ChecklistController(ChecklistService checklistService, ChecklistDetailService checklistDetailService) {
         this.checklistService = checklistService;
+        this.checklistDetailService = checklistDetailService;
     }
 
     @PostMapping
@@ -30,6 +31,14 @@ public class ChecklistController {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(checklistService.register(checklistCreate));
+    }
+
+    @PostMapping("/{checklist_id}/detail/{detail_id}")
+    public ResponseEntity<Void> checkUpdate(@PathVariable("checklist_id") Long checklistId, @PathVariable("detail_id") Long detailId) {
+        checklistDetailService.checkUpdate(checklistId, detailId);
+
+        return ResponseEntity
+                .status(HttpStatus.OK).build();
     }
 
 

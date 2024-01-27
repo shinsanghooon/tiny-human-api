@@ -36,22 +36,28 @@ public class ChecklistServiceImpl implements ChecklistService {
 
     @Override
     public ChecklistResponse register(ChecklistCreate checklistCreate) {
+
         User user = authService.getUserOutOfSecurityContextHolder();
         Checklist savedChecklist = checklistRepository.save(Checklist.fromCreate(checklistCreate, user));
 
         List<ChecklistDetail> checklistDetails = checklistCreate.checklistDetailCreate().stream()
-                .map(ChecklistDetail::fromCreate)
+                .map(c -> ChecklistDetail.builder()
+                        .contents(c.content())
+                        .reason(c.content())
+                        .checklistId(savedChecklist.id()).build())
                 .toList();
-        checklistDetailRepository.saveAll(checklistDetails, savedChecklist);
 
-        savedChecklist.addChecklistDetail(checklistDetails);
+        List<ChecklistDetail> savedChecklistDetail = checklistDetailRepository.saveAll(checklistDetails, savedChecklist);
+        Checklist checklist = savedChecklist.addChecklistDetail(savedChecklistDetail);
 
-        return checklistRepository.save(savedChecklist).toModel();
+        checklistRepository.save(checklist);
+
+        return checklist.toResponseModel();
     }
 
     public List<ChecklistResponse> getChecklist() {
         User user = authService.getUserOutOfSecurityContextHolder();
-        return checklistRepository.findByUserId(user.id()).stream().map(Checklist::toModel).toList();
+        return checklistRepository.findByUserId(user.id()).stream().map(Checklist::toResponseModel).toList();
     }
 
 }

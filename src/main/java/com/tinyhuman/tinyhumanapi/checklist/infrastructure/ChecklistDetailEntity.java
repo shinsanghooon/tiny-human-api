@@ -49,6 +49,7 @@ public class ChecklistDetailEntity {
         if (this.checklist != null) {
             this.checklist.getChecklistDetails().remove(this);
         }
+
         this.checklist = checklist;
         checklist.addChecklistDetail(this);
 

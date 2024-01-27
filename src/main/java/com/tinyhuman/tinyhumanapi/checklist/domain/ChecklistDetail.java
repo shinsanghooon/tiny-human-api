@@ -3,7 +3,7 @@ package com.tinyhuman.tinyhumanapi.checklist.domain;
 import com.tinyhuman.tinyhumanapi.checklist.controller.port.dto.ChecklistDetailCreate;
 import lombok.Builder;
 
-public record ChecklistDetail(Long id, String contents, String reason, boolean isChecked) {
+public record ChecklistDetail(Long id, String contents, String reason, boolean isChecked, Long checklistId) {
 
     @Builder
     public ChecklistDetail {
@@ -13,17 +13,18 @@ public record ChecklistDetail(Long id, String contents, String reason, boolean i
     public static ChecklistDetail fromCreate(ChecklistDetailCreate checklistDetailCreate) {
         return ChecklistDetail.builder()
                 .contents(checklistDetailCreate.content())
-                .reason("")
+                .reason(checklistDetailCreate.reason())
                 .isChecked(false)
                 .build();
     }
 
     public ChecklistDetail updateCheck() {
         return ChecklistDetail.builder()
-                .id(this.id())
-                .contents(this.contents())
-                .reason(this.reason())
-                .isChecked(!this.isChecked())
+                .id(this.id)
+                .contents(this.contents)
+                .reason(this.reason)
+                .isChecked(!this.isChecked)
+                .checklistId(this.checklistId)
                 .build();
     }
 }

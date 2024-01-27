@@ -74,7 +74,7 @@ public class ChecklistEntity extends BaseEntity {
     }
 
     public void addChecklistDetail(ChecklistDetailEntity checklistDetail) {
-        checklistDetails.add(checklistDetail);
+        this.checklistDetails.add(checklistDetail);
     }
 
 }
