@@ -42,10 +42,9 @@ public class ChecklistController {
                 .body(checklistService.getChecklist());
     }
 
-    @PostMapping("/{checklist_id}/detail/{detail_id}")
-    public ResponseEntity<Void> checkUpdate(@PathVariable("checklist_id") Long checklistId, @PathVariable("detail_id") Long detailId) {
-        checklistDetailService.checkUpdate(checklistId, detailId);
-
+    @PostMapping("{checklist_id}/detail/{checklist_detail_id}")
+    public ResponseEntity<Void> checkUpdate(@PathVariable("checklist_id") Long checklistId, @PathVariable("checklist_detail_id") Long checklist_detail_id) {
+        checklistDetailService.checkUpdate(checklistId, checklist_detail_id);
         return ResponseEntity
                 .status(HttpStatus.OK).build();
     }

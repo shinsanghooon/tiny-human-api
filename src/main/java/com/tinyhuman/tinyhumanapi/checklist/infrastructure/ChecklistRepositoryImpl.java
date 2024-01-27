@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -23,5 +24,10 @@ public class ChecklistRepositoryImpl implements ChecklistRepository {
         return checklistJpaRepository.findByUserId(userId).stream()
                 .map(ChecklistEntity::toModel)
                 .toList();
+    }
+
+    @Override
+    public Optional<Checklist> findById(Long id) {
+        return checklistJpaRepository.findById(id).map(ChecklistEntity::toModel);
     }
 }
