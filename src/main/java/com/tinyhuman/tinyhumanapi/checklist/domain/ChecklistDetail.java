@@ -29,6 +29,19 @@ public record ChecklistDetail(Long id, String contents, String reason, boolean i
                 .build();
     }
 
+    public ChecklistDetail toggleAllUpdate(boolean isChecked) {
+        return ChecklistDetail.builder()
+                .id(this.id)
+                .contents(this.contents)
+                .reason(this.reason)
+                .isChecked(isChecked)
+                .checklistId(this.checklistId)
+                .build();
+    }
+
+
+
+
     public ChecklistDetailResponse toResponseModel() {
         return ChecklistDetailResponse.builder()
                 .id(this.id)

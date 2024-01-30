@@ -43,7 +43,7 @@ public class ChecklistDetailServiceImpl implements ChecklistDetailService {
     }
 
     @Override
-    public void toggleAllCheckDetail(Long checklistId) {
+    public void toggleAllCheckDetail(Long checklistId, boolean targetChecked ) {
         Checklist checklist = checklistRepository.findById(checklistId)
                 .orElseThrow(() -> {
                     log.error("ResourceNotFoundException(User) - Checklist Id:{}", checklistId);
@@ -51,7 +51,7 @@ public class ChecklistDetailServiceImpl implements ChecklistDetailService {
                 });
 
         List<ChecklistDetail> updatedChecklistDetails = checklist.checklistDetails().stream()
-                .map(ChecklistDetail::toggleUpdate).toList();
+                .map(c -> c.toggleAllUpdate(targetChecked)).toList();
 
         System.out.println("updatedChecklistDetails = " + updatedChecklistDetails);
 

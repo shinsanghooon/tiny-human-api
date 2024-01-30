@@ -4,6 +4,7 @@ import com.tinyhuman.tinyhumanapi.checklist.controller.port.ChecklistDetailServi
 import com.tinyhuman.tinyhumanapi.checklist.controller.port.ChecklistService;
 import com.tinyhuman.tinyhumanapi.checklist.controller.port.dto.ChecklistCreate;
 import com.tinyhuman.tinyhumanapi.checklist.controller.port.dto.ChecklistResponse;
+import com.tinyhuman.tinyhumanapi.checklist.controller.port.dto.ToggleAllUpdateRequest;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.Builder;
@@ -43,15 +44,17 @@ public class ChecklistController {
     }
 
     @PatchMapping("{checklist_id}/detail/{checklist_detail_id}/toggle")
-    public ResponseEntity<Void> toggleCheckDetail(@PathVariable("checklist_id") Long checklistId, @PathVariable("checklist_detail_id") Long checklist_detail_id) {
+    public ResponseEntity<Void> toggleCheckDetail(@PathVariable("checklist_id") Long checklistId,
+                                                  @PathVariable("checklist_detail_id") Long checklist_detail_id) {
         checklistDetailService.toggleCheckDetail(checklistId, checklist_detail_id);
         return ResponseEntity
                 .status(HttpStatus.OK).build();
     }
 
     @PatchMapping("{checklist_id}/toggle-all")
-    public ResponseEntity<Void> toggleAllCheckDetail(@PathVariable("checklist_id") Long checklistId) {
-        checklistDetailService.toggleAllCheckDetail(checklistId);
+    public ResponseEntity<Void> toggleAllCheckDetail(@PathVariable("checklist_id") Long checklistId,
+                                                     @RequestBody ToggleAllUpdateRequest toggleAllUpdateRequest) {
+        checklistDetailService.toggleAllCheckDetail(checklistId, toggleAllUpdateRequest.targetChecked());
         return ResponseEntity
                 .status(HttpStatus.OK).build();
     }

@@ -6,5 +6,5 @@ public interface ChecklistDetailService {
 
     ChecklistDetail toggleCheckDetail(Long checklistId, Long id);
 
-    void toggleAllCheckDetail(Long checklistId);
+    void toggleAllCheckDetail(Long checklistId, boolean targetChecked);
 }
