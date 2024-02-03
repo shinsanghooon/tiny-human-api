@@ -16,6 +16,7 @@ public record Checklist(Long id, String title, User user, List<ChecklistDetail> 
 
     public static Checklist fromCreate(ChecklistCreate checklistCreate, User user) {
         return Checklist.builder()
+                .id(checklistCreate.id())
                 .title(checklistCreate.title())
                 .user(user)
                 .isDeleted(false)

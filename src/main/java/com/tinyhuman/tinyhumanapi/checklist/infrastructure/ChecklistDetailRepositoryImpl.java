@@ -37,10 +37,12 @@ public class ChecklistDetailRepositoryImpl implements ChecklistDetailRepository 
                 .map(c -> ChecklistDetail.builder()
                         .id(c.getId())
                         .contents(c.getContents())
-                        .reason((c.getReason()))
+                        .reason(c.getReason())
+                        .isChecked(c.isChecked())
                         .checklistId(c.getChecklist().getId())
                         .build()
                 ).toList();
+
     }
 
     @Override
