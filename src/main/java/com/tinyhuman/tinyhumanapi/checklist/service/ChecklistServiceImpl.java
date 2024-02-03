@@ -3,6 +3,7 @@ package com.tinyhuman.tinyhumanapi.checklist.service;
 import com.tinyhuman.tinyhumanapi.auth.controller.port.AuthService;
 import com.tinyhuman.tinyhumanapi.checklist.controller.port.ChecklistService;
 import com.tinyhuman.tinyhumanapi.checklist.controller.port.dto.ChecklistCreate;
+import com.tinyhuman.tinyhumanapi.checklist.controller.port.dto.ChecklistDetailCreate;
 import com.tinyhuman.tinyhumanapi.checklist.controller.port.dto.ChecklistResponse;
 import com.tinyhuman.tinyhumanapi.checklist.domain.Checklist;
 import com.tinyhuman.tinyhumanapi.checklist.domain.ChecklistDetail;
@@ -43,8 +44,8 @@ public class ChecklistServiceImpl implements ChecklistService {
 
         List<ChecklistDetail> checklistDetails = checklistCreate.checklistDetailCreate().stream()
                 .map(c -> ChecklistDetail.builder()
-                        .contents(c.content())
-                        .reason(c.content())
+                        .contents(c.contents())
+                        .reason(c.contents())
                         .checklistId(savedChecklist.id()).build())
                 .toList();
 
