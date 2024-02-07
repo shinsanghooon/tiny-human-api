@@ -120,6 +120,8 @@ public class ChecklistServiceImpl implements ChecklistService {
                 });
 
         Checklist deletedChecklist = checklist.delete();
+
+        checklistDetailRepository.deleteAllById(checklist.checklistDetails().stream().map(ChecklistDetail::id).toList());
         checklistRepository.save(deletedChecklist);
     }
 

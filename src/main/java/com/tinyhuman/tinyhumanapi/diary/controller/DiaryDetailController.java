@@ -78,4 +78,14 @@ public class DiaryDetailController {
                 .status(HttpStatus.CREATED)
                 .body(diaryPreSignedUrlResponse);
     }
+
+    @Operation(summary = "일기 날짜 변경 API", responses = {
+            @ApiResponse(responseCode = "200", description = "메인 사진 변경 성공")})
+    @PatchMapping("{diaryId}/date")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<DiaryResponse> changeDate(@PathVariable("diaryId") Long diaryId, @RequestBody ChangeDate changeDate) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(diaryDetailService.changeDate(diaryId, changeDate));
+    }
 }
