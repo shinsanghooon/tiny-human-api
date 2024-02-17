@@ -274,7 +274,7 @@ class AlbumServiceImplTest {
         @DisplayName("첫 페이지 조회 시, 입력받은 size만큼 id 내림차순으로 조회한다.")
         void getAllAlbum() {
 
-            PageCursor<AlbumResponse> albumCursor = albumServiceImpl.getAlbumsByBaby(babyId, new CursorRequest(null, 5));
+            PageCursor<AlbumResponse> albumCursor = albumServiceImpl.getAlbumsByBaby(babyId, new CursorRequest(null, 5), "uploadedAt");
             List<AlbumResponse> albums = albumCursor.body();
 
             assertThat(albums.size()).isEqualTo(5);
@@ -288,7 +288,7 @@ class AlbumServiceImplTest {
         @Test
         @DisplayName("두번째 조회부터, 입력 받은 key값부터 size만큼 id 내림차순으로 조회한다.")
         void getAllAlbumWithCursor() {
-            PageCursor<AlbumResponse> albumCursor = albumServiceImpl.getAlbumsByBaby(babyId, new CursorRequest(16L, 7));
+            PageCursor<AlbumResponse> albumCursor = albumServiceImpl.getAlbumsByBaby(babyId, new CursorRequest(16L, 7), "uploadedAt");
             List<AlbumResponse> albums = albumCursor.body();
 
             assertThat(albums.size()).isEqualTo(7);

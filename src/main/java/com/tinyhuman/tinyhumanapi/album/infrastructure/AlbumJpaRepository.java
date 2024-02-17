@@ -14,7 +14,11 @@ public interface AlbumJpaRepository extends JpaRepository<AlbumEntity, Long> {
 
     List<AlbumEntity> findByBabyId(Long babyId, Pageable page);
 
+    List<AlbumEntity> findByBabyIdOrderByOriginalCreatedAtDesc(Long babyId, Pageable page);
+
     List<AlbumEntity> findByBabyIdAndIdLessThan(Long babyId, Long id, Pageable page);
+
+    List<AlbumEntity> findByBabyIdAndIdLessThanOrderByOriginalCreatedAtDesc(Long babyId, Long id, Pageable page);
 
     List<AlbumEntity> findByBabyIdAndKeyNameIn(Long babyId, Set<String> keyName);
 

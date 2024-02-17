@@ -12,14 +12,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Set;
 
 @Repository
 @RequiredArgsConstructor
 public class AlbumRepositoryImpl implements AlbumRepository {
 
     private final AlbumJpaRepository albumJpaRepository;
-
 
     @Override
     public List<Album> saveAll(List<Album> albums) {
@@ -46,18 +44,33 @@ public class AlbumRepositoryImpl implements AlbumRepository {
     }
 
     @Override
-    public List<Album> findByBabyId(Long babyId, CursorRequest cursorRequest) {
+    public List<Album> findByBabyId(Long babyId, CursorRequest cursorRequest, String order) {
         Sort sort = Sort.by(Sort.Direction.DESC, "id"); // 정렬 정보 설정
         Pageable pageable = PageRequest.of(0, cursorRequest.size(), sort);
 
-        if (cursorRequest.hasKey()) {
-            return albumJpaRepository.findByBabyIdAndIdLessThan(babyId, cursorRequest.key(), pageable).stream()
+        if (order.equals("uploadedAt")) {
+            if (cursorRequest.hasKey()) {
+                return albumJpaRepository.findByBabyIdAndIdLessThan(babyId, cursorRequest.key(), pageable).stream()
+                        .map(AlbumEntity::toModel)
+                        .toList();
+            }
+            return albumJpaRepository.findByBabyId(babyId, pageable).stream()
+                    .map(AlbumEntity::toModel)
+                    .toList();
+        } else {
+
+            if (cursorRequest.hasKey()) {
+                return albumJpaRepository.findByBabyIdAndIdLessThanOrderByOriginalCreatedAtDesc(babyId, cursorRequest.key(), pageable).stream()
+                        .map(AlbumEntity::toModel)
+                        .toList();
+            }
+            return albumJpaRepository.findByBabyIdOrderByOriginalCreatedAtDesc(babyId, pageable).stream()
                     .map(AlbumEntity::toModel)
                     .toList();
         }
-        return albumJpaRepository.findByBabyId(babyId, pageable).stream()
-                .map(AlbumEntity::toModel)
-                .toList();
+
+
+
     }
 
     @Override
