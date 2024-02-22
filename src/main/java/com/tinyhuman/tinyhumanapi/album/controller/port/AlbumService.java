@@ -11,7 +11,7 @@ public interface AlbumService {
 
     List<AlbumUploadResponse> uploadAlbums(Long babyId, List<AlbumCreate> files);
 
-    PageCursor<AlbumResponse> getAlbumsByBaby(Long babyId, CursorRequest cursorRequest);
+    PageCursor<AlbumResponse> getAlbumsByBaby(Long babyId, CursorRequest cursorRequest, String order);
 
     List<Album> delete(AlbumDelete albums);
 

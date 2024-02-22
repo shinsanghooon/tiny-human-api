@@ -1,5 +1,6 @@
 package com.tinyhuman.tinyhumanapi.user.infrastructure;
 
+import com.tinyhuman.tinyhumanapi.auth.eum.SocialMedia;
 import com.tinyhuman.tinyhumanapi.checklist.infrastructure.ChecklistEntity;
 import com.tinyhuman.tinyhumanapi.common.infrastructure.BaseEntity;
 import com.tinyhuman.tinyhumanapi.diary.infrastructure.DiaryEntity;
@@ -42,6 +43,10 @@ public class UserEntity extends BaseEntity {
     @Column(name = "last_login_at")
     private LocalDateTime lastLoginAt;
 
+    @Column(name = "social_media")
+    @Enumerated(EnumType.STRING)
+    private SocialMedia socialMedia;
+
     @OneToMany(mappedBy = "user")
     private final List<UserBabyRelationEntity> userBabyRelations = new ArrayList<>();
 
@@ -55,12 +60,13 @@ public class UserEntity extends BaseEntity {
     private boolean isDeleted = false;
 
     @Builder
-    public UserEntity(Long id, String name, String email, String password, UserStatus status, LocalDateTime lastLoginAt, boolean isDeleted) {
+    public UserEntity(Long id, String name, String email, String password, UserStatus status, SocialMedia socialMedia, LocalDateTime lastLoginAt, boolean isDeleted) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.password = password;
         this.status = status;
+        this.socialMedia = socialMedia;
         this.lastLoginAt = lastLoginAt;
         this.isDeleted = isDeleted;
     }
@@ -72,6 +78,7 @@ public class UserEntity extends BaseEntity {
                 .email(user.email())
                 .password(user.password())
                 .status(user.status())
+                .socialMedia(user.socialMedia())
                 .lastLoginAt(user.lastLoginAt())
                 .isDeleted(user.isDeleted())
                 .build();
@@ -84,6 +91,7 @@ public class UserEntity extends BaseEntity {
                 .email(this.email)
                 .password(this.password)
                 .status(this.status)
+                .socialMedia(this.socialMedia)
                 .lastLoginAt(this.lastLoginAt)
                 .isDeleted(this.isDeleted)
                 .build();

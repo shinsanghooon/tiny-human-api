@@ -102,7 +102,7 @@ class AlbumRepositoryImplTest {
     @Test
     @DisplayName("아기 id로 앨범을 조회한다.")
     void findByBabyIdSecondTime() {
-        List<Album> albums = albumRepository.findByBabyId(1L, new CursorRequest(21L, 5));
+        List<Album> albums = albumRepository.findByBabyId(1L, new CursorRequest(21L, 5), "uploadedAt");
 
         assertThat(albums.size()).isEqualTo(5);
         assertThat(albums).extracting("id").containsExactly(20L, 19L, 18L, 17L, 16L);

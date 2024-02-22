@@ -82,7 +82,7 @@ public class FakeAlbumRepository implements AlbumRepository {
     }
 
     @Override
-    public List<Album> findByBabyId(Long babyId, CursorRequest cursorRequest) {
+    public List<Album> findByBabyId(Long babyId, CursorRequest cursorRequest, String order) {
         if (cursorRequest.hasKey()) {
             return data.stream()
                     .filter(a -> a.babyId().equals(babyId))

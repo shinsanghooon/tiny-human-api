@@ -27,7 +27,6 @@ public class ChecklistDetailRepositoryImpl implements ChecklistDetailRepository 
 
     @Override
     public List<ChecklistDetail> saveAll(List<ChecklistDetail> checklistDetails, Checklist checklist) {
-
         List<ChecklistDetailEntity> checklistDetailEntities = checklistDetailJpaRepository.saveAll(
                 checklistDetails.stream()
                         .map(checklistDetail -> ChecklistDetailEntity.fromModel(checklistDetail, checklist))
@@ -37,15 +36,23 @@ public class ChecklistDetailRepositoryImpl implements ChecklistDetailRepository 
                 .map(c -> ChecklistDetail.builder()
                         .id(c.getId())
                         .contents(c.getContents())
-                        .reason((c.getReason()))
+                        .reason(c.getReason())
+                        .isChecked(c.isChecked())
                         .checklistId(c.getChecklist().getId())
                         .build()
                 ).toList();
+
     }
 
     @Override
     public Optional<ChecklistDetail> findById(Long id) {
         return checklistDetailJpaRepository.findById(id).map(ChecklistDetailEntity::toModel);
     }
+
+    @Override
+    public void deleteAllById(List<Long> ids) {
+        checklistDetailJpaRepository.deleteAllById(ids);
+    }
+
 
 }

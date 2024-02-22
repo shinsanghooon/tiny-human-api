@@ -16,4 +16,6 @@ public interface ChecklistDetailRepository {
 
     Optional<ChecklistDetail> findById(Long id);
 
+    void deleteAllById(List<Long> ids);
+
 }

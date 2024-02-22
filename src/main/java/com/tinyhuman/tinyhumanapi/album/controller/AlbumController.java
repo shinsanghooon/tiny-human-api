@@ -51,11 +51,10 @@ public class AlbumController {
     public ResponseEntity<PageCursor<AlbumResponse>> getAllAlbums(@PathVariable("babyId") Long babyId, @RequestParam("order") String order,
                                                           @RequestParam(value = "key", required = false) Long key, @RequestParam("size") int size) {
 
-        System.out.println("key = " + key);
         CursorRequest cursorRequest = new CursorRequest(key, size);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(albumService.getAlbumsByBaby(babyId, cursorRequest));
+                .body(albumService.getAlbumsByBaby(babyId, cursorRequest, order));
     }
 
     @Operation(summary = "앨범 삭제 API", responses = {

@@ -11,5 +11,7 @@ public interface ChecklistService {
 
     List<ChecklistResponse> getChecklist();
 
+    ChecklistResponse update(ChecklistCreate checklistCreate);
+
     void delete(Long id);
 }

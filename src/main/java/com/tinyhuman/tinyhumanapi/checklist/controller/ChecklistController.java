@@ -43,6 +43,13 @@ public class ChecklistController {
                 .body(checklistService.getChecklist());
     }
 
+    @PatchMapping
+    public ResponseEntity<ChecklistResponse> update(@RequestBody @Valid ChecklistCreate checklistCreate) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(checklistService.update(checklistCreate));
+    }
+
     @PatchMapping("{checklist_id}/detail/{checklist_detail_id}/toggle")
     public ResponseEntity<Void> toggleCheckDetail(@PathVariable("checklist_id") Long checklistId,
                                                   @PathVariable("checklist_detail_id") Long checklist_detail_id) {

@@ -4,10 +4,7 @@ import com.tinyhuman.tinyhumanapi.common.exception.NotSupportedContentTypeExcept
 import com.tinyhuman.tinyhumanapi.common.exception.ResourceNotFoundException;
 import com.tinyhuman.tinyhumanapi.common.service.port.UuidHolder;
 import com.tinyhuman.tinyhumanapi.diary.controller.port.DiaryDetailService;
-import com.tinyhuman.tinyhumanapi.diary.controller.port.dto.DiaryPreSignedUrlResponse;
-import com.tinyhuman.tinyhumanapi.diary.controller.port.dto.DiaryResponse;
-import com.tinyhuman.tinyhumanapi.diary.controller.port.dto.PictureCreate;
-import com.tinyhuman.tinyhumanapi.diary.controller.port.dto.SentenceCreate;
+import com.tinyhuman.tinyhumanapi.diary.controller.port.dto.*;
 import com.tinyhuman.tinyhumanapi.diary.domain.Diary;
 import com.tinyhuman.tinyhumanapi.diary.domain.Picture;
 import com.tinyhuman.tinyhumanapi.diary.domain.Sentence;
@@ -20,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 import static com.tinyhuman.tinyhumanapi.common.utils.FileUtils.*;
@@ -132,6 +130,7 @@ public class DiaryDetailServiceImpl implements DiaryDetailService {
 
     @Override
     public DiaryPreSignedUrlResponse addPictures(Long diaryId, List<PictureCreate> pictureCreates) {
+
         Diary diary = getDiary(diaryId);
         List<Picture> pictures = registerPictures(pictureCreates, diary);
 
@@ -151,8 +150,32 @@ public class DiaryDetailServiceImpl implements DiaryDetailService {
 
         Diary diaryWithNewPictures = diary.addPictureToNewPictures(newPictures);
         diaryRepository.save(diaryWithNewPictures);
+
         return DiaryPreSignedUrlResponse.fromModel(diaryWithNewPictures);
     }
+
+    @Override
+    public DiaryResponse changeDate(Long diaryId, ChangeDate changeDate) {
+        Diary diary = getDiary(diaryId);
+
+        long daysBetween = ChronoUnit.DAYS.between(diary.baby().dayOfBirth(), changeDate.updatedDate()) + 1;
+        Diary dateUpdateDiary = Diary.builder()
+                .id(diary.id())
+                .date(changeDate.updatedDate())
+                .likeCount(diary.likeCount())
+                .daysAfterBirth((int) daysBetween)
+                .sentences(diary.sentences())
+                .pictures(diary.pictures())
+                .user(diary.user())
+                .baby(diary.baby())
+                .isDeleted(diary.isDeleted())
+                .build();
+
+        Diary savedDiary = diaryRepository.save(dateUpdateDiary);
+
+        return DiaryResponse.fromModel(savedDiary.addPictures(diary.pictures()).addSentences(diary.sentences()));
+    }
+
 
     private List<Picture> registerPictures(List<PictureCreate> pictureCreates, Diary diary) {
         List<Picture> pictures = new ArrayList<>();

@@ -2,6 +2,7 @@ package com.tinyhuman.tinyhumanapi.auth.controller;
 
 import com.tinyhuman.tinyhumanapi.auth.controller.port.AuthService;
 import com.tinyhuman.tinyhumanapi.auth.domain.LoginRequest;
+import com.tinyhuman.tinyhumanapi.auth.domain.SocialLoginRequest;
 import com.tinyhuman.tinyhumanapi.auth.domain.TokenResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -23,6 +24,14 @@ public class AuthController {
     @PostMapping("login")
     public TokenResponse login(@Valid @RequestBody LoginRequest loginRequest) {
         return authService.login(loginRequest);
+    }
+
+    @Operation(summary = "구글 로그인 API", responses = {
+            @ApiResponse(responseCode = "200", description = "로그인 성공")})
+    @ResponseStatus(HttpStatus.OK)
+    @PostMapping("google")
+    public TokenResponse googleLogin(@Valid @RequestBody SocialLoginRequest socialLoginRequest) {
+        return authService.googleLogin(socialLoginRequest);
     }
 
 }

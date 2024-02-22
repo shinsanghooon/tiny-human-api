@@ -13,9 +13,10 @@ public record ChecklistDetail(Long id, String contents, String reason, boolean i
 
     public static ChecklistDetail fromCreate(ChecklistDetailCreate checklistDetailCreate) {
         return ChecklistDetail.builder()
-                .contents(checklistDetailCreate.content())
+                .id(checklistDetailCreate.id())
+                .contents(checklistDetailCreate.contents())
                 .reason(checklistDetailCreate.reason())
-                .isChecked(false)
+                .isChecked(checklistDetailCreate.isChecked() != null && checklistDetailCreate.isChecked())
                 .build();
     }
 
@@ -38,9 +39,6 @@ public record ChecklistDetail(Long id, String contents, String reason, boolean i
                 .checklistId(this.checklistId)
                 .build();
     }
-
-
-
 
     public ChecklistDetailResponse toResponseModel() {
         return ChecklistDetailResponse.builder()
