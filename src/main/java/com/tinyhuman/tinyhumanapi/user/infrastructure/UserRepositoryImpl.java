@@ -1,5 +1,6 @@
 package com.tinyhuman.tinyhumanapi.user.infrastructure;
 
+import com.tinyhuman.tinyhumanapi.auth.eum.SocialMedia;
 import com.tinyhuman.tinyhumanapi.user.domain.User;
 import com.tinyhuman.tinyhumanapi.user.service.port.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -29,8 +30,18 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
+    public Optional<User> findByEmailAndSocialMedia(String email, SocialMedia socialMedia) {
+        return userJpaRepository.findByEmailAndSocialMedia(email, socialMedia).map(UserEntity::toModel);
+    }
+
+    @Override
     public boolean existsByEmail(String email) {
         return userJpaRepository.existsByEmail(email);
+    }
+
+    @Override
+    public boolean existsByEmailAndSocialMedia(String email, SocialMedia socialMedia) {
+        return userJpaRepository.existsByEmailAndSocialMedia(email, socialMedia);
     }
 
 }

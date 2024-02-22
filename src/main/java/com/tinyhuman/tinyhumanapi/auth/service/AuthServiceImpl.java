@@ -7,6 +7,7 @@ import com.tinyhuman.tinyhumanapi.auth.domain.LoginRequest;
 import com.tinyhuman.tinyhumanapi.auth.domain.RefreshToken;
 import com.tinyhuman.tinyhumanapi.auth.domain.SocialLoginRequest;
 import com.tinyhuman.tinyhumanapi.auth.domain.TokenResponse;
+import com.tinyhuman.tinyhumanapi.auth.eum.SocialMedia;
 import com.tinyhuman.tinyhumanapi.auth.service.port.RefreshTokenRepository;
 import com.tinyhuman.tinyhumanapi.common.exception.ResourceNotFoundException;
 import com.tinyhuman.tinyhumanapi.common.exception.UnauthorizedAccessException;
@@ -107,14 +108,11 @@ public class AuthServiceImpl implements AuthService {
         String name = socialLoginRequest.name();
         String photoUrl = socialLoginRequest.photoUrl();
 
-
         RestTemplate restTemplate = new RestTemplate();
         Map<String, String> map = new HashMap<>();
         map.put("access_token", accessToken);
         ResponseEntity<GoogleInfoResponse> infoResponse = restTemplate.postForEntity("https://www.googleapis.com/oauth2/v1/tokeninfo",
                 map, GoogleInfoResponse.class);
-
-        System.out.println("infoResponse.getBody() = " + infoResponse.getBody().toString());
 
         String responseEmail = infoResponse.getBody().email();
         boolean isVerifiedEmail = infoResponse.getBody().verified_email();
@@ -129,25 +127,22 @@ public class AuthServiceImpl implements AuthService {
             throw new UnauthorizedAccessException("구글 로그인", email);
         }
 
-        // TODO: user 생성 or 기존에 있는지 여부 확인
-        boolean isEmailExists = userRepository.existsByEmail(email);
+        boolean isEmailExists = userRepository.existsByEmailAndSocialMedia(email, SocialMedia.GOOGLE);
 
         User user;
         if (isEmailExists) {
-            user = userRepository.findByEmail(email).get();
+            user = userRepository.findByEmailAndSocialMedia(email, SocialMedia.GOOGLE).get();
         } else {
             user = userRepository.save(User.builder()
                     .name(name)
                     .email(email)
                     .password(accessToken)
                     .status(UserStatus.ACTIVE)
+                    .socialMedia(SocialMedia.GOOGLE)
                     .build());
         }
 
-        System.out.println("user.email() = " + user.email());
-        System.out.println("user.name() = " + user.name());
-
-        TokenResponse tokenResponse = customTokenProvider.generationToken(user, Duration.ofHours(2));
+        TokenResponse tokenResponse = customTokenProvider.generationToken(user, Duration.ofHours(1));
 
         RefreshToken newRefreshToken = generateNewRefreshToken(user, tokenResponse);
 

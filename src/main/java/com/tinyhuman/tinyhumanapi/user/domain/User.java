@@ -1,5 +1,6 @@
 package com.tinyhuman.tinyhumanapi.user.domain;
 
+import com.tinyhuman.tinyhumanapi.auth.eum.SocialMedia;
 import com.tinyhuman.tinyhumanapi.user.enums.UserStatus;
 import lombok.Builder;
 
@@ -11,6 +12,7 @@ public record User(
         String email,
         String password,
         UserStatus status,
+        SocialMedia socialMedia,
         LocalDateTime lastLoginAt,
         boolean isDeleted
 ) {
@@ -25,6 +27,7 @@ public record User(
                 .email(userCreate.email())
                 .password(userCreate.password())
                 .status(UserStatus.ACTIVE)
+                .socialMedia(userCreate.socialMedia())
                 .isDeleted(false)
                 .build();
     }

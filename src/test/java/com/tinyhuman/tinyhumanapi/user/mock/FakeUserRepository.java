@@ -1,5 +1,6 @@
 package com.tinyhuman.tinyhumanapi.user.mock;
 
+import com.tinyhuman.tinyhumanapi.auth.eum.SocialMedia;
 import com.tinyhuman.tinyhumanapi.user.domain.User;
 import com.tinyhuman.tinyhumanapi.user.enums.UserStatus;
 import com.tinyhuman.tinyhumanapi.user.service.port.UserRepository;
@@ -51,9 +52,22 @@ public class FakeUserRepository implements UserRepository {
     }
 
     @Override
+    public Optional<User> findByEmailAndSocialMedia(String email, SocialMedia socialMedia) {
+        return data.stream()
+                .filter(user -> (user.email().equals(email) && user.socialMedia().equals(socialMedia)))
+                .findAny();
+    }
+
+    @Override
     public boolean existsByEmail(String email) {
         return data.stream()
                 .anyMatch(s -> s.email().equals(email));
 
+    }
+
+    @Override
+    public boolean existsByEmailAndSocialMedia(String email, SocialMedia socialMedia) {
+        return data.stream()
+                .anyMatch(s -> (s.email().equals(email) && s.socialMedia().equals(socialMedia)));
     }
 }
