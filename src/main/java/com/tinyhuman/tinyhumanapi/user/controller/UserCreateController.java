@@ -1,9 +1,8 @@
 package com.tinyhuman.tinyhumanapi.user.controller;
 
+import com.tinyhuman.tinyhumanapi.user.controller.port.UserPushService;
 import com.tinyhuman.tinyhumanapi.user.controller.port.UserService;
-import com.tinyhuman.tinyhumanapi.user.domain.EmailDuplicateCheck;
-import com.tinyhuman.tinyhumanapi.user.domain.UserCreate;
-import com.tinyhuman.tinyhumanapi.user.domain.UserResponse;
+import com.tinyhuman.tinyhumanapi.user.domain.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -20,9 +19,12 @@ public class UserCreateController {
 
     private final UserService userService;
 
+    private final UserPushService userPushService;
+
     @Builder
-    public UserCreateController(UserService userService) {
+    public UserCreateController(UserService userService, UserPushService userPushService) {
         this.userService = userService;
+        this.userPushService = userPushService;
     }
 
     @Operation(summary = "회원 가입 API", responses = {
@@ -46,4 +48,14 @@ public class UserCreateController {
                 .status(HttpStatus.OK)
                 .build();
     }
+
+    @Operation(summary = "푸시 정보 등록 API", responses = {
+            @ApiResponse(responseCode = "201", description = "푸시 정보 등록 성공")})
+    @PostMapping("/tokens")
+    public ResponseEntity<UserPushToken> registerPushInfo(@RequestBody @Valid UserPushTokenCreate userPushTokenCreate) {
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(userPushService.registerToken(userPushTokenCreate));
+    }
+
 }
