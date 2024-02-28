@@ -5,11 +5,11 @@ import com.tinyhuman.tinyhumanapi.user.service.port.UserPushTokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
-public class UserPushTokenImpl implements UserPushTokenRepository {
+public class UserPushTokenRepositoryImpl implements UserPushTokenRepository {
 
     private final UserPushTokenJpaRepository userPushTokenJpaRepository;
 
@@ -19,7 +19,8 @@ public class UserPushTokenImpl implements UserPushTokenRepository {
     }
 
     @Override
-    public List<UserPushToken> findByUserId(Long userId) {
-        return userPushTokenJpaRepository.findByUserId(userId).stream().map(UserPushTokenEntity::toModel).toList();
+    public Optional<UserPushToken> findByUserIdAndAndDeviceInfo(Long userId, String deviceInfo) {
+        return userPushTokenJpaRepository.findByUserIdAndAndDeviceInfo(userId, deviceInfo).map(UserPushTokenEntity::toModel);
     }
+
 }

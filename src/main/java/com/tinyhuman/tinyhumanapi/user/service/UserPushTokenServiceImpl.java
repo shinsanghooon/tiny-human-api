@@ -11,6 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 
 @Service
 @Transactional
@@ -30,11 +32,20 @@ public class UserPushTokenServiceImpl implements UserPushService {
     @Override
     public UserPushToken registerToken(UserPushTokenCreate userPushTokenCreate) {
         User user = authService.getUserOutOfSecurityContextHolder();
-        UserPushToken userPushToken = UserPushToken.builder()
+
+        Optional<UserPushToken> userTokenInfo = userPushTokenRepository.findByUserIdAndAndDeviceInfo(user.id(), userPushTokenCreate.deviceInfo());
+        UserPushToken.UserPushTokenBuilder userPushTokenBuilder = UserPushToken.builder()
                 .userId(user.id())
                 .fcmToken(userPushTokenCreate.fcmToken())
-                .deviceInfo(userPushTokenCreate.deviceInfo())
-                .build();
+                .deviceInfo(userPushTokenCreate.deviceInfo());
+
+        UserPushToken userPushToken;
+        if (userTokenInfo.isPresent()) {
+            userPushToken = userPushTokenBuilder.id(userTokenInfo.get().id()).build();
+        } else {
+            userPushToken = userPushTokenBuilder.build();
+        }
+
         return userPushTokenRepository.save(userPushToken);
     }
 }
