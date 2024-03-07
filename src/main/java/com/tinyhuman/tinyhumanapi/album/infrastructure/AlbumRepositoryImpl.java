@@ -11,6 +11,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 
 @Repository
@@ -29,7 +32,6 @@ public class AlbumRepositoryImpl implements AlbumRepository {
                 .toList();
     }
 
-    // TODO: 얘는 왜 여기서 예외를 던지지?
     @Override
     public Album findByIdAndBabyId(Long id, Long babyId) {
         return albumJpaRepository.findByIdAndBabyId(id, babyId)
@@ -60,7 +62,8 @@ public class AlbumRepositoryImpl implements AlbumRepository {
         } else {
 
             if (cursorRequest.hasKey()) {
-                return albumJpaRepository.findByBabyIdAndIdLessThanOrderByOriginalCreatedAtDesc(babyId, cursorRequest.key(), pageable).stream()
+                LocalDateTime keyDate = LocalDateTime.ofInstant(Instant.ofEpochSecond(cursorRequest.key()), ZoneId.systemDefault());
+                return albumJpaRepository.findByBabyIdAndOriginalCreatedAtBeforeOrderByOriginalCreatedAtDesc(babyId, keyDate, pageable).stream()
                         .map(AlbumEntity::toModel)
                         .toList();
             }
@@ -68,9 +71,6 @@ public class AlbumRepositoryImpl implements AlbumRepository {
                     .map(AlbumEntity::toModel)
                     .toList();
         }
-
-
-
     }
 
     @Override
