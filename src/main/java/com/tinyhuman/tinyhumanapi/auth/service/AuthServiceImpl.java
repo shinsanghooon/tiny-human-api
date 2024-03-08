@@ -66,7 +66,7 @@ public class AuthServiceImpl implements AuthService {
                     return new ResourceNotFoundException("User", " " + email);
                 });
 
-        TokenResponse tokenResponse = customTokenProvider.generationToken(user, Duration.ofHours(2));
+        TokenResponse tokenResponse = customTokenProvider.generationToken(user, Duration.ofHours(1));
 
         RefreshToken newRefreshToken = generateNewRefreshToken(user, tokenResponse);
 

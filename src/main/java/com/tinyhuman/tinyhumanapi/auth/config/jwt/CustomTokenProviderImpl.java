@@ -24,10 +24,11 @@ public class CustomTokenProviderImpl implements CustomTokenProvider{
 
     public TokenResponse generationToken(User user, Duration expiredAt) {
         Date now = new Date();
-        return makeToken(new Date(now.getTime() + expiredAt.toMillis()), user);
+        Duration refreshExpiredAt = expiredAt.plusHours(2);
+        return makeToken(new Date(now.getTime() + expiredAt.toMillis()), new Date(now.getTime() + refreshExpiredAt.toMillis()), user);
     }
 
-    private TokenResponse makeToken(Date expiry, User user) {
+    private TokenResponse makeToken(Date expiry, Date refreshExpiry, User user) {
         Date now = new Date();
 
         String accessToken = Jwts.builder()
@@ -41,7 +42,7 @@ public class CustomTokenProviderImpl implements CustomTokenProvider{
                 .compact();
 
         String refreshToken = Jwts.builder()
-                .setExpiration(expiry)
+                .setExpiration(refreshExpiry)
                 .signWith(SignatureAlgorithm.HS256, jwtProperties.getSecretKey())
                 .compact();
 
