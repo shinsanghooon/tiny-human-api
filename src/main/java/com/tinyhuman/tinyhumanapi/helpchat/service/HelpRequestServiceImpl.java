@@ -41,8 +41,9 @@ public class HelpRequestServiceImpl implements HelpRequestService {
     }
 
     @Override
-    public List<HelpChatResponse> getChecklist() {
-        return null;
+    public List<HelpChatResponse> getHelpRequest() {
+        User user = authService.getUserOutOfSecurityContextHolder();
+        return helpRequestRepository.findByUserId(user.id()).stream().map(HelpRequest::toResponse).toList();
     }
 
     @Override

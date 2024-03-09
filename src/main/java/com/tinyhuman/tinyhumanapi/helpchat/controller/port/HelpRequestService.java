@@ -10,7 +10,7 @@ public interface HelpRequestService {
 
     HelpChatResponse register(HelpRequestCreate helpRequestCreate);
 
-    List<HelpChatResponse> getChecklist();
+    List<HelpChatResponse> getHelpRequest();
 
     HelpChatResponse update(HelpRequest helpRequest);
 

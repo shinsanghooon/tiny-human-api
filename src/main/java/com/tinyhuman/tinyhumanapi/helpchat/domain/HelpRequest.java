@@ -27,6 +27,7 @@ public record HelpRequest(Long id, Long userId, RequestType requestType, String 
                 .userId(this.userId)
                 .requestType(this.requestType)
                 .contents(this.contents)
+                .createdAt(this.createdAt)
                 .build();
     }
 }
