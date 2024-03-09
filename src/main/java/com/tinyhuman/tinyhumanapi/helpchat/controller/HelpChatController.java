@@ -1,8 +1,11 @@
 package com.tinyhuman.tinyhumanapi.helpchat.controller;
 
+import com.tinyhuman.tinyhumanapi.helpchat.controller.port.HelpChatService;
 import com.tinyhuman.tinyhumanapi.helpchat.controller.port.HelpRequestService;
+import com.tinyhuman.tinyhumanapi.helpchat.controller.port.dto.HelpChatCreate;
 import com.tinyhuman.tinyhumanapi.helpchat.controller.port.dto.HelpChatResponse;
 import com.tinyhuman.tinyhumanapi.helpchat.controller.port.dto.HelpRequestCreate;
+import com.tinyhuman.tinyhumanapi.helpchat.controller.port.dto.HelpRequestResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.Builder;
 import org.springframework.http.HttpStatus;
@@ -18,22 +21,39 @@ public class HelpChatController {
 
     private final HelpRequestService helpRequestService;
 
+    private final HelpChatService helpChatService;
+
     @Builder
-    public HelpChatController(HelpRequestService helpRequestService) {
+    public HelpChatController(HelpRequestService helpRequestService, HelpChatService helpChatService) {
         this.helpRequestService = helpRequestService;
+        this.helpChatService = helpChatService;
     }
 
-    @PostMapping
-    public ResponseEntity<HelpChatResponse> registerChecklist(@RequestBody HelpRequestCreate helpRequestCreate) {
+    @PostMapping("help-request")
+    public ResponseEntity<HelpRequestResponse> registerHelpRequest(@RequestBody HelpRequestCreate helpRequestCreate) {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(helpRequestService.register(helpRequestCreate));
     }
 
-    @GetMapping
-    public ResponseEntity<List<HelpChatResponse>> getHelpChats() {
+    @GetMapping("help-request")
+    public ResponseEntity<List<HelpRequestResponse>> getHelpRequests() {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(helpRequestService.getHelpRequest());
+    }
+
+    @PostMapping()
+    public ResponseEntity<HelpChatResponse> registerHelpChat(@RequestBody HelpChatCreate helpChatCreate) {
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(helpChatService.register(helpChatCreate));
+    }
+
+    @GetMapping()
+    public ResponseEntity<List<HelpChatResponse>> getHelpChats() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(helpChatService.getHelpChats());
     }
 }

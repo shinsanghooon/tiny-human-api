@@ -1,6 +1,6 @@
 package com.tinyhuman.tinyhumanapi.helpchat.domain;
 
-import com.tinyhuman.tinyhumanapi.helpchat.controller.port.dto.HelpChatResponse;
+import com.tinyhuman.tinyhumanapi.helpchat.controller.port.dto.HelpRequestResponse;
 import com.tinyhuman.tinyhumanapi.helpchat.controller.port.dto.HelpRequestCreate;
 import com.tinyhuman.tinyhumanapi.helpchat.enums.RequestType;
 import lombok.Builder;
@@ -21,8 +21,8 @@ public record HelpRequest(Long id, Long userId, RequestType requestType, String 
                 .contents(helpRequestCreate.contents())
                 .build();
     }
-    public HelpChatResponse toResponse() {
-        return HelpChatResponse.builder()
+    public HelpRequestResponse toResponse() {
+        return HelpRequestResponse.builder()
                 .id(this.id)
                 .userId(this.userId)
                 .requestType(this.requestType)

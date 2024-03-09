@@ -2,7 +2,7 @@ package com.tinyhuman.tinyhumanapi.helpchat.service;
 
 import com.tinyhuman.tinyhumanapi.auth.controller.port.AuthService;
 import com.tinyhuman.tinyhumanapi.helpchat.controller.port.HelpRequestService;
-import com.tinyhuman.tinyhumanapi.helpchat.controller.port.dto.HelpChatResponse;
+import com.tinyhuman.tinyhumanapi.helpchat.controller.port.dto.HelpRequestResponse;
 import com.tinyhuman.tinyhumanapi.helpchat.controller.port.dto.HelpRequestCreate;
 import com.tinyhuman.tinyhumanapi.helpchat.domain.HelpRequest;
 import com.tinyhuman.tinyhumanapi.helpchat.service.port.HelpRequestRepository;
@@ -30,7 +30,7 @@ public class HelpRequestServiceImpl implements HelpRequestService {
     }
 
     @Override
-    public HelpChatResponse register(HelpRequestCreate helpRequestCreate) {
+    public HelpRequestResponse register(HelpRequestCreate helpRequestCreate) {
         User user = authService.getUserOutOfSecurityContextHolder();
         if (!user.id().equals(helpRequestCreate.userId())) {
             throw new IllegalArgumentException("사용자 아이디가 일치하지 않습니다.");
@@ -41,13 +41,13 @@ public class HelpRequestServiceImpl implements HelpRequestService {
     }
 
     @Override
-    public List<HelpChatResponse> getHelpRequest() {
+    public List<HelpRequestResponse> getHelpRequest() {
         User user = authService.getUserOutOfSecurityContextHolder();
         return helpRequestRepository.findByUserId(user.id()).stream().map(HelpRequest::toResponse).toList();
     }
 
     @Override
-    public HelpChatResponse update(HelpRequest helpRequest) {
+    public HelpRequestResponse update(HelpRequest helpRequest) {
         return null;
     }
 
