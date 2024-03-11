@@ -4,7 +4,7 @@ import lombok.Builder;
 
 import java.time.LocalDateTime;
 
-public record HelpChatResponse(Long id, Long helpRequestId, Long helpRequestUserId, Long helpAnswerUserId, LocalDateTime createdAt, HelpRequestResponse helpRequest) {
+public record HelpChatResponse(Long id, Long helpRequestId, Long helpRequestUserId, Long helpAnswerUserId, String latestMessage, LocalDateTime latestMessageTime, LocalDateTime createdAt, HelpRequestResponse helpRequest) {
 
     @Builder
     public HelpChatResponse {
@@ -17,6 +17,8 @@ public record HelpChatResponse(Long id, Long helpRequestId, Long helpRequestUser
                 .helpRequestId(this.helpRequestId)
                 .helpRequestUserId(this.helpRequestUserId)
                 .helpAnswerUserId(this.helpAnswerUserId)
+                .latestMessage(this.latestMessage)
+                .latestMessageTime(this.latestMessageTime)
                 .createdAt(this.createdAt)
                 .helpRequest(helpRequestResponse)
                 .build();

@@ -9,6 +9,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Where;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Getter
 @Table(name = "help_chats")
@@ -29,15 +31,23 @@ public class HelpChatEntity extends BaseEntity {
     @Column(name = "help_answer_user_id")
     private Long helpAnswerUserId;
 
+    @Column(name = "latest_message")
+    private String latestMessage;
+
+    @Column(name = "latest_message_time")
+    private LocalDateTime latestMessageTime;
+
     @Column(name="is_deleted")
     private boolean isDeleted = false;
 
     @Builder
-    public HelpChatEntity(Long id, Long helpRequestId, Long helpRequestUserId, Long helpAnswerUserId, boolean isDeleted) {
+    public HelpChatEntity(Long id, Long helpRequestId, Long helpRequestUserId, Long helpAnswerUserId, String latestMessage, LocalDateTime latestMessageTime, boolean isDeleted) {
         this.id = id;
         this.helpRequestId = helpRequestId;
         this.helpRequestUserId = helpRequestUserId;
         this.helpAnswerUserId = helpAnswerUserId;
+        this.latestMessage = latestMessage;
+        this.latestMessageTime = latestMessageTime;
         this.isDeleted = isDeleted;
     }
 
@@ -46,6 +56,8 @@ public class HelpChatEntity extends BaseEntity {
                 .helpRequestId(helpChat.helpRequestId())
                 .helpRequestUserId(helpChat.helpRequestUserId())
                 .helpAnswerUserId(helpChat.helpAnswerUserId())
+                .latestMessage(helpChat.latestMessage())
+                .latestMessageTime(helpChat.latestMessageTime())
                 .build();
     }
 
@@ -55,6 +67,8 @@ public class HelpChatEntity extends BaseEntity {
                 .helpRequestId(this.helpRequestId)
                 .helpRequestUserId(this.helpRequestUserId)
                 .helpAnswerUserId(this.helpAnswerUserId)
+                .latestMessage(this.latestMessage)
+                .latestMessageTime(this.latestMessageTime)
                 .createdAt(this.getCreatedAt())
                 .build();
     }
