@@ -3,6 +3,7 @@ package com.tinyhuman.tinyhumanapi.helpchat.service;
 import com.tinyhuman.tinyhumanapi.auth.controller.port.AuthService;
 import com.tinyhuman.tinyhumanapi.helpchat.controller.port.HelpChatService;
 import com.tinyhuman.tinyhumanapi.helpchat.controller.port.dto.HelpChatCreate;
+import com.tinyhuman.tinyhumanapi.helpchat.controller.port.dto.HelpChatLatestMessage;
 import com.tinyhuman.tinyhumanapi.helpchat.controller.port.dto.HelpChatResponse;
 import com.tinyhuman.tinyhumanapi.helpchat.domain.HelpChat;
 import com.tinyhuman.tinyhumanapi.helpchat.domain.HelpRequest;
@@ -59,6 +60,18 @@ public class HelpChatServiceImpl implements HelpChatService {
         }
 
         return helpChatResponseWithRequest;
+    }
+
+    @Override
+    public void updateLatestMessage(Long helpChatId, HelpChatLatestMessage helpChatLatestMessage) {
+        HelpChat helpChat = helpChatRepository.findById(helpChatId)
+                .orElseThrow(() -> {
+                    log.error("ResourceNotFoundException(HelpChat) - HelpChat:{}", helpChatId);
+                    return null;
+                });
+
+        HelpChat messageUpdatedHelpChat = helpChat.addLatestMessage(helpChatLatestMessage);
+        helpChatRepository.save(messageUpdatedHelpChat);
     }
 
     @Override

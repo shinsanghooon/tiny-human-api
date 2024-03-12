@@ -12,4 +12,6 @@ public interface HelpChatRepository {
 
     Optional<HelpChat> findById(Long id);
 
+    Optional<HelpChat> findByHelpRequestIdAndHelpRequestUserIdAndHelpAnswerUserId(Long requestId, Long requestUserId, Long answerUserId);
+
 }

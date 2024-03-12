@@ -2,10 +2,7 @@ package com.tinyhuman.tinyhumanapi.helpchat.controller;
 
 import com.tinyhuman.tinyhumanapi.helpchat.controller.port.HelpChatService;
 import com.tinyhuman.tinyhumanapi.helpchat.controller.port.HelpRequestService;
-import com.tinyhuman.tinyhumanapi.helpchat.controller.port.dto.HelpChatCreate;
-import com.tinyhuman.tinyhumanapi.helpchat.controller.port.dto.HelpChatResponse;
-import com.tinyhuman.tinyhumanapi.helpchat.controller.port.dto.HelpRequestCreate;
-import com.tinyhuman.tinyhumanapi.helpchat.controller.port.dto.HelpRequestResponse;
+import com.tinyhuman.tinyhumanapi.helpchat.controller.port.dto.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.Builder;
 import org.springframework.http.HttpStatus;
@@ -55,5 +52,14 @@ public class HelpChatController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(helpChatService.getHelpChats());
+    }
+
+    @PatchMapping("{id}")
+    public ResponseEntity<Void> updateLatestMessage(@PathVariable("id") Long helpChatId,
+                                                    @RequestBody HelpChatLatestMessage helpChatLatestMessage){
+        helpChatService.updateLatestMessage(helpChatId, helpChatLatestMessage);
+        return ResponseEntity
+                .status(HttpStatus.NO_CONTENT)
+                .build();
     }
 }

@@ -53,6 +53,7 @@ public class HelpChatEntity extends BaseEntity {
 
     public static HelpChatEntity fromModel(HelpChat helpChat) {
         return HelpChatEntity.builder()
+                .id(helpChat.id())
                 .helpRequestId(helpChat.helpRequestId())
                 .helpRequestUserId(helpChat.helpRequestUserId())
                 .helpAnswerUserId(helpChat.helpAnswerUserId())

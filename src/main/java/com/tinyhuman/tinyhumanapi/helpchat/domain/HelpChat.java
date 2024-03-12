@@ -1,6 +1,7 @@
 package com.tinyhuman.tinyhumanapi.helpchat.domain;
 
 import com.tinyhuman.tinyhumanapi.helpchat.controller.port.dto.HelpChatCreate;
+import com.tinyhuman.tinyhumanapi.helpchat.controller.port.dto.HelpChatLatestMessage;
 import com.tinyhuman.tinyhumanapi.helpchat.controller.port.dto.HelpChatResponse;
 import lombok.Builder;
 
@@ -28,6 +29,18 @@ public record HelpChat(Long id, Long helpRequestId, Long helpRequestUserId, Long
                 .helpAnswerUserId(this.helpAnswerUserId)
                 .latestMessage(this.latestMessage)
                 .latestMessageTime(this.latestMessageTime)
+                .createdAt(this.createdAt)
+                .build();
+    }
+
+    public HelpChat addLatestMessage(HelpChatLatestMessage helpChatLatestMessage) {
+        return HelpChat.builder()
+                .id(this.id)
+                .helpRequestId(this.helpRequestId)
+                .helpRequestUserId(this.helpRequestUserId)
+                .helpAnswerUserId(this.helpAnswerUserId)
+                .latestMessage(helpChatLatestMessage.message())
+                .latestMessageTime(helpChatLatestMessage.messageTime())
                 .createdAt(this.createdAt)
                 .build();
     }

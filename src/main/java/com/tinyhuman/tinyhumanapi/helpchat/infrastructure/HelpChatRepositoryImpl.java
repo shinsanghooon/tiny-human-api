@@ -32,4 +32,10 @@ public class HelpChatRepositoryImpl implements HelpChatRepository {
         return helpChatJpaRepository.findById(id).map(HelpChatEntity::toModel);
     }
 
+    @Override
+    public Optional<HelpChat> findByHelpRequestIdAndHelpRequestUserIdAndHelpAnswerUserId(Long requestId, Long requestUserId, Long answerUserId) {
+        return helpChatJpaRepository.findByHelpRequestIdAndHelpRequestUserIdAndHelpAnswerUserId(requestId, requestUserId, answerUserId)
+                .map(HelpChatEntity::toModel);
+    }
+
 }
