@@ -42,8 +42,27 @@ public class FirebasePushService implements PushService {
         List<UserPushToken> targetUserTokens = userPushTokenRepository.findByUserIds(targetUserIds);
         List<String> registrationTokens = targetUserTokens.stream().map(UserPushToken::fcmToken).toList();
 
+        sendMultiMessageWithTokens("도움이 필요해요!", contents, registrationTokens);
+    }
+
+    @Override
+    public void pushMessageToUser(Long fromUserId, Long toUserId, String contents) {
+
+        userRepository.findById(toUserId)
+                .orElseThrow(() -> {
+                    log.error("ResourceNotFoundException(User) - toUserId:{}", toUserId);
+                    return null;
+                });
+
+        List<UserPushToken> toUserTokens = userPushTokenRepository.findByUserId(toUserId);
+        List<String> registrationTokens = toUserTokens.stream().map(UserPushToken::fcmToken).toList();
+
+        sendMultiMessageWithTokens("메시지가 도착했습니다.", contents, registrationTokens);
+    }
+
+    private void sendMultiMessageWithTokens(String pushTitle, String contents, List<String> registrationTokens) {
         Notification notification = Notification.builder()
-                .setTitle("도움이 필요해요!")
+                .setTitle(pushTitle)
                 .setBody(contents)
                 .build();
 
@@ -72,7 +91,5 @@ public class FirebasePushService implements PushService {
         } catch (FirebaseMessagingException e) {
             log.error(e.getMessage());
         }
-
-
     }
 }

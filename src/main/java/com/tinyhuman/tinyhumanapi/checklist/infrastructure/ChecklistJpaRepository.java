@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public interface ChecklistJpaRepository extends JpaRepository<ChecklistEntity, Long> {
 
-    List<ChecklistEntity> findByUserId(Long userId);
+    List<ChecklistEntity> findByUserIdOrderByCreatedAtDesc(Long userId);
 
     Optional<ChecklistEntity> findByIdAndUserId(Long id, Long userID);
 }

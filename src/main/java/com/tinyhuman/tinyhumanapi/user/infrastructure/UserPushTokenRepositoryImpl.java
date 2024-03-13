@@ -25,6 +25,11 @@ public class UserPushTokenRepositoryImpl implements UserPushTokenRepository {
     }
 
     @Override
+    public List<UserPushToken> findByUserId(Long userId) {
+        return userPushTokenJpaRepository.findByUserId(userId).stream().map(UserPushTokenEntity::toModel).toList();
+    }
+
+    @Override
     public List<UserPushToken> findByUserIds(List<Long> userIds) {
         return userPushTokenJpaRepository.findByUserIdIn(userIds).stream().map(UserPushTokenEntity::toModel).toList();
     }

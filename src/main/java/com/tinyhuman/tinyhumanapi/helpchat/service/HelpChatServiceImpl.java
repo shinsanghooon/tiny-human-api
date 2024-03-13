@@ -9,6 +9,7 @@ import com.tinyhuman.tinyhumanapi.helpchat.domain.HelpChat;
 import com.tinyhuman.tinyhumanapi.helpchat.domain.HelpRequest;
 import com.tinyhuman.tinyhumanapi.helpchat.service.port.HelpChatRepository;
 import com.tinyhuman.tinyhumanapi.helpchat.service.port.HelpRequestRepository;
+import com.tinyhuman.tinyhumanapi.integration.service.port.PushService;
 import com.tinyhuman.tinyhumanapi.user.domain.User;
 import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
@@ -28,11 +29,14 @@ public class HelpChatServiceImpl implements HelpChatService {
 
     private final HelpRequestRepository helpRequestRepository;
 
+    private final PushService pushService;
+
     @Builder
-    public HelpChatServiceImpl(AuthService authService, HelpChatRepository helpChatRepository, HelpRequestRepository helpRequestRepository) {
+    public HelpChatServiceImpl(AuthService authService, HelpChatRepository helpChatRepository, HelpRequestRepository helpRequestRepository, PushService pushService) {
         this.authService = authService;
         this.helpChatRepository = helpChatRepository;
         this.helpRequestRepository = helpRequestRepository;
+        this.pushService = pushService;
     }
 
     @Override
@@ -64,6 +68,8 @@ public class HelpChatServiceImpl implements HelpChatService {
 
     @Override
     public void updateLatestMessage(Long helpChatId, HelpChatLatestMessage helpChatLatestMessage) {
+        User user = authService.getUserOutOfSecurityContextHolder();
+
         HelpChat helpChat = helpChatRepository.findById(helpChatId)
                 .orElseThrow(() -> {
                     log.error("ResourceNotFoundException(HelpChat) - HelpChat:{}", helpChatId);
@@ -72,6 +78,23 @@ public class HelpChatServiceImpl implements HelpChatService {
 
         HelpChat messageUpdatedHelpChat = helpChat.addLatestMessage(helpChatLatestMessage);
         helpChatRepository.save(messageUpdatedHelpChat);
+
+        Long helpAnswerUserId = helpChatLatestMessage.helpAnswerUserId();
+        Long helpRequestUserId = helpChatLatestMessage.helpRequestUserId();
+        Long userId = user.id();
+
+        Long toUserId;
+        if (userId == helpAnswerUserId) {
+            toUserId = helpRequestUserId;
+        } else {
+            toUserId = helpAnswerUserId;
+        }
+
+        pushService.pushMessageToUser(userId, toUserId, helpChatLatestMessage.message());
+
+
+
+
     }
 
     @Override

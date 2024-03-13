@@ -10,6 +10,7 @@ public interface UserPushTokenRepository {
     UserPushToken save(UserPushToken userPushToken);
     Optional<UserPushToken> findByUserIdAndAndDeviceInfo(Long userId, String deviceInfo);
 
+    List<UserPushToken> findByUserId(Long userId);
     List<UserPushToken> findByUserIds(List<Long> userIds);
 
 }

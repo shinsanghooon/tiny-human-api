@@ -22,7 +22,7 @@ public class ChecklistRepositoryImpl implements ChecklistRepository {
 
     @Override
     public List<Checklist> findByUserId(Long userId) {
-        return checklistJpaRepository.findByUserId(userId).stream()
+        return checklistJpaRepository.findByUserIdOrderByCreatedAtDesc(userId).stream()
                 .map(ChecklistEntity::toModel)
                 .toList();
     }
