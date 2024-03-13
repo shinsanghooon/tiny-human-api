@@ -32,5 +32,18 @@ public record User(
                 .build();
     }
 
+    public User addLastLoginAt(){
+        return User.builder()
+                .id(this.id)
+                .name(this.name)
+                .email(this.email)
+                .password(this.password)
+                .status(this.status)
+                .socialMedia(this.socialMedia)
+                .lastLoginAt(LocalDateTime.now())
+                .isDeleted(this.isDeleted)
+                .build();
+    }
+
 
 }

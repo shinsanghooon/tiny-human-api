@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -65,6 +66,9 @@ public class AuthServiceImpl implements AuthService {
                     log.error("ResourceNotFoundException(User) - userEmail:{}", email);
                     return new ResourceNotFoundException("User", " " + email);
                 });
+
+        User userWithLastLoginAt = user.addLastLoginAt();
+        userRepository.save(userWithLastLoginAt);
 
         TokenResponse tokenResponse = customTokenProvider.generationToken(user, Duration.ofHours(1));
 
@@ -139,8 +143,12 @@ public class AuthServiceImpl implements AuthService {
                     .password(accessToken)
                     .status(UserStatus.ACTIVE)
                     .socialMedia(SocialMedia.GOOGLE)
+                    .lastLoginAt(LocalDateTime.now())
                     .build());
         }
+
+        User userWithLastLoginAt = user.addLastLoginAt();
+        userRepository.save(userWithLastLoginAt);
 
         TokenResponse tokenResponse = customTokenProvider.generationToken(user, Duration.ofHours(1));
 
