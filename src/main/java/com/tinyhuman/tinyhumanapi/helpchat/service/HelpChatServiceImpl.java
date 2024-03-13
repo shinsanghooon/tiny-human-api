@@ -91,10 +91,6 @@ public class HelpChatServiceImpl implements HelpChatService {
         }
 
         pushService.pushMessageToUser(userId, toUserId, helpChatLatestMessage.message());
-
-
-
-
     }
 
     @Override

@@ -42,6 +42,7 @@ public class FirebasePushService implements PushService {
         List<UserPushToken> targetUserTokens = userPushTokenRepository.findByUserIds(targetUserIds);
         List<String> registrationTokens = targetUserTokens.stream().map(UserPushToken::fcmToken).toList();
 
+        System.out.println("Create Chat Room");
         sendMultiMessageWithTokens("도움이 필요해요!", contents, registrationTokens);
     }
 
@@ -54,9 +55,12 @@ public class FirebasePushService implements PushService {
                     return null;
                 });
 
+        System.out.println("fromUserId = " + fromUserId);
+        System.out.println("toUserId = " + toUserId);
         List<UserPushToken> toUserTokens = userPushTokenRepository.findByUserId(toUserId);
         List<String> registrationTokens = toUserTokens.stream().map(UserPushToken::fcmToken).toList();
 
+        System.out.println("Create Chat");
         sendMultiMessageWithTokens("메시지가 도착했습니다.", contents, registrationTokens);
     }
 
