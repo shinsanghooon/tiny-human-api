@@ -11,4 +11,6 @@ public interface UserPushTokenJpaRepository extends JpaRepository<UserPushTokenE
 
     Optional<UserPushTokenEntity> findByUserIdAndAndDeviceInfo(Long userId, String deviceInfo);
 
+    List<UserPushTokenEntity> findByUserIdIn(List<Long> userIds);
+
 }

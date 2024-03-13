@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Where;
 
 import java.time.LocalDateTime;
@@ -32,6 +33,7 @@ public class HelpChatEntity extends BaseEntity {
     private Long helpAnswerUserId;
 
     @Column(name = "latest_message")
+    @ColumnDefault("대화 중인 채팅이 없습니다.")
     private String latestMessage;
 
     @Column(name = "latest_message_time")

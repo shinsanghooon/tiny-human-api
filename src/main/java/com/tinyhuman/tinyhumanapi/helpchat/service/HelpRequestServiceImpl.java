@@ -6,6 +6,7 @@ import com.tinyhuman.tinyhumanapi.helpchat.controller.port.dto.HelpRequestRespon
 import com.tinyhuman.tinyhumanapi.helpchat.controller.port.dto.HelpRequestCreate;
 import com.tinyhuman.tinyhumanapi.helpchat.domain.HelpRequest;
 import com.tinyhuman.tinyhumanapi.helpchat.service.port.HelpRequestRepository;
+import com.tinyhuman.tinyhumanapi.integration.service.port.PushService;
 import com.tinyhuman.tinyhumanapi.user.domain.User;
 import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
@@ -23,10 +24,13 @@ public class HelpRequestServiceImpl implements HelpRequestService {
 
     private final HelpRequestRepository helpRequestRepository;
 
+    private final PushService pushService;
+
     @Builder
-    public HelpRequestServiceImpl(AuthService authService, HelpRequestRepository helpRequestRepository) {
+    public HelpRequestServiceImpl(AuthService authService, HelpRequestRepository helpRequestRepository, PushService pushService) {
         this.authService = authService;
         this.helpRequestRepository = helpRequestRepository;
+        this.pushService = pushService;
     }
 
     @Override
@@ -37,6 +41,7 @@ public class HelpRequestServiceImpl implements HelpRequestService {
         }
 
         HelpRequest savedHelpRequest = helpRequestRepository.save(HelpRequest.fromCreate(helpRequestCreate));
+        pushService.pushMessage(user.id(), helpRequestCreate.requestType(), helpRequestCreate.contents());
         return savedHelpRequest.toResponse();
     }
 
