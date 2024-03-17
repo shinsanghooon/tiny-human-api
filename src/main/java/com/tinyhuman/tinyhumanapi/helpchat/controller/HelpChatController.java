@@ -33,6 +33,13 @@ public class HelpChatController {
                 .body(helpRequestService.register(helpRequestCreate));
     }
 
+    @GetMapping("help-request/all")
+    public ResponseEntity<List<HelpRequestResponse>> getHelpAllRequests() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(helpRequestService.getHelpAllRequest());
+    }
+
     @GetMapping("help-request")
     public ResponseEntity<List<HelpRequestResponse>> getHelpRequests() {
         return ResponseEntity

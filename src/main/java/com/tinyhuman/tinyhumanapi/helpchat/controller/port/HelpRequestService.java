@@ -12,7 +12,10 @@ public interface HelpRequestService {
 
     List<HelpRequestResponse> getHelpRequest();
 
+    List<HelpRequestResponse> getHelpAllRequest();
+
     HelpRequestResponse update(HelpRequest helpRequest);
 
     void delete(Long id);
+
 }

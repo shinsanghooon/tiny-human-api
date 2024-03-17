@@ -1,6 +1,7 @@
 package com.tinyhuman.tinyhumanapi.helpchat.service;
 
 import com.tinyhuman.tinyhumanapi.auth.controller.port.AuthService;
+import com.tinyhuman.tinyhumanapi.common.exception.ResourceNotFoundException;
 import com.tinyhuman.tinyhumanapi.helpchat.controller.port.HelpChatService;
 import com.tinyhuman.tinyhumanapi.helpchat.controller.port.dto.HelpChatCreate;
 import com.tinyhuman.tinyhumanapi.helpchat.controller.port.dto.HelpChatLatestMessage;
@@ -42,7 +43,13 @@ public class HelpChatServiceImpl implements HelpChatService {
     @Override
     public HelpChatResponse register(HelpChatCreate HelpChatCreate) {
         HelpChat savedHelpChat = helpChatRepository.save(HelpChat.fromCreate(HelpChatCreate));
-        return savedHelpChat.toResponse();
+        HelpRequest helpRequest = helpRequestRepository.findById(savedHelpChat.helpRequestId())
+                .orElseThrow(() -> {
+                    log.error("ResourceNotFoundException(HelpRequest) - HelpRequest:{}", savedHelpChat.helpRequestId());
+                    return new ResourceNotFoundException("HelpRequest", savedHelpChat.helpRequestId());
+                });
+        HelpChatResponse response = savedHelpChat.toResponse();
+        return response.addHelpRequest(helpRequest.toResponse());
     }
 
     @Override
@@ -73,7 +80,7 @@ public class HelpChatServiceImpl implements HelpChatService {
         HelpChat helpChat = helpChatRepository.findById(helpChatId)
                 .orElseThrow(() -> {
                     log.error("ResourceNotFoundException(HelpChat) - HelpChat:{}", helpChatId);
-                    return null;
+                    return new ResourceNotFoundException("HelpChat", helpChatId);
                 });
 
         HelpChat messageUpdatedHelpChat = helpChat.addLatestMessage(helpChatLatestMessage);

@@ -9,5 +9,7 @@ public interface HelpRequestJpaRepository extends JpaRepository<HelpRequestEntit
 
     List<HelpRequestEntity> findByUserId(Long userId);
 
+    List<HelpRequestEntity> findByUserIdNot(Long userId);
+
     Optional<HelpRequestEntity> findByIdAndUserId(Long id, Long userID);
 }

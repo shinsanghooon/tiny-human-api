@@ -19,6 +19,7 @@ public record HelpChat(Long id, Long helpRequestId, Long helpRequestUserId, Long
                 .helpRequestId(helpChatCreate.helpRequestId())
                 .helpRequestUserId(helpChatCreate.helpRequestUserId())
                 .helpAnswerUserId(helpChatCreate.helpAnswerUserId())
+                .latestMessageTime(LocalDateTime.now())
                 .build();
     }
     public HelpChatResponse toResponse() {

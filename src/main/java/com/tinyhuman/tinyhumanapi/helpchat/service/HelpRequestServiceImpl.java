@@ -50,6 +50,10 @@ public class HelpRequestServiceImpl implements HelpRequestService {
         User user = authService.getUserOutOfSecurityContextHolder();
         return helpRequestRepository.findByUserId(user.id()).stream().map(HelpRequest::toResponse).toList();
     }
+    @Override
+    public List<HelpRequestResponse> getHelpAllRequest() {
+        return helpRequestRepository.findAll().stream().map(HelpRequest::toResponse).toList();
+    }
 
     @Override
     public HelpRequestResponse update(HelpRequest helpRequest) {
@@ -60,4 +64,5 @@ public class HelpRequestServiceImpl implements HelpRequestService {
     public void delete(Long id) {
 
     }
+
 }

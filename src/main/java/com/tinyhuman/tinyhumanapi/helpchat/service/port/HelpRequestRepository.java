@@ -10,6 +10,10 @@ public interface HelpRequestRepository {
 
     List<HelpRequest> findByUserId(Long userId);
 
+//    List<HelpRequest> findByUserIdNot(Long userId);
+
+    List<HelpRequest> findAll();
+
     Optional<HelpRequest> findById(Long id);
 
     Optional<HelpRequest> findByIdAndUserId(Long id, Long userId);

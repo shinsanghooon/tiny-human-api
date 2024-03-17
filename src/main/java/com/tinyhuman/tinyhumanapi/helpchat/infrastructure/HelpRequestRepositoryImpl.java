@@ -28,6 +28,13 @@ public class HelpRequestRepositoryImpl implements HelpRequestRepository {
     }
 
     @Override
+    public List<HelpRequest> findAll() {
+        return helpRequestJpaRepository.findAll().stream()
+                .map(HelpRequestEntity::toModel)
+                .toList();
+    }
+
+    @Override
     public Optional<HelpRequest> findById(Long id) {
         return helpRequestJpaRepository.findById(id).map(HelpRequestEntity::toModel);
     }
