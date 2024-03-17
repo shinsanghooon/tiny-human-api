@@ -23,6 +23,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -89,7 +91,13 @@ public class AlbumServiceImpl implements AlbumService {
                 .map(AlbumResponse::fromModel)
                 .toList();
 
-        long nextKey = getNextKey(albumResponses);
+        long nextKey;
+        if (order.equals("uploadedAt")) {
+            nextKey = getNextKey(albumResponses);
+        } else {
+            nextKey = getOriginalCreatedAtNextKey(albumResponses);
+        }
+
         return new PageCursor<>(cursorRequest.next(nextKey), albumResponses);
     }
 
@@ -97,6 +105,20 @@ public class AlbumServiceImpl implements AlbumService {
         return albumResponses.stream()
                 .mapToLong(AlbumResponse::id)
                 .min()
+                .orElse(CursorRequest.NONE_KEY);
+    }
+
+    private static long getOriginalCreatedAtNextKey(List<AlbumResponse> albumResponses) {
+        List<Long> originalCreatedAt = albumResponses.stream()
+                .map(albumResponse -> {
+                    ZoneId zoneId = ZoneId.systemDefault(); // 시스템 기본 시간대
+
+                    ZonedDateTime zonedDateTime = albumResponse.originalCreatedAt().atZone(zoneId);
+                    return zonedDateTime.toEpochSecond();
+                }).toList();
+
+        return originalCreatedAt.stream()
+                .min(Long::compare)
                 .orElse(CursorRequest.NONE_KEY);
     }
 

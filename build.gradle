@@ -47,6 +47,9 @@ dependencies {
     // swagger
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2'
 
+    // fireabase
+    implementation 'com.google.firebase:firebase-admin:9.2.0'
+
     annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'

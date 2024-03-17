@@ -68,6 +68,7 @@ public class ChecklistEntity extends BaseEntity {
         return Checklist.builder()
                 .id(this.id)
                 .title(this.title)
+                .createdAt(this.getCreatedAt())
                 .user(this.user.toModel())
                 .isDeleted(this.isDeleted)
                 .checklistDetails(this.checklistDetails.stream().map(ChecklistDetailEntity::toModel).toList())

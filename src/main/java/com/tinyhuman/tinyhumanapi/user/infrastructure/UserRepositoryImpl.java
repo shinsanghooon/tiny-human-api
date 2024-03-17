@@ -4,8 +4,11 @@ import com.tinyhuman.tinyhumanapi.auth.eum.SocialMedia;
 import com.tinyhuman.tinyhumanapi.user.domain.User;
 import com.tinyhuman.tinyhumanapi.user.service.port.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -42,6 +45,15 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public boolean existsByEmailAndSocialMedia(String email, SocialMedia socialMedia) {
         return userJpaRepository.existsByEmailAndSocialMedia(email, socialMedia);
+    }
+
+    @Override
+    public List<User> findRandomUser(int limit) {
+        PageRequest pageRequest = PageRequest.of(0, limit, Sort.by("lastLoginAt").descending());
+        return userJpaRepository.findAllByOrderByLastLoginAtDesc(pageRequest).getContent()
+                .stream()
+                .map(UserEntity::toModel
+                ).toList();
     }
 
 }

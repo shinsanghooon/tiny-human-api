@@ -5,9 +5,10 @@ import com.tinyhuman.tinyhumanapi.checklist.controller.port.dto.ChecklistRespons
 import com.tinyhuman.tinyhumanapi.user.domain.User;
 import lombok.Builder;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
-public record Checklist(Long id, String title, User user, List<ChecklistDetail> checklistDetails, boolean isDeleted) {
+public record Checklist(Long id, String title, LocalDateTime createdAt, User user, List<ChecklistDetail> checklistDetails, boolean isDeleted) {
 
     @Builder
     public Checklist {
@@ -27,6 +28,7 @@ public record Checklist(Long id, String title, User user, List<ChecklistDetail> 
         return Checklist.builder()
                 .id(this.id)
                 .title(this.title)
+                .createdAt(this.createdAt)
                 .user(this.user)
                 .checklistDetails(checklistDetails)
                 .build();
@@ -36,6 +38,7 @@ public record Checklist(Long id, String title, User user, List<ChecklistDetail> 
         return Checklist.builder()
                 .id(this.id)
                 .title(this.title)
+                .createdAt(this.createdAt)
                 .user(this.user)
                 .checklistDetails(this.checklistDetails)
                 .isDeleted(true)
@@ -46,6 +49,7 @@ public record Checklist(Long id, String title, User user, List<ChecklistDetail> 
         return ChecklistResponse.builder()
                 .id(this.id)
                 .title(this.title)
+                .createdAt(this.createdAt)
                 .checklistDetail(this.checklistDetails().stream().map(ChecklistDetail::toResponseModel).toList())
                 .build();
     }

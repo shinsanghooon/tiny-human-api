@@ -17,5 +17,4 @@ public interface AlbumRepository {
 
     List<Album> findByBabyId(Long babyId, CursorRequest cursorRequest, String order);
 
-
 }

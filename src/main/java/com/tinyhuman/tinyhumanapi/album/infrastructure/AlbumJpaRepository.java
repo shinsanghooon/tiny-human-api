@@ -4,6 +4,7 @@ package com.tinyhuman.tinyhumanapi.album.infrastructure;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -19,6 +20,8 @@ public interface AlbumJpaRepository extends JpaRepository<AlbumEntity, Long> {
     List<AlbumEntity> findByBabyIdAndIdLessThan(Long babyId, Long id, Pageable page);
 
     List<AlbumEntity> findByBabyIdAndIdLessThanOrderByOriginalCreatedAtDesc(Long babyId, Long id, Pageable page);
+
+    List<AlbumEntity> findByBabyIdAndOriginalCreatedAtBeforeOrderByOriginalCreatedAtDesc(Long babyId, LocalDateTime originalCreatedAt, Pageable page);
 
     List<AlbumEntity> findByBabyIdAndKeyNameIn(Long babyId, Set<String> keyName);
 

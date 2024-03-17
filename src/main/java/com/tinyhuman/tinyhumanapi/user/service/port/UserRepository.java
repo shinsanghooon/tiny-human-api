@@ -3,6 +3,7 @@ package com.tinyhuman.tinyhumanapi.user.service.port;
 import com.tinyhuman.tinyhumanapi.auth.eum.SocialMedia;
 import com.tinyhuman.tinyhumanapi.user.domain.User;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository {
@@ -18,4 +19,6 @@ public interface UserRepository {
     boolean existsByEmail(String email);
 
     boolean existsByEmailAndSocialMedia(String email, SocialMedia socialMedia);
+
+    List<User> findRandomUser(int limit);
 }

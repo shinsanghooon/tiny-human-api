@@ -11,9 +11,11 @@ import com.tinyhuman.tinyhumanapi.common.utils.CursorRequest;
 import com.tinyhuman.tinyhumanapi.common.utils.PageCursor;
 import com.tinyhuman.tinyhumanapi.diary.controller.port.DiaryService;
 import com.tinyhuman.tinyhumanapi.diary.controller.port.dto.*;
+import com.tinyhuman.tinyhumanapi.diary.domain.CounselorLetter;
 import com.tinyhuman.tinyhumanapi.diary.domain.Diary;
 import com.tinyhuman.tinyhumanapi.diary.domain.Picture;
 import com.tinyhuman.tinyhumanapi.diary.domain.Sentence;
+import com.tinyhuman.tinyhumanapi.diary.service.port.CounselorLetterRepository;
 import com.tinyhuman.tinyhumanapi.diary.service.port.DiaryRepository;
 import com.tinyhuman.tinyhumanapi.diary.service.port.PictureRepository;
 import com.tinyhuman.tinyhumanapi.diary.service.port.SentenceRepository;
@@ -56,6 +58,8 @@ public class DiaryServiceImpl implements DiaryService {
 
     private final UserBabyRelationRepository userBabyRelationRepository;
 
+    private final CounselorLetterRepository counselorLetterJpaRepository;
+
     private final AuthService authService;
 
     private final UuidHolder uuidHolder;
@@ -63,7 +67,7 @@ public class DiaryServiceImpl implements DiaryService {
     @Builder
     public DiaryServiceImpl(DiaryRepository diaryRepository, SentenceRepository sentenceRepository, PictureRepository pictureRepository,
                             BabyRepository babyRepository, UserRepository userRepository, ImageService imageService,
-                            UserBabyRelationRepository userBabyRelationRepository, AuthService authService, UuidHolder uuidHolder) {
+                            UserBabyRelationRepository userBabyRelationRepository, CounselorLetterRepository counselorLetterJpaRepository, AuthService authService, UuidHolder uuidHolder) {
         this.diaryRepository = diaryRepository;
         this.sentenceRepository = sentenceRepository;
         this.pictureRepository = pictureRepository;
@@ -71,6 +75,7 @@ public class DiaryServiceImpl implements DiaryService {
         this.userRepository = userRepository;
         this.imageService = imageService;
         this.userBabyRelationRepository = userBabyRelationRepository;
+        this.counselorLetterJpaRepository = counselorLetterJpaRepository;
         this.authService = authService;
         this.uuidHolder = uuidHolder;
     }
@@ -173,8 +178,30 @@ public class DiaryServiceImpl implements DiaryService {
                 .map(DiaryResponse::fromModel)
                 .toList();
 
+        List<CounselorLetter> counselorLetters = counselorLetterJpaRepository.findByBabyId(babyId);
+
+        // DiaryResponse 리스트 업데이트
+        List<DiaryResponse> diaryResponsesWithLetter = diaryResponses.stream()
+                .map(diaryResponse -> {
+                    // CounselorLetter 리스트에서 일치하는 diaryId 찾기
+                    String letter = counselorLetters.stream()
+                            .filter(counselorLetter -> counselorLetter.diaryId().equals(diaryResponse.id()))
+                            .findFirst()
+                            .map(CounselorLetter::contents)
+                            .orElse(diaryResponse.letter()); // 일치하는 항목이 없으면 기존 값을 사용
+
+                    // 새로운 DiaryResponse 인스턴스 생성
+                    return diaryResponse.addLetter(letter);
+                })
+                .toList();
+
+        // 결과 출력
+        diaryResponsesWithLetter.forEach(diaryResponse -> {
+            System.out.println("Diary ID: " + diaryResponse.id() + ", Letter: " + diaryResponse.letter());
+        });
+
         long nextKey = getNextKey(diaryResponses);
-        return new PageCursor<>(cursorRequest.next(nextKey), diaryResponses);
+        return new PageCursor<>(cursorRequest.next(nextKey), diaryResponsesWithLetter);
     }
 
     private static long getNextKey(List<DiaryResponse> diaryResponses) {
