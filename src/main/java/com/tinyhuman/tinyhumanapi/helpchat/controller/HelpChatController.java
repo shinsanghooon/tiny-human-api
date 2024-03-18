@@ -54,6 +54,13 @@ public class HelpChatController {
                 .body(helpChatService.register(helpChatCreate));
     }
 
+    @GetMapping("{id}")
+    public ResponseEntity<HelpChatResponse> getHelpChat(@PathVariable("id") Long helpChatId) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(helpChatService.getHelpChat(helpChatId));
+    }
+
     @GetMapping()
     public ResponseEntity<List<HelpChatResponse>> getHelpChats() {
         return ResponseEntity

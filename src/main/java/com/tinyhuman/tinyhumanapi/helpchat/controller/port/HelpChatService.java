@@ -16,4 +16,6 @@ public interface HelpChatService {
     void updateLatestMessage(Long hepRequestId, HelpChatLatestMessage helpChatLatestMessage);
 
     void delete(Long id);
+
+    HelpChatResponse getHelpChat(Long helpChatId);
 }
