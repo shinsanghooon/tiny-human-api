@@ -1,10 +1,24 @@
 spring:
-  profiles.active: local
+  profiles.active: dev
+
 ---
 spring:
   config:
     activate:
-      on-profile: local
+      on-profile: dev
+    import: 'aws-parameterstore:/tinyhuman/'
+  cloud:
+    aws:
+      parameterstore:
+        region: ap-northeast-2
+  datasource:
+    url: ${db_uri}
+    username: ${db_user}
+    password: ${db_pw}
+    hikari:
+      max-lifetime: 56000
+      connection-timeout: 2000
+    driver-class-name: org.mariadb.jdbc.Driver
   jpa:
     hibernate:
       ddl-auto: update
@@ -20,13 +34,20 @@ spring:
     multipart:
       max-file-size: 15MB
       max-request-size: 300MB
-aws:
-  s3:
-    raw-bucketName: tiny-human-dev
-    thumbnail-bucketName: tiny-human-thumbnail-dev
-jwt:
-  issuer: abc@tinyhuman.com
-  secret_key: gqe213bfl3quh2
 logging:
   level:
     org.hibernate.sql: debug
+    org.springframework.cloud: DEBUG
+    io:
+      awspring:
+        cloud:
+          paramstore: DEBUG
+aws:
+  accessKeyId: ${access_key_id}
+  secretAccessKey: ${secret_access_key}
+  s3:
+    raw-bucketName: tiny-human-local
+    thumbnail-bucketName: tiny-human-thumbnail-local
+jwt:
+  issuer: abc@tinyhuman.com
+  secret_key: ${jwt_secret_key}
