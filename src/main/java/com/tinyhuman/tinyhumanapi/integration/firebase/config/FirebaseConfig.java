@@ -15,7 +15,7 @@ public class FirebaseConfig {
 
     @Bean
     FirebaseMessaging firebaseMessaging() throws IOException {
-        FileInputStream serviceAccount = new FileInputStream("tiny-human-firebase-adminsdk-ngube-b177991707.json");
+        FileInputStream serviceAccount = new FileInputStream("firebase_admin_sdk.json");
         FirebaseOptions.Builder optionBuilder = FirebaseOptions.builder();
         FirebaseOptions options = optionBuilder
                 .setCredentials(GoogleCredentials.fromStream(serviceAccount))

@@ -15,7 +15,7 @@ ARG ARTIFACT_NAME=app.jar
 ARG JAR_FILE_PATH=build/libs/tiny-human-api-0.0.1-SNAPSHOT.jar
 WORKDIR $APP_HOME
 COPY --from=build $APP_HOME/$JAR_FILE_PATH $ARTIFACT_NAME
-COPY tiny-human-firebase-adminsdk-ngube-b177991707.json $APP_HOME/
+COPY firebase_admin_sdk.json $APP_HOME/
 
 EXPOSE 8080
 
