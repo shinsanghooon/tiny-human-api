@@ -12,7 +12,7 @@
     <property name="MAX_FILE_SIZE" value="10MB"/>
     <property name="MAX_HISTORY" value="30"/>
 
-    <springProfile name="local, dev">
+    <springProfile name="local, dev, prod">
         <!-- CONSOLE -->
         <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
             <!-- 출력 패턴 -->
