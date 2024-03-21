@@ -104,4 +104,21 @@ public class HelpChatServiceImpl implements HelpChatService {
     public void delete(Long id) {
 
     }
+
+    @Override
+    public HelpChatResponse getHelpChat(Long helpChatId) {
+        HelpChat helpChat = helpChatRepository.findById(helpChatId)
+                .orElseThrow(() -> {
+                    log.error("ResourceNotFoundException(HelpChat) - HelpChat:{}", helpChatId);
+                    return new ResourceNotFoundException("HelpChat", helpChatId);
+                });
+
+        HelpRequest helpRequest = helpRequestRepository.findById(helpChat.helpRequestId())
+                .orElseThrow(() -> {
+                    log.error("ResourceNotFoundException(HelpRequest) - HelpRequest:{}", helpChat.helpRequestId());
+                    return new ResourceNotFoundException("HelpRequest", helpChat.helpRequestId());
+                });
+        HelpChatResponse response = helpChat.toResponse();
+        return response.addHelpRequest(helpRequest.toResponse());
+    }
 }

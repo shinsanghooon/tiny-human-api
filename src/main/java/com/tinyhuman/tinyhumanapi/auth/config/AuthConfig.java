@@ -45,6 +45,7 @@ public class AuthConfig {
                                 .requestMatchers(HttpMethod.GET, "/api/v1/users/email/duplicate-check").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/api/v1/token").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/api/v1/token").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/health").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .formLogin(AbstractHttpConfigurer::disable)
