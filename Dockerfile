@@ -17,6 +17,8 @@ WORKDIR $APP_HOME
 COPY --from=build $APP_HOME/$JAR_FILE_PATH $ARTIFACT_NAME
 COPY firebase_admin_sdk.json $APP_HOME/
 
+RUN mkdir -p $APP_HOME/logs/error
+
 EXPOSE 8080
 
 ENTRYPOINT ["java", "-jar", "app.jar"]
