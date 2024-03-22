@@ -17,6 +17,31 @@
             "essential": true,
             "environment": [],
             "environmentFiles": [],
+            "secrets":[
+                    {
+                        "valueFrom": "arn:aws:ssm:ap-northeast-2:703031833039:parameter/tinyhuman/access_key_id",
+                        "name": "access_key_id"
+                    },
+                    {
+                        "valueFrom": "arn:aws:ssm:ap-northeast-2:703031833039:parameter/tinyhuman/db_pw",
+                        "name": "db_pw"
+                    },
+                    {
+                        "valueFrom": "arn:aws:ssm:ap-northeast-2:703031833039:parameter/tinyhuman/db_user",
+                        "name": "db_user"
+                    },
+                    {
+                        "valueFrom": "arn:aws:ssm:ap-northeast-2:703031833039:parameter/tinyhuman/db_uri",
+                        "name": "db_uri"
+                    },
+                    {
+                        "valueFrom": "arn:aws:ssm:ap-northeast-2:703031833039:parameter/tinyhuman/secret_access_key",
+                        "name": "secret_access_key"
+                    },
+                    {
+                        "valueFrom": "arn:aws:ssm:ap-northeast-2:703031833039:parameter/tinyhuman/jwt_secret_key",
+                        "name": "jwt_secret_key"
+                    }]
             "mountPoints": [],
             "volumesFrom": [],
             "ulimits": [],
