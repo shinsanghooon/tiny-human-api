@@ -51,8 +51,8 @@ dependencies {
     // fireabase
     implementation 'com.google.firebase:firebase-admin:9.2.0'
 
-    implementation 'org.springframework.cloud:spring-cloud-starter-bootstrap:4.1.0'
-    implementation 'io.awspring.cloud:spring-cloud-starter-aws-parameter-store-config:2.4.1'
+//    implementation 'org.springframework.cloud:spring-cloud-starter-bootstrap:4.1.0'
+//    implementation 'io.awspring.cloud:spring-cloud-starter-aws-parameter-store-config:2.4.1'
 
 
     annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"

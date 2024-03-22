@@ -15,10 +15,10 @@ import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 @Configuration
 public class AwsConfig {
 
-    @Value("${aws.accessKeyId}")
+    @Value("${spring.aws.accessKeyId}")
     private String awsAccessKeyId;
 
-    @Value("${aws.secretAccessKey}")
+    @Value("${spring.aws.secretAccessKey}")
     private String awsSecretAccessKey;
 
     @Bean

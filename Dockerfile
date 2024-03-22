@@ -21,4 +21,4 @@ RUN mkdir -p $APP_HOME/logs/error
 
 EXPOSE 8080
 
-ENTRYPOINT ["java", "-Dspring.profiles.active=dev", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-Dspring.profiles.active=local", "-jar", "app.jar"]

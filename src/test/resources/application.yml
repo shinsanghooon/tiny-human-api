@@ -14,16 +14,16 @@ spring:
       ddl-auto: create-drop
     defer-datasource-initialization: true
 
-aws:
-  s3:
-    raw-bucketName: tiny-human-dev
-    thumbnail-bucketName: tiny-human-thumbnail-dev
-  accessKeyId: 12345
-  secretAccessKey: 12345
+  aws:
+    s3:
+      raw-bucketName: tiny-human-dev
+      thumbnail-bucketName: tiny-human-thumbnail-dev
+    accessKeyId: 12345
+    secretAccessKey: 12345
 
-jwt:
-  issuer: abc@tinyhuman.com
-  secret_key: gqe213bfl3quh2
+  jwt:
+    issuer: abc@tinyhuman.com
+    secret_key: gqe213bfl3quh2
 
 
 

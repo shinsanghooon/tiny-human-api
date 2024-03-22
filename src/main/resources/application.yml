@@ -33,3 +33,6 @@ spring:
   jwt:
     issuer: abc@tinyhuman.com
     secretkey: ${JWT_SECRET_KEY}
+
+
+# docker run -p 8080:8080 -e SPRING_DATASOURCE_URL -e SPRING_DATASOURCE_USERNAME -e SPRING_DATASOURCE_PASSWORD -e SPRING_JWT_SECRETKEY -e SPRING_AWS_ACCESSKEYID -e SPRING_AWS_SECRETACCESSKEY tiny-human-api .
