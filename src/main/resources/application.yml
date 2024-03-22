@@ -43,6 +43,7 @@ logging:
         cloud:
           paramstore: DEBUG
 aws:
+  region: ap-northeast-2
   accessKeyId: ${access_key_id}
   secretAccessKey: ${secret_access_key}
   s3:
