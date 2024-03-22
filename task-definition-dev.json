@@ -20,27 +20,27 @@
             "secrets":[
                     {
                         "valueFrom": "arn:aws:ssm:ap-northeast-2:703031833039:parameter/tinyhuman/access_key_id",
-                        "name": "access_key_id"
-                    },
-                    {
-                        "valueFrom": "arn:aws:ssm:ap-northeast-2:703031833039:parameter/tinyhuman/db_pw",
-                        "name": "db_pw"
-                    },
-                    {
-                        "valueFrom": "arn:aws:ssm:ap-northeast-2:703031833039:parameter/tinyhuman/db_user",
-                        "name": "db_user"
-                    },
-                    {
-                        "valueFrom": "arn:aws:ssm:ap-northeast-2:703031833039:parameter/tinyhuman/db_uri",
-                        "name": "db_uri"
+                        "name": "SPRING_AWS_ACCESSKEYID"
                     },
                     {
                         "valueFrom": "arn:aws:ssm:ap-northeast-2:703031833039:parameter/tinyhuman/secret_access_key",
-                        "name": "secret_access_key"
+                        "name": "SPRING_AWS_SECRETACCESSKEY"
+                    },
+                    {
+                        "valueFrom": "arn:aws:ssm:ap-northeast-2:703031833039:parameter/tinyhuman/db_pw",
+                        "name": "SPRING_DATASOURCE_PASSWORD"
+                    },
+                    {
+                        "valueFrom": "arn:aws:ssm:ap-northeast-2:703031833039:parameter/tinyhuman/db_user",
+                        "name": "SPRING_DATASOURCE_USERNAME"
+                    },
+                    {
+                        "valueFrom": "arn:aws:ssm:ap-northeast-2:703031833039:parameter/tinyhuman/db_uri",
+                        "name": "SPRING_DATASOURCE_URL"
                     },
                     {
                         "valueFrom": "arn:aws:ssm:ap-northeast-2:703031833039:parameter/tinyhuman/jwt_secret_key",
-                        "name": "jwt_secret_key"
+                        "name": "SPRING_JWT_SECRETKEY"
                     }],
             "mountPoints": [],
             "volumesFrom": [],

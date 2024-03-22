@@ -1,20 +1,12 @@
 spring:
-  profiles.active: dev
+  profiles.active: local
 
 ---
 spring:
   config:
     activate:
-      on-profile: dev
-    import: 'aws-parameterstore:/tinyhuman/'
-  cloud:
-    aws:
-      parameterstore:
-        region: ap-northeast-2
+      on-profile: local
   datasource:
-    url: ${db_uri}
-    username: ${db_user}
-    password: ${db_pw}
     hikari:
       max-lifetime: 56000
       connection-timeout: 2000
@@ -30,25 +22,14 @@ spring:
     open-in-view: false
     defer-datasource-initialization: true
     generate-ddl: true
-  servlet:
-    multipart:
-      max-file-size: 15MB
-      max-request-size: 300MB
-logging:
-  level:
-    org.hibernate.sql: debug
-    org.springframework.cloud: DEBUG
-    io:
-      awspring:
-        cloud:
-          paramstore: DEBUG
-aws:
-  region: ap-northeast-2
-  accessKeyId: ${access_key_id}
-  secretAccessKey: ${secret_access_key}
-  s3:
-    raw-bucketName: tiny-human-local
-    thumbnail-bucketName: tiny-human-thumbnail-local
-jwt:
-  issuer: abc@tinyhuman.com
-  secret_key: ${jwt_secret_key}
+  logging:
+    level:
+      org.hibernate.sql: debug
+  aws:
+    region: ap-northeast-2
+    s3:
+      raw-bucketName: tiny-human-local
+      thumbnail-bucketName: tiny-human-thumbnail-local
+  jwt:
+    issuer: abc@tinyhuman.com
+    secretkey: ${JWT_SECRET_KEY}

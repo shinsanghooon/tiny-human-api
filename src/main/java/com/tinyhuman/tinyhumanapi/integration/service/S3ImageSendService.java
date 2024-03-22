@@ -15,7 +15,7 @@ import java.time.Duration;
 @RequiredArgsConstructor
 public class S3ImageSendService implements ImageService {
 
-    @Value("${aws.s3.raw-bucketName}")
+    @Value("${spring.aws.s3.raw-bucketName}")
     private String RAW_BUCKET_NAME;
 
     private final S3Presigner s3Presigner;
