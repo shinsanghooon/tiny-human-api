@@ -41,7 +41,7 @@
                     {
                         "valueFrom": "arn:aws:ssm:ap-northeast-2:703031833039:parameter/tinyhuman/jwt_secret_key",
                         "name": "jwt_secret_key"
-                    }]
+                    }],
             "mountPoints": [],
             "volumesFrom": [],
             "ulimits": [],
