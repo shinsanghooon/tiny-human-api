@@ -61,7 +61,7 @@
     "family": "tiny-human-api-server",
     "taskRoleArn": "arn:aws:iam::703031833039:role/ecs_task",
     "executionRoleArn": "arn:aws:iam::703031833039:role/ecs_task",
-    "networkMode": "awsvpc",
+    "networkMode": "bridge",
     "revision": 1,
     "volumes": [],
     "status": "ACTIVE",
