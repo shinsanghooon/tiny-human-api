@@ -35,7 +35,7 @@ env:
   ACTIVE_PROFILE: local
   AWS_REGION: ap-northeast-2                  
   ECR_REPOSITORY: 703031833039.dkr.ecr.ap-northeast-2.amazonaws.com/tiny-human-api          
-  ECS_SERVICE: tiny-human-api-ecs-service                 
+  ECS_SERVICE: tiny-human-api-service
   ECS_CLUSTER: tiny-human-api-cluster	                
   ECS_TASK_DEFINITION: task-definition-dev.json 
   CONTAINER_NAME: tiny-human-api           # set this to the name of the container in the
