@@ -1,5 +1,5 @@
 {
-    "faily": "tiny-human-api-server",
+    "family": "tiny-human-api-server",
     "containerDefinitions": [
         {
             "name": "tiny-human-api",
