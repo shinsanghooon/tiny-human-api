@@ -1,5 +1,5 @@
 {
-    "taskDefinitionArn": "arn:aws:ecs:ap-northeast-2:703031833039:task-definition/tiny-human-api-server:1",
+    "faily": "tiny-human-api-server",
     "containerDefinitions": [
         {
             "name": "tiny-human-api",
