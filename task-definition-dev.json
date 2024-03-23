@@ -1,5 +1,4 @@
 {
-    "family": "tiny-human-api-server",
     "containerDefinitions": [
         {
             "name": "tiny-human-api",
@@ -103,7 +102,7 @@
         "EC2"
     ],
     "cpu": "1024",
-    "memory": "3072",
+    "memory": "2048",
     "runtimePlatform": {
         "cpuArchitecture": "X86_64",
         "operatingSystemFamily": "LINUX"
