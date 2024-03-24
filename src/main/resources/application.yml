@@ -28,8 +28,8 @@ spring:
   aws:
     region: ap-northeast-2
     s3:
-      raw-bucketName: tiny-human-local
-      thumbnail-bucketName: tiny-human-thumbnail-local
+      raw-bucketName: tiny-human-dev
+      thumbnail-bucketName: tiny-human-thumbnail-dev
   jwt:
     issuer: abc@tinyhuman.com
     secretkey: ${JWT_SECRET_KEY}
