@@ -1,4 +1,4 @@
-FROM openjdk:17-oraclelinux8 as build
+FROM openjdk:17-ea-11-jdk-slim as build
 ENV APP_HOME=/apps/
 WORKDIR $APP_HOME
 COPY build.gradle settings.gradle gradlew $APP_HOME
@@ -8,7 +8,7 @@ RUN ./gradlew build || return 0
 COPY src $APP_HOME/src
 RUN ./gradlew -x test clean build
 
-FROM openjdk:17-oraclelinux8
+FROM openjdk:17-ea-11-jdk-slim
 ENV APP_HOME=/apps
 ARG ARTIFACT_NAME=app.jar
 
