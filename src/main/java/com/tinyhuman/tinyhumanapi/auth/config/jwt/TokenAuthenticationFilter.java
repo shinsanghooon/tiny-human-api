@@ -26,6 +26,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
             "/api/v1/users",
             "/api/v1/users/email/duplicate-check",
             "/api/v1/token",
+            "/api/v1/auth/kakao",
     };
 
     @Override

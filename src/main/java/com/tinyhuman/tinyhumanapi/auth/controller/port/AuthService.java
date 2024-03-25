@@ -12,4 +12,6 @@ public interface AuthService {
     User getUserOutOfSecurityContextHolder();
 
     TokenResponse googleLogin(SocialLoginRequest socialLoginRequest);
+
+    TokenResponse kakaoLogin(SocialLoginRequest socialLoginRequest);
 }

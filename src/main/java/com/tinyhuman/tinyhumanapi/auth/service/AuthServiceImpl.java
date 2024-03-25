@@ -158,5 +158,40 @@ public class AuthServiceImpl implements AuthService {
 
         return tokenResponse;
     }
+
+    @Override
+    public TokenResponse kakaoLogin(SocialLoginRequest socialLoginRequest) {
+        String email = socialLoginRequest.email();
+        String accessToken = socialLoginRequest.socialAccessToken();
+        String name = socialLoginRequest.name();
+        String photoUrl = socialLoginRequest.photoUrl();
+
+        boolean isEmailExists = userRepository.existsByEmailAndSocialMedia(email, SocialMedia.KAKAO);
+
+        User user;
+        if (isEmailExists) {
+            user = userRepository.findByEmailAndSocialMedia(email, SocialMedia.KAKAO).get();
+        } else {
+            user = userRepository.save(User.builder()
+                    .name(name)
+                    .email(email)
+                    .password(accessToken)
+                    .status(UserStatus.ACTIVE)
+                    .socialMedia(SocialMedia.KAKAO)
+                    .lastLoginAt(LocalDateTime.now())
+                    .build());
+        }
+
+        User userWithLastLoginAt = user.addLastLoginAt();
+        userRepository.save(userWithLastLoginAt);
+
+        TokenResponse tokenResponse = customTokenProvider.generationToken(user, Duration.ofHours(1));
+
+        RefreshToken newRefreshToken = generateNewRefreshToken(user, tokenResponse);
+
+        refreshTokenRepository.save(newRefreshToken);
+
+        return tokenResponse;
+    }
 }
 

@@ -34,5 +34,13 @@ public class AuthController {
         return authService.googleLogin(socialLoginRequest);
     }
 
+    @Operation(summary = "카카오 로그인 API", responses = {
+            @ApiResponse(responseCode = "200", description = "로그인 성공")})
+    @ResponseStatus(HttpStatus.OK)
+    @PostMapping("kakao")
+    public TokenResponse kakaoLogin(@Valid @RequestBody SocialLoginRequest socialLoginRequest) {
+        return authService.kakaoLogin(socialLoginRequest);
+    }
+
 }
 
