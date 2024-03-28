@@ -42,5 +42,12 @@ public class AuthController {
         return authService.kakaoLogin(socialLoginRequest);
     }
 
+    @Operation(summary = "애플 로그인 API", responses = {
+            @ApiResponse(responseCode = "200", description = "로그인 성공")})
+    @ResponseStatus(HttpStatus.OK)
+    @PostMapping("apple")
+    public TokenResponse appleLogin(@Valid @RequestBody SocialLoginRequest socialLoginRequest) {
+        return authService.appleLogin(socialLoginRequest);
+    }
 }
 

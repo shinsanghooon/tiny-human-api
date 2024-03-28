@@ -14,4 +14,6 @@ public interface AuthService {
     TokenResponse googleLogin(SocialLoginRequest socialLoginRequest);
 
     TokenResponse kakaoLogin(SocialLoginRequest socialLoginRequest);
+
+    TokenResponse appleLogin(SocialLoginRequest socialLoginRequest);
 }
