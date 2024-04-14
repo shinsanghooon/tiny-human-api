@@ -41,7 +41,7 @@ public class HelpRequestServiceImpl implements HelpRequestService {
         }
 
         HelpRequest savedHelpRequest = helpRequestRepository.save(HelpRequest.fromCreate(helpRequestCreate));
-        pushService.chatCreatePushMessage(user.id(), helpRequestCreate.requestType(), helpRequestCreate.contents());
+        pushService.chatCreatePushMessage(user.id(), savedHelpRequest.id(), helpRequestCreate.requestType(), helpRequestCreate.contents());
         return savedHelpRequest.toResponse();
     }
 

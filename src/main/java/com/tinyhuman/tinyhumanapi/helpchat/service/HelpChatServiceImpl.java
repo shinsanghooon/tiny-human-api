@@ -97,7 +97,7 @@ public class HelpChatServiceImpl implements HelpChatService {
             toUserId = helpAnswerUserId;
         }
 
-        pushService.pushMessageToUser(userId, toUserId, helpChatLatestMessage.message());
+        pushService.pushMessageToUser(messageUpdatedHelpChat.id(), userId, toUserId, helpChatLatestMessage.message());
     }
 
     @Override

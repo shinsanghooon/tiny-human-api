@@ -12,7 +12,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -24,7 +26,7 @@ public class FirebasePushService implements PushService {
     private final UserPushTokenRepository userPushTokenRepository;
 
     @Override
-    public void chatCreatePushMessage(Long userId, RequestType requestType, String contents) {
+    public void chatCreatePushMessage(Long userId, Long helpRequestId, RequestType requestType, String contents) {
         /**
          * 1. 특정 조건에 해당하는 유저를 찾는다.
          * 2. 조건에 해당하는 유저의 FCM 토큰을 불러온다
@@ -56,13 +58,17 @@ public class FirebasePushService implements PushService {
         } else {
             message = user.name() + "님이 도움을 요청하고 있어요!";
         }
-        sendMultiMessageWithTokens(message, contents, registrationTokens);
+
+        Map<String, String> data = new HashMap<>();
+        data.put("helpRequestId", helpRequestId.toString());
+
+        sendMultiMessageWithTokens(message, data, contents, registrationTokens);
     }
 
     @Override
-    public void pushMessageToUser(Long fromUserId, Long toUserId, String contents) {
+    public void pushMessageToUser(Long chatId, Long fromUserId, Long toUserId, String contents) {
 
-        userRepository.findById(toUserId)
+        User user = userRepository.findById(toUserId)
                 .orElseThrow(() -> {
                     log.error("ResourceNotFoundException(User) - toUserId:{}", toUserId);
                     return null;
@@ -73,11 +79,20 @@ public class FirebasePushService implements PushService {
         List<UserPushToken> toUserTokens = userPushTokenRepository.findByUserId(toUserId);
         List<String> registrationTokens = toUserTokens.stream().map(UserPushToken::fcmToken).toList();
 
-        System.out.println("Create Chat");
-        sendMultiMessageWithTokens("메시지가 도착했습니다.", contents, registrationTokens);
+        String message;
+        if (user.name() == null || user.name().isEmpty() || user.name().isBlank()) {
+            message = "메시지가 도착했습니다.";
+        } else {
+            message = user.name() + "님이 메시지를 보냈습니다.";
+        }
+
+        Map<String, String> data = new HashMap<>();
+        data.put("chatId", chatId.toString());
+
+        sendMultiMessageWithTokens(message, data, contents, registrationTokens);
     }
 
-    private void sendMultiMessageWithTokens(String pushTitle, String contents, List<String> registrationTokens) {
+    private void sendMultiMessageWithTokens(String pushTitle, Map<String, String> data, String contents, List<String> registrationTokens) {
         Notification notification = Notification.builder()
                 .setTitle(pushTitle)
                 .setBody(contents)
@@ -85,6 +100,7 @@ public class FirebasePushService implements PushService {
 
         MulticastMessage message = MulticastMessage.builder()
                 .setNotification(notification)
+                .putAllData(data)
                 .addAllTokens(registrationTokens)
                 .build();
 
