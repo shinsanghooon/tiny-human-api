@@ -22,13 +22,21 @@ public class FirebasePushService implements PushService {
     private final FirebaseMessaging firebaseMessaging;
     private final UserRepository userRepository;
     private final UserPushTokenRepository userPushTokenRepository;
+
     @Override
-    public void pushMessage(Long userId, RequestType requestType, String contents) {
+    public void chatCreatePushMessage(Long userId, RequestType requestType, String contents) {
         /**
          * 1. 특정 조건에 해당하는 유저를 찾는다.
          * 2. 조건에 해당하는 유저의 FCM 토큰을 불러온다
          * 3. 푸시 메시지를 만들어서 날린다.
          */
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> {
+                    log.error("ResourceNotFoundException(User) - toUserId:{}", userId);
+                    return null;
+                });
+
         List<User> targetUsers = userRepository.findRandomUser(25);
         if (requestType.equals(RequestType.LOCATION)) {
             System.out.println("requestType.getKorean() = " + requestType.getKorean());
@@ -42,8 +50,13 @@ public class FirebasePushService implements PushService {
         List<UserPushToken> targetUserTokens = userPushTokenRepository.findByUserIds(targetUserIds);
         List<String> registrationTokens = targetUserTokens.stream().map(UserPushToken::fcmToken).toList();
 
-        System.out.println("Create Chat Room");
-        sendMultiMessageWithTokens("도움이 필요해요!", contents, registrationTokens);
+        String message;
+        if (user.name() == null || user.name().isEmpty() || user.name().isBlank()) {
+            message = "도움이 필요해요!";
+        } else {
+            message = user.name() + "님이 도움을 요청하고 있어요!";
+        }
+        sendMultiMessageWithTokens(message, contents, registrationTokens);
     }
 
     @Override
