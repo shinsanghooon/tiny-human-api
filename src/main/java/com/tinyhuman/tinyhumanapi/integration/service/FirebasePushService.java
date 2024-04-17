@@ -60,6 +60,7 @@ public class FirebasePushService implements PushService {
         }
 
         Map<String, String> data = new HashMap<>();
+        data.put("type", "help");
         data.put("helpRequestId", helpRequestId.toString());
 
         sendMultiMessageWithTokens(message, data, contents, registrationTokens);
@@ -87,6 +88,7 @@ public class FirebasePushService implements PushService {
         }
 
         Map<String, String> data = new HashMap<>();
+        data.put("type", "chat");
         data.put("chatId", chatId.toString());
 
         sendMultiMessageWithTokens(message, data, contents, registrationTokens);
