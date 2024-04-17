@@ -68,7 +68,7 @@ public class FirebasePushService implements PushService {
     @Override
     public void pushMessageToUser(Long chatId, Long fromUserId, Long toUserId, String contents) {
 
-        User user = userRepository.findById(toUserId)
+        User user = userRepository.findById(fromUserId)
                 .orElseThrow(() -> {
                     log.error("ResourceNotFoundException(User) - toUserId:{}", toUserId);
                     return null;
