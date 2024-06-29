@@ -4,6 +4,7 @@ import com.tinyhuman.tinyhumanapi.auth.controller.port.AuthService;
 import com.tinyhuman.tinyhumanapi.common.exception.ResourceNotFoundException;
 import com.tinyhuman.tinyhumanapi.common.exception.UnauthorizedAccessException;
 import com.tinyhuman.tinyhumanapi.user.controller.port.UserService;
+import com.tinyhuman.tinyhumanapi.user.domain.NotificationSettingsUpdate;
 import com.tinyhuman.tinyhumanapi.user.domain.User;
 import com.tinyhuman.tinyhumanapi.user.domain.UserCreate;
 import com.tinyhuman.tinyhumanapi.user.domain.UserResponse;
@@ -70,5 +71,29 @@ public class UserServiceImpl implements UserService {
         if(userRepository.existsByEmail(email)){
             throw new EmailDuplicateException();
         }
+    }
+
+    @Override
+    public UserResponse updateNotificationSettings(Long userId, NotificationSettingsUpdate notificationSettingsUpdate) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> {
+                    log.error("ResourceNotFoundException(User) - userId:{}", userId);
+                    return new ResourceNotFoundException("User", userId);
+                });
+
+        User update_user = userRepository.save(User.builder()
+                .id(user.id())
+                .name(user.name())
+                .email(user.email())
+                .password(user.password())
+                .status(user.status())
+                .socialMedia(user.socialMedia())
+                .lastLoginAt(user.lastLoginAt())
+                .isDeleted(user.isDeleted())
+                .isAllowChatNotifications(notificationSettingsUpdate.isAllowChatNotifications())
+                .isAllowDiaryNotifications(notificationSettingsUpdate.isAllowDiaryNotifications())
+                .build());
+
+        return UserResponse.fromModel(update_user);
     }
 }

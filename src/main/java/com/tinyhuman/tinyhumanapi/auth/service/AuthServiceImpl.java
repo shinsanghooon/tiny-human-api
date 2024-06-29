@@ -67,6 +67,7 @@ public class AuthServiceImpl implements AuthService {
                     return new ResourceNotFoundException("User", " " + email);
                 });
 
+        System.out.println("user = " + user);
         User userWithLastLoginAt = user.addLastLoginAt();
         userRepository.save(userWithLastLoginAt);
 

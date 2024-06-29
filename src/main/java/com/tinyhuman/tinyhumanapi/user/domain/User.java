@@ -14,7 +14,11 @@ public record User(
         UserStatus status,
         SocialMedia socialMedia,
         LocalDateTime lastLoginAt,
-        boolean isDeleted
+        boolean isDeleted,
+
+        boolean isAllowChatNotifications,
+
+        boolean isAllowDiaryNotifications
 ) {
 
     @Builder
@@ -29,6 +33,8 @@ public record User(
                 .status(UserStatus.ACTIVE)
                 .socialMedia(userCreate.socialMedia())
                 .isDeleted(false)
+                .isAllowDiaryNotifications(false)
+                .isAllowChatNotifications(false)
                 .build();
     }
 
@@ -42,6 +48,8 @@ public record User(
                 .socialMedia(this.socialMedia)
                 .lastLoginAt(LocalDateTime.now())
                 .isDeleted(this.isDeleted)
+                .isAllowDiaryNotifications(this.isAllowDiaryNotifications)
+                .isAllowChatNotifications(this.isAllowChatNotifications)
                 .build();
     }
 

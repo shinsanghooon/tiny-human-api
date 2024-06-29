@@ -10,7 +10,11 @@ public record UserResponse(
         String name,
         String email,
         UserStatus status,
-        LocalDateTime lastLoginAt
+        LocalDateTime lastLoginAt,
+
+        boolean isAllowChatNotifications,
+
+        boolean isAllowDiaryNotifications
 ) {
 
     @Builder
@@ -24,6 +28,8 @@ public record UserResponse(
                 .name(user.name())
                 .status(user.status())
                 .lastLoginAt(user.lastLoginAt())
+                .isAllowChatNotifications(user.isAllowChatNotifications())
+                .isAllowDiaryNotifications(user.isAllowDiaryNotifications())
                 .build();
     }
 }

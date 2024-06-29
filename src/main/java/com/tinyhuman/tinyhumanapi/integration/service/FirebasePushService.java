@@ -113,7 +113,6 @@ public class FirebasePushService implements PushService {
                 List<String> failedTokens = new ArrayList<>();
                 for (int i = 0; i < responses.size(); i++) {
                     if (!responses.get(i).isSuccessful()) {
-                        // The order of responses corresponds to the order of the registration tokens.
                         System.out.println("Token = " + registrationTokens.get(i));
                         System.out.println("Message = " + responses.get(i).getException().getMessage());
                         failedTokens.add(registrationTokens.get(i));

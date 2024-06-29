@@ -58,4 +58,12 @@ public class UserCreateController {
                 .body(userPushService.registerToken(userPushTokenCreate));
     }
 
+    @PatchMapping("/{userId}/settings/notifications")
+    public ResponseEntity<UserResponse> updateNotificationSettings(@PathVariable Long userId, @RequestBody NotificationSettingsUpdate notificationSettingsUpdate) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(userService.updateNotificationSettings(userId, notificationSettingsUpdate));
+
+    }
+
 }

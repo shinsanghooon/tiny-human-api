@@ -56,11 +56,19 @@ public class UserEntity extends BaseEntity {
     @OneToMany(mappedBy = "user")
     private final List<ChecklistEntity> checklists = new ArrayList<>();
 
-    @Column(name="is_deleted")
+    @Column(name = "is_deleted")
     private boolean isDeleted = false;
 
+    @Column(name = "allow_diary_notifications", nullable = false)
+    private boolean allowDiaryNotifications = false;
+
+    @Column(name = "allow_chat_notifications", nullable = false)
+    private boolean allowChatNotifications = false;
+
     @Builder
-    public UserEntity(Long id, String name, String email, String password, UserStatus status, SocialMedia socialMedia, LocalDateTime lastLoginAt, boolean isDeleted) {
+    public UserEntity(Long id, String name, String email, String password, UserStatus status, SocialMedia socialMedia, LocalDateTime lastLoginAt, boolean isDeleted,
+                      boolean isAllowDiaryNotifications,
+                      boolean isAllowChatNotifications) {
         this.id = id;
         this.name = name;
         this.email = email;
@@ -69,6 +77,8 @@ public class UserEntity extends BaseEntity {
         this.socialMedia = socialMedia;
         this.lastLoginAt = lastLoginAt;
         this.isDeleted = isDeleted;
+        this.allowDiaryNotifications = isAllowDiaryNotifications;
+        this.allowChatNotifications = isAllowChatNotifications;
     }
 
     public static UserEntity fromModel(User user) {
@@ -81,6 +91,8 @@ public class UserEntity extends BaseEntity {
                 .socialMedia(user.socialMedia())
                 .lastLoginAt(user.lastLoginAt())
                 .isDeleted(user.isDeleted())
+                .isAllowChatNotifications(user.isAllowChatNotifications())
+                .isAllowDiaryNotifications(user.isAllowDiaryNotifications())
                 .build();
     }
 
@@ -94,6 +106,8 @@ public class UserEntity extends BaseEntity {
                 .socialMedia(this.socialMedia)
                 .lastLoginAt(this.lastLoginAt)
                 .isDeleted(this.isDeleted)
+                .isAllowChatNotifications(this.allowChatNotifications)
+                .isAllowDiaryNotifications(this.allowDiaryNotifications)
                 .build();
     }
 
