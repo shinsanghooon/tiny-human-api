@@ -110,4 +110,4 @@ jobs:
           docker pull $ECR_REPOSITORY:$IMAGE_TAG
           docker stop tiny_human_api_container || true
           docker rm tiny_human_api_container || true
-          docker run -d --name tiny_human_api_container -p 80:80 $ECR_REPOSITORY:$IMAGE_TAG
+          docker run -d --name tiny_human_api_container -p 8080:8080 $ECR_REPOSITORY:$IMAGE_TAG
