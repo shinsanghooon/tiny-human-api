@@ -118,7 +118,7 @@ jobs:
           docker pull $ECR_REPOSITORY:latest
           docker stop tiny-human-api || true
           docker rm tiny-human-api || true
-          docker run -d --name tiny-human-api -p 80:8080 \
+          docker run -d --name tiny-human-api -p 8080:8080 \
             -e SPRING_AWS_ACCESSKEYID="$SPRING_AWS_ACCESSKEYID" \
             -e SPRING_AWS_SECRETACCESSKEY="$SPRING_AWS_SECRETACCESSKEY" \
             -e SPRING_DATASOURCE_PASSWORD="$SPRING_DATASOURCE_PASSWORD" \
