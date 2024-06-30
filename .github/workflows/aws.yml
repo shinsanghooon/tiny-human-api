@@ -107,7 +107,7 @@ jobs:
         envs: ECR_REPOSITORY, IMAGE_TAG, AWS_REGION
         script: |
           aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_REPOSITORY
-          docker pull $ECR_REPOSITORY:$IMAGE_TAG
-          docker stop tiny_human_api_container || true
-          docker rm tiny_human_api_container || true
-          docker run -d --name tiny_human_api_container -p 8080:8080 $ECR_REPOSITORY:$IMAGE_TAG
+          docker pull $ECR_REPOSITORY:latest
+          docker stop tiny-human-api || true
+          docker rm tiny-human-api || true
+          docker run -d --name tiny-human-api -p 8080:8080 $ECR_REPOSITORY:latest
