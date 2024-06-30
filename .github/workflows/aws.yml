@@ -106,6 +106,13 @@ jobs:
         key: ${{ secrets.EC2_SSH_KEY }}
         envs: ECR_REPOSITORY, IMAGE_TAG, AWS_REGION
         script: |
+          export SPRING_AWS_ACCESSKEYID=$(aws ssm get-parameter --name "/tinyhuman/access_key_id" --with-decryption --region "ap-northeast-2" --query "Parameter.Value" --output text)
+          export SPRING_AWS_SECRETACCESSKEY=$(aws ssm get-parameter --name "/tinyhuman/secret_access_key" --with-decryption --region "ap-northeast-2" --query "Parameter.Value" --output text)
+          export SPRING_DATASOURCE_PASSWORD=$(aws ssm get-parameter --name "/tinyhuman/db_pw" --with-decryption --region "ap-northeast-2" --query "Parameter.Value" --output text)
+          export SPRING_DATASOURCE_USERNAME=$(aws ssm get-parameter --name "/tinyhuman/db_user" --with-decryption --region "ap-northeast-2" --query "Parameter.Value" --output text)
+          export SPRING_DATASOURCE_URL=$(aws ssm get-parameter --name "/tinyhuman/db_uri" --with-decryption --region "ap-northeast-2" --query "Parameter.Value" --output text)
+          export SPRING_JWT_SECRETKEY=$(aws ssm get-parameter --name "/tinyhuman/jwt_secret_key" --with-decryption --region "ap-northeast-2" --query "Parameter.Value" --output text)
+        
           aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_REPOSITORY
           docker image prune -f
           docker pull $ECR_REPOSITORY:latest
