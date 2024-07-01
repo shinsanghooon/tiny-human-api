@@ -70,4 +70,14 @@ public class FakeUserRepository implements UserRepository {
         return data.stream()
                 .anyMatch(s -> (s.email().equals(email) && s.socialMedia().equals(socialMedia)));
     }
+
+    @Override
+    public List<User> findRandomUser(int limit) {
+        return null;
+    }
+
+    @Override
+    public List<User> findByAllowDiaryNotificationsIsTrue() {
+        return null;
+    }
 }

@@ -56,4 +56,9 @@ public class UserRepositoryImpl implements UserRepository {
                 ).toList();
     }
 
+    @Override
+    public List<User> findByAllowDiaryNotificationsIsTrue() {
+        return userJpaRepository.findByAllowDiaryNotificationsIsTrue().stream().map(UserEntity::toModel).toList();
+    }
+
 }

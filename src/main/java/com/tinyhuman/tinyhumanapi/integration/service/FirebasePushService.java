@@ -9,6 +9,7 @@ import com.tinyhuman.tinyhumanapi.user.service.port.UserPushTokenRepository;
 import com.tinyhuman.tinyhumanapi.user.service.port.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -92,6 +93,25 @@ public class FirebasePushService implements PushService {
         data.put("chatId", chatId.toString());
 
         sendMultiMessageWithTokens(message, data, contents, registrationTokens);
+    }
+
+    @Scheduled(cron = "0 0 12 * * ?", zone = "UTC")
+    public void scheduledChatCreatePushMessage() {
+
+        List<User> users = userRepository.findByAllowDiaryNotificationsIsTrue();
+
+        for (User user : users) {
+            List<UserPushToken> toUserTokens = userPushTokenRepository.findByUserId(user.id());
+            List<String> registrationTokens = toUserTokens.stream().map(UserPushToken::fcmToken).toList();
+            String message = "일기를 작성할 시간입니다.";
+
+            Map<String, String> data = new HashMap<>();
+
+            data.put("type", "diary");
+            data.put("diary", "diary");
+
+            sendMultiMessageWithTokens(message, data, "오늘의 추억을 남겨보세요.", registrationTokens);
+        }
     }
 
     private void sendMultiMessageWithTokens(String pushTitle, Map<String, String> data, String contents, List<String> registrationTokens) {

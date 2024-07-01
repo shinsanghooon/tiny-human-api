@@ -21,4 +21,6 @@ public interface UserRepository {
     boolean existsByEmailAndSocialMedia(String email, SocialMedia socialMedia);
 
     List<User> findRandomUser(int limit);
+
+    List<User> findByAllowDiaryNotificationsIsTrue();
 }
